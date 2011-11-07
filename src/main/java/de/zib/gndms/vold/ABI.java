@@ -36,13 +36,6 @@ public class ABI
         {
                 ABI abi = new ABI();
 
-                if( args.length < 1 || args[0].equals( "--help" ) || args[0].equals( "-h" ) )
-                {
-                        System.out.println( "run with configuration file name as argument." );
-                        System.exit( 0 );
-
-                }
-
                 while( true )
                 {
                         try {
