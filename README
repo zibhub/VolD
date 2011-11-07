@@ -31,3 +31,14 @@ There are different backends where the data can be stored.
 
 - The first backend is BabuDB, a key value store which provides prefix lookups. It has good performance but offers bad debugging possibilities.
 - For debugging purposes, the second backend is a directory on the filesystem. It's more easy to actually see the stock in there, but offers worse performance.
+
+Build, configure, run
+~~~~~~~~~~~~~~~~~~~~~
+
+The building process is based on buildr.
+
+- To build packages (.jar and .war), run 'buildr vold:package' in the main directory of the project.
+- The configuration is stored in src/main/java/META-INF/applicationContext.xml
+- For testing purposes, the ABI can be run with 'buildr vold:run'.
+- The .war file is a self-contained archive and can be used in any ApplicationContainer (tested with jetty-6.1.26).
+
