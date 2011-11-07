@@ -1,0 +1,81 @@
+
+package de.zib.gndms.vold;
+
+import java.util.List;
+import java.util.LinkedList;
+
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+public class Voldi
+{
+        private static final Log log =
+                LogFactory.getLog(Voldi.class);
+
+        final private Frontend frontend;
+
+        private Voldi( )
+        {
+                frontend = new Frontend();
+        }
+
+        public void init( )
+        {
+                frontend.init( "test.xml" );
+        }
+
+        public void testinsert1( )
+        {
+                List< String > value = new LinkedList< String >();
+                value.add( "Hallo" );
+                value.add( "Welt" );
+
+                frontend.insert( "deutsch", new Key( "/test/standard", "string", "huhu" ), value );
+        }
+
+        public void testinsert2( )
+        {
+                List< String > value = new LinkedList< String >();
+                value.add( "Hello" );
+                value.add( "World" );
+
+                frontend.insert( "englisch", new Key( "/test/standard", "string", "huhu" ), value );
+        }
+
+        public void deinit( )
+        {
+                frontend.deinit();
+        }
+
+        public static void main( String[] args )
+        {
+                Voldi voldi = new Voldi();
+
+                voldi.init();
+
+                voldi.testinsert1();
+                try{ Thread.sleep( 1000 ); }
+                catch( Exception e ){ }
+                voldi.testinsert2();
+                try{ Thread.sleep( 2000 ); }
+                catch( Exception e ){ }
+                voldi.testinsert1();
+
+                try
+                {
+                        Thread.sleep( 7000 );
+                }
+                catch( InterruptedException e )
+                {
+                        System.out.println( e.getMessage() );
+                }
+
+                voldi.deinit();
+
+                System.out.println( "Fertig" );
+        }
+}
+
