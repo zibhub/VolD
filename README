@@ -9,7 +9,7 @@ VolD is the shortcut for VolatileDirectory and that is, what VolD is in its hear
 Volatile Directory Logic
 ~~~~~~~~~~~~~~~~~~~~~~~~
 
-With the interface explained below, a set of mappings from keys to sets of values can be stored. These keys are managed in a directory structure. Additionally, each key is stored per source, i. e. if two sources (e.g. different clients on the REST interface) store the same key in the same directory (called scope), a lookup for this key will merge the sets of values, given by both sources. Using the REST interface, the source is given implicitly while the using the ABI the source has to be given when inserting.
+With the interface explained below, a set of mappings from keys to sets of values can be stored. These keys are managed in a directory structure. Additionally, each key is stored per source, i. e. if two sources (e.g. different clients on the REST interface) store the same key in the same directory (called scope), a lookup for this key will merge the sets of values, given by both sources. Using the REST interface, the source is given implicitly while using the ABI the source has to be given when inserting.
 
 Interfaces
 ~~~~~~~~~~
