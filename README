@@ -22,12 +22,12 @@ VolD will be run as a daemon / service. There are two different interfaces avail
 Reaper
 ~~~~~~
 
-If configured, a Reaper is running in the background, cleaning the database from keys which are too old. If a key should stay in the database, it has to be inserted again, before its livetime is over. The keys will be deleted after but not exactly when their age reaches the configured time to live (TTL).
+If configured, a Reaper is running in the background, cleaning the database from keys which are too old. If a key should stay in the database, it has to be inserted again, before its livetime is over. Otherwise the keys will be deleted after but not exactly when their age reaches the configured time to live (TTL).
 
 Backends
 ~~~~~~~~
 
 There are different backends where the data can be stored.
 
-- The first backend is BabuDB, a key value store which provides prefix lookups. It has good performance but offers bad debugging.
+- The first backend is BabuDB, a key value store which provides prefix lookups. It has good performance but offers bad debugging possibilities.
 - For debugging purposes, the second backend is a directory on the filesystem. It's more easy to actually see the stock in there, but offers worse performance.
