@@ -1,0 +1,33 @@
+
+VolD
+~~~~
+
+
+VolD is the shortcut for VolatileDirectory and that is, what VolD is in its heart. All stored values will be deleted after a given period of time if they won't be refreshed in between.
+
+
+Volatile Directory Logic
+~~~~~~~~~~~~~~~~~~~~~~~~
+
+With the interface explained below, a set of mappings from keys to sets of values can be stored. These keys are managed in a directory structure. Additionally, each key is stored per source, i. e. if two sources (e.g. different clients on the REST interface) store the same key in the same directory (called scope), a lookup for this key will merge the sets of values, given by both sources. Using the REST interface, the source is given implicitly while the using the ABI the source has to be given when inserting.
+
+Interfaces
+~~~~~~~~~~
+
+VolD will be run as a daemon / service. There are two different interfaces available.
+
+- The first interface is an ABI. It's nice to test around while developing.
+- The second interface is a REST based interface based on springframework.
+
+Reaper
+~~~~~~
+
+If configured, a Reaper is running in the background, cleaning the database from keys which are too old. If a key should stay in the database, it has to be inserted again, before its livetime is over. The keys will be deleted after but not exactly when their age reaches the configured time to live (TTL).
+
+Backends
+~~~~~~~~
+
+There are different backends where the data can be stored.
+
+- The first backend is BabuDB, a key value store which provides prefix lookups. It has good performance but offers bad debugging.
+- For debugging purposes, the second backend is a directory on the filesystem. It's more easy to actually see the stock in there, but offers worse performance.
