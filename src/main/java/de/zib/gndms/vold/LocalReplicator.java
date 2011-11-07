@@ -10,23 +10,56 @@ import org.slf4j.LoggerFactory;
 public class LocalReplicator implements Replicator
 {
         protected final Logger log = LoggerFactory.getLogger( this.getClass() );
-        private final VolatileDirectory replica;
+        private VolatileDirectory replica;
 
         public LocalReplicator( VolatileDirectory replica )
         {
+                this.replica = replica;
+        }
+
+        public LocalReplicator( )
+        {
+                this.replica = null;
+        }
+
+        public void setReplica( VolatileDirectory replica )
+        {
+                this.replica = replica;
+        }
+
+        public void checkState( )
+        {
                 if( null == replica )
                 {
-                        throw new IllegalArgumentException( "LocalReplicator initialized with null argument, which is illegal!" );
+                        throw new IllegalStateException( "Tried to operate on ReplicatedVolatileDirectory while it had not been initialized yet. You first need to set volatile directory!" );
                 }
-
-                this.replica = replica;
         }
 
         @Override
         public void insert( List< String > key, Set< String > value )
                 throws DirectoryException
         {
-                log.trace( "Insert: " + key.toString() + " |--> " + value.toString() );
+                // guard
+                {
+                        log.trace( "Insert: " + key.toString() + " |--> " + value.toString() );
+
+                        checkState();
+                }
+
                 replica.insert( key, value );
+        }
+
+        @Override
+        public void delete( List< String > key )
+                throws DirectoryException
+        {
+                // guard
+                {
+                        log.trace( "Delete: " + key.toString() );
+
+                        checkState();
+                }
+
+                replica.delete( key );
         }
 }

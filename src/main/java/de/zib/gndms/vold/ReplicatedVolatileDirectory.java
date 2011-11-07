@@ -14,35 +14,69 @@ public class ReplicatedVolatileDirectory implements VolatileDirectory
 {
         protected final Log log = LogFactory.getLog( this.getClass() );
 
-        private final VolatileDirectory backend;
-        private final Replicator replicator;
+        private VolatileDirectory backend;
+        private Replicator replicator;
 
         public ReplicatedVolatileDirectory( VolatileDirectory backend, Replicator replicator )
         {
-                if( null == backend || null == replicator )
-                {
-                        throw new IllegalArgumentException( "Initialized ReplicatedVolatileDirectory with null as argument is illegal!" );
-                }
-
                 this.backend = backend;
                 this.replicator = replicator;
+        }
+
+        public ReplicatedVolatileDirectory( )
+        {
+                this.backend = null;
+                this.replicator = null;
+        }
+
+        public void setDirectory( VolatileDirectory directory )
+        {
+                this.backend = directory;
+        }
+
+        public void setReplicator( Replicator replicator )
+        {
+                this.replicator = replicator;
+        }
+
+        public void checkState( )
+        {
+                if( null == backend || null == replicator )
+                {
+                        throw new IllegalStateException( "Tried to operate on frontend while it had not been initialized yet. You first need to set a volatile Directory!" );
+                }
         }
 
 	@Override
 	public long getActualSlice( )
 	{
+                // guard
+                {
+                        checkState();
+                }
+
 		return backend.getActualSlice();
 	}
 
 	@Override
 	public long getNumberOfSlices( )
 	{
+                // guard
+                {
+                        checkState();
+                }
+
 		return backend.getNumberOfSlices();
 	}
 
 	@Override
 	public long getTimeSliceSize( )
 	{
+                // guard
+                {
+                        checkState();
+                }
+
 		return backend.getTimeSliceSize();
 	}
 
@@ -50,22 +84,121 @@ public class ReplicatedVolatileDirectory implements VolatileDirectory
 	public void insert( List< String > key, Set< String > value )
                 throws DirectoryException
 	{
+                // guard
+                {
+                        checkState();
+                }
+
                 log.debug( "Replicating insert: " + key.toString() + " |--> " + value.toString() );
-                backend.insert( key, value );
+
+                InsertThread insertion = new InsertThread( backend, key, value );
+                insertion.start();
                 replicator.insert( key, value );
+                
+                try
+                {
+                        insertion.join();
+                }
+                catch( InterruptedException e )
+                {
+                        throw new DirectoryException( this.getClass(), e );
+                }
+
+                if( null != insertion.exception )
+                        throw insertion.exception;
 	}
 
         @Override
         public void delete( List< String > key )
                 throws DirectoryException
         {
-                backend.delete( key );
+                // guard
+                {
+                        checkState();
+                }
+
+                log.debug( "Replicating delete: " + key.toString() );
+
+                DeleteThread deletion = new DeleteThread( backend, key );
+                deletion.start();
+                replicator.delete( key );
+                
+                try
+                {
+                        deletion.join();
+                }
+                catch( InterruptedException e )
+                {
+                        throw new DirectoryException( this.getClass(), e );
+                }
+
+                if( null != deletion.exception )
+                        throw deletion.exception;
+        }
+
+        private class InsertThread extends Thread
+        {
+                private final VolatileDirectory directory;
+                private final List< String > key;
+                private final Set< String > values;
+                public DirectoryException exception = null;
+
+                public InsertThread( VolatileDirectory directory, List< String > key, Set< String > values )
+                {
+                        this.directory = directory;
+                        this.key = key;
+                        this.values = values;
+                }
+
+                @Override
+                public void run()
+                {
+                        try
+                        {
+                                directory.insert( key, values );
+                        }
+                        catch( DirectoryException e )
+                        {
+                                this.exception = e;
+                        }
+                }
+        }
+
+        private class DeleteThread extends Thread
+        {
+                private final VolatileDirectory directory;
+                private final List< String > key;
+                public DirectoryException exception = null;
+
+                public DeleteThread( VolatileDirectory directory, List< String > key )
+                {
+                        this.directory = directory;
+                        this.key = key;
+                }
+
+                @Override
+                public void run()
+                {
+                        try
+                        {
+                                directory.delete( key );
+                        }
+                        catch( DirectoryException e )
+                        {
+                                this.exception = e;
+                        }
+                }
         }
 
 	@Override
 	public Set< String > lookup( List< String > key )
                 throws DirectoryException
 	{
+                // guard
+                {
+                        checkState();
+                }
+
                 return backend.lookup( key );
 	}
 
@@ -73,6 +206,11 @@ public class ReplicatedVolatileDirectory implements VolatileDirectory
 	public Map< List< String >, Set< String > > prefixLookup( List< String > key )
                 throws DirectoryException
 	{
+                // guard
+                {
+                        checkState();
+                }
+
                 return backend.prefixLookup( key );
 	}
 
@@ -80,6 +218,11 @@ public class ReplicatedVolatileDirectory implements VolatileDirectory
         public Map< List< String >, DateTime > sliceLookup( long slice )
                 throws DirectoryException
         {
+                // guard
+                {
+                        checkState();
+                }
+
                 return backend.sliceLookup( slice );
         }
 }
