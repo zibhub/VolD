@@ -13,17 +13,33 @@
 
         <!-- setup the frontend -->
         <bean id="frontend" class="de.zib.gndms.vold.Frontend">
-                <property name="volatileDirectory" ref="voldi1" />
+                <property name="volatileDirectory" ref="replication" />
         </bean>
 
         <!-- setup reaper -->
         <bean id="reaper" class="de.zib.gndms.vold.Reaper">
                 <property name="TTL" value="20000" />
-                <property name="slicedDirectory" ref="voldi1" />
+                <property name="slicedDirectory" ref="replication" />
+        </bean>
+
+        <!-- setup replication -->
+        <bean id="replication" class="de.zib.gndms.vold.ReplicatedVolatileDirectory">
+                <property name="directory" ref="voldi1" />
+                <property name="replicator" ref="replicationwrapper" />
+        </bean>
+
+        <bean id="replicationwrapper" class="de.zib.gndms.vold.LocalReplicator">
+                <property name="replica" ref="voldi2" />
         </bean>
 
         <!-- setup VolatileDirectory for backend1 -->
         <bean id="voldi1" class="de.zib.gndms.vold.VolatileDirectoryImpl">
+                <property name="backend" ref="backend1" />
+                <property name="timeslice" ref="timeslice" />
+        </bean>
+
+        <!-- setup VolatileDirectory for backend2 -->
+        <bean id="voldi2" class="de.zib.gndms.vold.VolatileDirectoryImpl">
                 <property name="backend" ref="backend2" />
                 <property name="timeslice" ref="timeslice" />
         </bean>
