@@ -2,7 +2,6 @@
 package de.zib.gndms.vold;
 
 import java.util.List;
-import java.util.Set;
 import java.util.Map;
 
 import java.io.FileWriter;
@@ -63,7 +62,6 @@ public class WriteLogger implements PartitionedDirectoryBackend
         @Override
         @PostConstruct
         public void open( )
-                throws DirectoryException
         {
                 // guard
                 {
@@ -85,7 +83,7 @@ public class WriteLogger implements PartitionedDirectoryBackend
                 {
                         this.logfile = null;
                         this.out = null;
-                        throw new DirectoryException( this.getClass(), e );
+                        throw new DirectoryException( e );
                 }
 
                 log.info( "Backend opened." );
@@ -94,7 +92,6 @@ public class WriteLogger implements PartitionedDirectoryBackend
         @Override
         @PreDestroy
         public void close( )
-                throws DirectoryException
         {
                 // guard
                 {
@@ -119,7 +116,7 @@ public class WriteLogger implements PartitionedDirectoryBackend
                 }
                 catch( IOException e )
                 {
-                        throw new DirectoryException( this.getClass(), e );
+                        throw new DirectoryException( e );
                 }
 
                 out = null;
@@ -136,7 +133,6 @@ public class WriteLogger implements PartitionedDirectoryBackend
 
         @Override
         public void insert( int partition, List< String > key, List< String > value )
-                throws DirectoryException
         {
                 // guard
                 {
@@ -146,7 +142,7 @@ public class WriteLogger implements PartitionedDirectoryBackend
 
                         if( ! this.isopen() )
                         {
-                                throw new DirectoryException( this.getClass(), new Exception( "Tried to operate on WriteLogger while it had not been initialized yet. Open it first!" ) );
+                                throw new DirectoryException( "Tried to operate on WriteLogger while it had not been initialized yet. Open it first!" );
                         }
                 }
 
@@ -157,13 +153,12 @@ public class WriteLogger implements PartitionedDirectoryBackend
                 }
                 catch( IOException e )
                 {
-                        throw new DirectoryException( this.getClass(), e );
+                        throw new DirectoryException( e );
                 }
         }
 
         @Override
         public void delete( int partition, List< String > key )
-                throws DirectoryException
         {
                 // guard
                 {
@@ -173,7 +168,7 @@ public class WriteLogger implements PartitionedDirectoryBackend
 
                         if( ! this.isopen() )
                         {
-                                throw new DirectoryException( this.getClass(), new Exception( "Tried to operate on WriteLogger while it had not been initialized yet. Open it first!" ) );
+                                throw new DirectoryException( "Tried to operate on WriteLogger while it had not been initialized yet. Open it first!" );
                         }
                 }
 
@@ -184,13 +179,12 @@ public class WriteLogger implements PartitionedDirectoryBackend
                 }
                 catch( IOException e )
                 {
-                        throw new DirectoryException( this.getClass(), e );
+                        throw new DirectoryException( e );
                 }
         }
 
         @Override
         public List< String > lookup( int partition, List< String > key )
-                throws DirectoryException
         {
                 // guard
                 {
@@ -202,7 +196,6 @@ public class WriteLogger implements PartitionedDirectoryBackend
 
         @Override
         public Map< List< String >, List< String > > prefixlookup( int partition, List< String > key )
-                throws DirectoryException
         {
                 // guard
                 {

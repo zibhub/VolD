@@ -95,7 +95,6 @@ public class Frontend
          * @short               Store the key-valuelist.
          **/
 	public void insert( String source, Key key, Set<String> value )
-                throws DirectoryException
 	{
                 // guard
                 {
@@ -111,15 +110,7 @@ public class Frontend
                         List< String > _key = key._buildkey();
                         _key.add( source );
 
-                        try
-                        {
-                                volatileDirectory.insert( _key, value );
-                        }
-                        catch( DirectoryException e )
-                        {
-                                e.prependMessage( "In Frontend.insert: " );
-                                throw e;
-                        }
+                        volatileDirectory.insert( _key, value );
                 }
                 finally
                 {
@@ -137,7 +128,6 @@ public class Frontend
          *                      are merged.
          **/
 	public Map< Key, Set< String > > lookup( Key key )
-                throws DirectoryException
 	{
                 DirectoryException found_exception = null;
 
@@ -188,16 +178,7 @@ public class Frontend
                         }
                         else
                         {
-                                try
-                                {
-                                        return scopeLookup( key );
-                                }
-                                catch( DirectoryException e )
-                                {
-                                        log.error( "Error in lookup for key " + key._buildkey().toString() + " - simply giving no results..." );
-                                        e.prependMessage( "In Frontend.lookup: " );
-                                        throw e;
-                                }
+                                return scopeLookup( key );
                         }
                 }
                 finally
@@ -226,7 +207,6 @@ public class Frontend
          * @throws DirectoryException
          **/
         private Map< Key, Set< String > > scopeLookup( Key key )
-                throws DirectoryException
         {
                 if( null == key )
                 {
@@ -250,8 +230,7 @@ public class Frontend
                                 }
                                 catch( DirectoryException e )
                                 {
-                                        e.prependMessage( "In Frontend.scopeLookup( " + key._buildkey().toString() + "): " );
-                                        throw e;
+                                        throw new DirectoryException( "In Frontend.scopeLookup( " + key._buildkey().toString() + "): ", e );
                                 }
                         }
                         else
@@ -268,8 +247,7 @@ public class Frontend
                                 }
                                 catch( DirectoryException e )
                                 {
-                                        e.prependMessage( "In Frontend.scopeLookup( " + _key.toString() + "): " );
-                                        throw e;
+                                        throw new DirectoryException( "In Frontend.scopeLookup( " + _key.toString() + "): ", e );
                                 }
                         }
                 }

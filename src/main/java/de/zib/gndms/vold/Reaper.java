@@ -25,11 +25,11 @@ public class Reaper extends Thread
         {
                 if( null == directory )
                 {
-                        throw new IllegalArgumentException( "Reaper needs a SlicedDirectory, but null was given!" );
+                        throw new IllegalArgumentException( "Reaper needs a SlicedDirectory, but null has been given!" );
                 }
                 if( TTL < 0 )
                 {
-                        throw new IllegalArgumentException( "ReaperWorker needs nonnegative TTL to count with, but TTL=" + TTL + " was given!" );
+                        throw new IllegalArgumentException( "ReaperWorker needs nonnegative TTL to count with, but TTL=" + TTL + " has been given!" );
                 }
 
                 this.ttl = TTL;
@@ -54,9 +54,9 @@ public class Reaper extends Thread
 
         public void setTTL( long ttl )
         {
-                if( ttl < 0 )
+                if( ttl <= 0 )
                 {
-                        throw new IllegalArgumentException( "ReaperWorker needs nonnegative TTL to count with, but TTL=" + ttl + " was given!" );
+                        throw new IllegalArgumentException( "ReaperWorker needs positive TTL to count with, but TTL=" + ttl + " has been given!" );
                 }
 
                 this.ttl = ttl;
@@ -191,13 +191,12 @@ public class Reaper extends Thread
                         }
                         catch( DirectoryException e )
                         {
-                                // do not handle exception. Error message should have been printed to log!
+                                log.error( e.getMessage() );
                                 return;
                         }
                 }
 
                 private void reap_timeslice( long timeslice )
-                        throws DirectoryException
                 {
                         log.trace( "ReapTimeslice: " + timeslice );
 
@@ -209,17 +208,7 @@ public class Reaper extends Thread
                                 }
                         }
 
-                                Map< List< String >, DateTime > map;
-                        try
-                        {
-                                map = directory.sliceLookup( timeslice );
-                        }
-                        catch( DirectoryException e )
-                        {
-                                log.error( "Reaper could not make a slicelookup on timeslice " + timeslice + "!" );
-                                e.prependMessage( "In Reaper.ReaperWorker.reap_timeslice(): " );
-                                throw e;
-                        }
+                        Map< List< String >, DateTime > map = directory.sliceLookup( timeslice );
 
                         DateTime now = DateTime.now();
 

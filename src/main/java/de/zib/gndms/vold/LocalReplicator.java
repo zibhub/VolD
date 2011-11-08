@@ -37,7 +37,6 @@ public class LocalReplicator implements Replicator
 
         @Override
         public void insert( List< String > key, Set< String > value )
-                throws DirectoryException
         {
                 // guard
                 {
@@ -51,7 +50,6 @@ public class LocalReplicator implements Replicator
 
         @Override
         public void delete( List< String > key )
-                throws DirectoryException
         {
                 // guard
                 {

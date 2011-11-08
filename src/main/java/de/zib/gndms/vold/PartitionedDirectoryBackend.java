@@ -3,9 +3,9 @@ package de.zib.gndms.vold;
 
 public interface PartitionedDirectoryBackend extends PartitionedDirectory
 {
-        void open( ) throws DirectoryException;
+        void open( );
 
-        void close( ) throws DirectoryException;
+        void close( );
 
         boolean isopen( );
 }

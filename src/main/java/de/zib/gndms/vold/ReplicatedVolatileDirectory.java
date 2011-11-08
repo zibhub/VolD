@@ -82,7 +82,6 @@ public class ReplicatedVolatileDirectory implements VolatileDirectory
 
 	@Override
 	public void insert( List< String > key, Set< String > value )
-                throws DirectoryException
 	{
                 // guard
                 {
@@ -92,16 +91,18 @@ public class ReplicatedVolatileDirectory implements VolatileDirectory
                 log.debug( "Replicating insert: " + key.toString() + " |--> " + value.toString() );
 
                 InsertThread insertion = new InsertThread( backend, key, value );
-                insertion.start();
-                replicator.insert( key, value );
                 
                 try
                 {
+                        insertion.start();
+
+                        replicator.insert( key, value );
+                        
                         insertion.join();
                 }
                 catch( InterruptedException e )
                 {
-                        throw new DirectoryException( this.getClass(), e );
+                        throw new DirectoryException( e );
                 }
 
                 if( null != insertion.exception )
@@ -110,7 +111,6 @@ public class ReplicatedVolatileDirectory implements VolatileDirectory
 
         @Override
         public void delete( List< String > key )
-                throws DirectoryException
         {
                 // guard
                 {
@@ -120,16 +120,18 @@ public class ReplicatedVolatileDirectory implements VolatileDirectory
                 log.debug( "Replicating delete: " + key.toString() );
 
                 DeleteThread deletion = new DeleteThread( backend, key );
-                deletion.start();
-                replicator.delete( key );
                 
                 try
                 {
+                        deletion.start();
+
+                        replicator.delete( key );
+
                         deletion.join();
                 }
                 catch( InterruptedException e )
                 {
-                        throw new DirectoryException( this.getClass(), e );
+                        throw new DirectoryException( e );
                 }
 
                 if( null != deletion.exception )
@@ -192,7 +194,6 @@ public class ReplicatedVolatileDirectory implements VolatileDirectory
 
 	@Override
 	public Set< String > lookup( List< String > key )
-                throws DirectoryException
 	{
                 // guard
                 {
@@ -204,7 +205,6 @@ public class ReplicatedVolatileDirectory implements VolatileDirectory
 
 	@Override
 	public Map< List< String >, Set< String > > prefixLookup( List< String > key )
-                throws DirectoryException
 	{
                 // guard
                 {
@@ -216,7 +216,6 @@ public class ReplicatedVolatileDirectory implements VolatileDirectory
 
         @Override
         public Map< List< String >, DateTime > sliceLookup( long slice )
-                throws DirectoryException
         {
                 // guard
                 {

@@ -105,7 +105,6 @@ public class BabuDirectory implements PartitionedDirectoryBackend
         @Override
         @PostConstruct
 	public void open( )
-                throws DirectoryException
 	{
 		// guard
 		{
@@ -122,7 +121,7 @@ public class BabuDirectory implements PartitionedDirectoryBackend
                                 null == getProperty( "babudb.sync" )
                                 )
                         {
-                                throw new DirectoryException( this.getClass(), new Exception( "Need to proper initialize BabuDirectory before opening it! Necessary is setting dir (base directory to store files, created by BabuDB), logDir (directory where logfiles are stored), sync (sync method, see BabuDB docs) and database name." ) );
+                                throw new DirectoryException( "Need to proper initialize BabuDirectory before opening it! Necessary is setting dir (base directory to store files, created by BabuDB), logDir (directory where logfiles are stored), sync (sync method, see BabuDB docs) and database name." );
                         }
 		}
 
@@ -134,13 +133,11 @@ public class BabuDirectory implements PartitionedDirectoryBackend
 			}
 			catch( java.io.IOException e )
 			{
-                                log.error( "BabuDirectory could not read config: " + e.getMessage() );
-                                throw new DirectoryException( this.getClass(), e );
+                                throw new DirectoryException( e );
 			}
 			catch( BabuDBException e )
 			{
-                                log.error( "BabuDirectory could not read config: " + e.getMessage() );
-				throw new DirectoryException( this.getClass(), e );
+				throw new DirectoryException( e );
 			}
 		}
 
@@ -163,8 +160,7 @@ public class BabuDirectory implements PartitionedDirectoryBackend
 				}
 				catch( BabuDBException e2 )
 				{
-                                        log.error( "BabuDirectory could not create database: " + e2.getMessage() );
-                                        throw new DirectoryException( this.getClass(), e2 );
+                                        throw new DirectoryException( e2 );
 				}
 			}
 
@@ -177,7 +173,6 @@ public class BabuDirectory implements PartitionedDirectoryBackend
         @Override
         @PreDestroy
 	public void close( )
-                throws DirectoryException
 	{
                 if( ! isopen() )
                 {
@@ -199,7 +194,7 @@ public class BabuDirectory implements PartitionedDirectoryBackend
 			catch( BabuDBException e2 )
 			{
                                 log.warn( "BabuDirectory could even not forcefully shutdown: " + e2.getMessage() );
-                                throw new DirectoryException( this.getClass(), e2 );
+                                throw new DirectoryException( e2 );
 			}
 		}
 
@@ -222,7 +217,6 @@ public class BabuDirectory implements PartitionedDirectoryBackend
 	 */
         @Override
         public void insert( int partition, List< String > key, List< String > value )
-                throws DirectoryException
 	{
                 log.trace( "Insert: " + partition + ":'" + key.toString() + "' -> '" + value.toString() + "'" );
 
@@ -230,7 +224,7 @@ public class BabuDirectory implements PartitionedDirectoryBackend
                 {
                         if( ! isopen() )
                         {
-                                throw new DirectoryException( this.getClass(), new Exception( "Tried to operate on closed database." ) );
+                                throw new DirectoryException( "Tried to operate on closed database." );
                         }
 
                         if( partition < 0 )
@@ -261,7 +255,6 @@ public class BabuDirectory implements PartitionedDirectoryBackend
 	 * The insert will be performed synchronously.
 	 */
 	private void insert( int partition, byte[] key, byte[] value )
-                throws DirectoryException
 	{
                 // guard
                 {
@@ -289,7 +282,6 @@ public class BabuDirectory implements PartitionedDirectoryBackend
 	 */
         @Override
         public void delete( int partition, List< String > key )
-                throws DirectoryException
 	{
                 log.trace( "Delete: " + partition + ":'" + key.toString() + "'" );
 
@@ -299,7 +291,7 @@ public class BabuDirectory implements PartitionedDirectoryBackend
                 {
                         if( ! isopen() )
                         {
-                                throw new DirectoryException( this.getClass(), new Exception( "Tried to operate on closed database." ) );
+                                throw new DirectoryException( "Tried to operate on closed database." );
                         }
 
                         if( partition < 0 )
@@ -314,21 +306,7 @@ public class BabuDirectory implements PartitionedDirectoryBackend
                         }
                 }
 
-                try
-                {
-                        _key = _buildkey( key );
-                }
-                catch( DirectoryException e )
-                {
-                        e.prependMessage( "In delete: " );
-                        throw e;
-                }
-                catch( IllegalArgumentException e )
-                {
-                        DirectoryException de = new DirectoryException( this.getClass(), e );
-                        de.prependMessage( "In delete: " );
-                        throw de;
-                }
+                _key = _buildkey( key );
 
                 db.singleInsert( partition, _key, null, null );
 	}
@@ -342,7 +320,6 @@ public class BabuDirectory implements PartitionedDirectoryBackend
 	 */
         @Override
         public Map< List< String >, List< String > > prefixlookup( int partition, List< String > key )
-                throws DirectoryException
 	{
                 log.trace( "PrefixLookup: " + partition + ":'" + key.toString() + "'" );
 
@@ -350,46 +327,26 @@ public class BabuDirectory implements PartitionedDirectoryBackend
                 {
                         if( ! isopen() )
                         {
-                                throw new DirectoryException( this.getClass(), new Exception( "Tried to operate on closed database." ) );
+                                throw new DirectoryException( "Tried to operate on closed database." );
                         }
 
                         if( partition < 0 )
                         {
-                                log.error( "Illegal argument in prefixlookup: partition (" + partition + ") may not be negative!" );
                                 throw new IllegalArgumentException( "BabuDirectory only has nonnegative partitions, thus " + partition + " is an illegal argument" );
                         }
                         if( null == key )
                         {
-                                log.error( "Illegal argument in prefixlookup: key is null" );
-                                throw new IllegalArgumentException( "In " + this.getClass().getName() + ".prefixlookup is null no valid key!" );
+                                throw new IllegalArgumentException( "null is no valid key!" );
                         }
                 }
 
                 Map< List< String >, List< String > > map = new HashMap< List< String >, List< String > >();
 
                 byte[] _key;
-                try
-                {
-                        _key = _buildkey( key );
-                }
-                catch( IllegalArgumentException e )
-                {
-                        DirectoryException de = new DirectoryException( this.getClass(), e );
-                        de.prependMessage( "In prefixlookup: " );
-                        throw de;
-                }
+                _key = _buildkey( key );
 
                 Map< byte[], byte[] > _map;
-                try
-                {
-                        _map = prefixlookup( partition, _key );
-                }
-                catch( DirectoryException e )
-                {
-                        e.prependMessage( "In prefixlookup: " );
-                        throw e;
-                }
-
+                _map = prefixlookup( partition, _key );
 
                 // transform results from BabuDB
 		{
@@ -397,9 +354,7 @@ public class BabuDirectory implements PartitionedDirectoryBackend
                         {
                                 if( null == entry.getKey() || null == entry.getValue() )
                                 {
-                                        String msg = "Internal error: got null key or value from BabuDB.";
-                                        log.error( msg );
-                                        throw new DirectoryException( this.getClass(), new Exception( msg ) );
+                                        throw new DirectoryException( "Internal error: got null key or value from BabuDB." );
                                 }
                                 map.put( buildkey( entry.getKey() ), buildkey( entry.getValue() ) );
                         }
@@ -416,7 +371,6 @@ public class BabuDirectory implements PartitionedDirectoryBackend
          * @throws DirectoryException
 	 */
 	private Map< byte[], byte[] > prefixlookup( int partition, byte[] key )
-                throws DirectoryException
 	{
                 // guard
                 {
@@ -453,8 +407,7 @@ public class BabuDirectory implements PartitionedDirectoryBackend
 			}
 			catch( BabuDBException e )
 			{
-                                log.error( "BabuDirectory could not lookup key: " + e.getMessage() );
-                                throw new DirectoryException( this.getClass(), e );
+                                throw new DirectoryException( e );
 			}
 		}
 
@@ -470,7 +423,6 @@ public class BabuDirectory implements PartitionedDirectoryBackend
 	 */
         @Override
         public List< String > lookup( int partition, List< String > key )
-                throws DirectoryException
 	{
                 log.trace( "Lookup: " + partition + ":'" + key.toString() + "'" );
 
@@ -478,7 +430,7 @@ public class BabuDirectory implements PartitionedDirectoryBackend
                 {
                         if( ! isopen() )
                         {
-                                throw new DirectoryException( this.getClass(), new Exception( "Tried to operate on closed database." ) );
+                                throw new DirectoryException( "Tried to operate on closed database." );
                         }
 
                         if( partition < 0 )
@@ -508,7 +460,6 @@ public class BabuDirectory implements PartitionedDirectoryBackend
          * @throws DirectoryException
 	 */
 	private byte[] lookup( int partition, byte[] key )
-                throws DirectoryException
 	{
 		DatabaseRequestResult< byte[] > req;
 
@@ -522,8 +473,7 @@ public class BabuDirectory implements PartitionedDirectoryBackend
 			}
 			catch( BabuDBException e )
 			{
-                                log.error( "BabuDirectory could not lookup key: " + e.getMessage() );
-                                throw new DirectoryException( this.getClass(), e );
+                                throw new DirectoryException( e );
 			}
 		}
 	}
@@ -534,7 +484,6 @@ public class BabuDirectory implements PartitionedDirectoryBackend
          * @throws DirectoryException
          **/
         private byte[] _buildkey( List< String > list )
-                throws DirectoryException
         {
                 if( null == list )
                 {
@@ -566,7 +515,7 @@ public class BabuDirectory implements PartitionedDirectoryBackend
                                 catch( UnsupportedEncodingException e )
                                 {
                                         log.error( "Encoding exception: " + e.getMessage() );
-                                        throw new DirectoryException( this.getClass(), e );
+                                        throw new DirectoryException( e );
                                 }
 
                                 try
@@ -576,7 +525,7 @@ public class BabuDirectory implements PartitionedDirectoryBackend
                                 catch( IllegalArgumentException e )
                                 {
                                         log.error( "Internal error in " + this.getClass().getName() + "._buildkey( list )! " );
-                                        throw new DirectoryException( this.getClass(), e );
+                                        throw new DirectoryException( e );
                                 }
                                 result[ offset+s.length() ] = 0;
 
@@ -593,7 +542,6 @@ public class BabuDirectory implements PartitionedDirectoryBackend
          * @throws DirectoryException
          **/
         private List< String > buildkey( byte[] _key )
-                throws DirectoryException
         {
                 if( null == _key )
                         return null;
@@ -614,7 +562,7 @@ public class BabuDirectory implements PartitionedDirectoryBackend
                                 catch( UnsupportedEncodingException e )
                                 {
                                         log.error( "Encoding exception: " + e.getMessage() );
-                                        throw new DirectoryException( this.getClass(), e );
+                                        throw new DirectoryException( e );
                                 }
 
                                 offset = ++i;

@@ -90,7 +90,6 @@ public class VolatileDirectoryImpl implements VolatileDirectory
 
 	@Override
 	public void insert( List< String > key, Set< String > value )
-                throws DirectoryException
 	{
                 // guard
                 {
@@ -152,7 +151,6 @@ public class VolatileDirectoryImpl implements VolatileDirectory
 
         @Override
         public void delete( List< String > key )
-                throws DirectoryException
         {
                 // guard
                 {
@@ -170,50 +168,25 @@ public class VolatileDirectoryImpl implements VolatileDirectory
 
                 // delete "key |--> value" entry
                 {
-                        try
-                        {
-                                directory.delete( 0, key );
-                        }
-                        catch( DirectoryException e )
-                        {
-                                e.prependMessage( "In " + this.getClass().getName() + ".delete: " );
-                                throw e;
-                        }
+                        directory.delete( 0, key );
                 }
 		
                 // delete "key |--> timeslice" entry
                 {
-                        try
-                        {
-                                directory.delete( 1, key );
-                        }
-                        catch( DirectoryException e )
-                        {
-                                e.prependMessage( "In " + this.getClass().getName() + ".delete: " );
-                                throw e;
-                        }
+                        directory.delete( 1, key );
                 }
 
                 // delete old "slice/key |--> date" entry
                 {
                         if( null != oldtimeslice )
                         {
-                                try
-                                {
-                                        directory.delete( 2, get_timeslice_key( to_timeslice( oldtimeslice ), key ) );
-                                }
-                                catch( DirectoryException e )
-                                {
-                                        e.prependMessage( "In " + this.getClass().getName() + ".delete: " );
-                                        throw e;
-                                }
+                                directory.delete( 2, get_timeslice_key( to_timeslice( oldtimeslice ), key ) );
                         }
                 }
         }
 
 	@Override
 	public Set< String > lookup( List< String > key )
-                throws DirectoryException
 	{
                 // guard
                 {
@@ -231,7 +204,6 @@ public class VolatileDirectoryImpl implements VolatileDirectory
 
 	@Override
 	public Map< List< String >, Set< String > > prefixLookup( List< String > key )
-                throws DirectoryException
 	{
                 // guard
                 {
@@ -259,7 +231,6 @@ public class VolatileDirectoryImpl implements VolatileDirectory
 
         @Override
         public Map< List< String >, DateTime > sliceLookup( long slice )
-                throws DirectoryException
         {
                 // guard
                 {
@@ -279,17 +250,9 @@ public class VolatileDirectoryImpl implements VolatileDirectory
                 // get all "timeslice/key |--> date" entries
                 {
                         // use an empty key to not get "17" when searching for timeslice "1"..
-                        try
-                        {
-                                map = directory.prefixlookup(
-                                        2,
-                                        get_timeslice_key( slice, new LinkedList< String >() ) );
-                        }
-                        catch( DirectoryException e )
-                        {
-                                e.prependMessage( "In slicelookup: " );
-                                throw e;
-                        }
+                        map = directory.prefixlookup(
+                                2,
+                                get_timeslice_key( slice, new LinkedList< String >() ) );
 
                         if( null == map )
                         {

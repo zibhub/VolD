@@ -39,7 +39,7 @@ public interface SlicedDirectory {
 	 */
 	long getNumberOfSlices( );
 
-        void delete( List< String > key ) throws DirectoryException;
+        void delete( List< String > key );
 
 	/**
 	 * Query for all Key-Iinsertiontime pairs of a given timeslice.
@@ -49,6 +49,6 @@ public interface SlicedDirectory {
 	 * @return		Returns a map with Key-Insertiontime pairs
 	 * with all keys of that timeslice.
 	 */
-	Map< List< String >, DateTime> sliceLookup( long timeslice ) throws DirectoryException;
+	Map< List< String >, DateTime> sliceLookup( long timeslice );
 
 }

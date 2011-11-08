@@ -7,9 +7,9 @@ import java.util.Map;
 
 public interface SimpleDirectory
 {
-        void insert( List< String > key, Set< String > value ) throws DirectoryException;
-        void delete( List< String > key ) throws DirectoryException;
+        void insert( List< String > key, Set< String > value );
+        void delete( List< String > key );
 
-        Set< String > lookup( List< String > key ) throws DirectoryException;
-        Map< List< String >, Set< String > > prefixLookup( List< String > key ) throws DirectoryException;
+        Set< String > lookup( List< String > key );
+        Map< List< String >, Set< String > > prefixLookup( List< String > key );
 }

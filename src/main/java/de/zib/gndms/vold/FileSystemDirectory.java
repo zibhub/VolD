@@ -64,22 +64,26 @@ public class FileSystemDirectory implements PartitionedDirectoryBackend
         
         }
 
+        private void checkState( )
+        {
+                if( null == rootPath )
+                {
+                        throw new IllegalStateException( "Tried to operate on FileSystemDirectory while it had not been initialized yet. Set the rootPath before!" );
+                }
+        }
+
         @Override
         @PostConstruct
         public void open( )
-                throws DirectoryException
         {
                 // guard
                 {
+                        checkState();
+
                         if( isopen() )
                         {
                                 log.warn( "Tried to open twice. Closing it before!" );
                                 close();
-                        }
-
-                        if( null == rootPath )
-                        {
-                                throw new DirectoryException( this.getClass(), new Exception( "Tried to open database, but no root path was given!" ) );
                         }
                 }
 
@@ -89,17 +93,14 @@ public class FileSystemDirectory implements PartitionedDirectoryBackend
                 }
                 catch( Exception e )
                 {
-                        log.error( "Directory could not be opened: " + e.getMessage() );
                         root = null;
-                        throw new DirectoryException( this.getClass(), e );
+                        throw new DirectoryException( e );
                 }
 
                 if( ! root.isDirectory() )
                 {
-                        String msg = "Directory could not be opened: " + rootPath + " is no directory!";
-                        log.error( msg );
                         root = null;
-                        throw new DirectoryException( this.getClass(), new Exception( msg ) );
+                        throw new DirectoryException( "Directory could not be opened: " + rootPath + " is no directory!" );
                 }
 
                 log.info( "Backend opened." );
@@ -131,7 +132,6 @@ public class FileSystemDirectory implements PartitionedDirectoryBackend
 
         @Override
         public void insert( int partition, List< String > key, List< String > value )
-                throws DirectoryException
         {
                 // guard
                 {
@@ -139,7 +139,7 @@ public class FileSystemDirectory implements PartitionedDirectoryBackend
 
                         if( ! isopen() )
                         {
-                                throw new DirectoryException( this.getClass(), new Exception( "Tried to operate on closed database." ) );
+                                throw new DirectoryException( "Tried to operate on closed database." );
                         }
                 }
 
@@ -176,6 +176,7 @@ public class FileSystemDirectory implements PartitionedDirectoryBackend
                                 }
                                 catch( DirectoryException e )
                                 {
+                                        // TODO: throw exception!
                                         log.warn( "Skipping insertion of value " + filename + " for key " + key.toString() + "(" + path + "), since an error occured during format conversion of value: " + e.getMessage() );
                                         continue;
                                 }
@@ -189,6 +190,7 @@ public class FileSystemDirectory implements PartitionedDirectoryBackend
                                 }
                                 catch( IOException e )
                                 {
+                                        // TODO: throw exception!
                                         log.error( "Skipping creation of value " + filename + " for key " + key.toString() + "(" + path + "), since an error occured" + ": " + e.getMessage() );
                                         continue;
                                 }
@@ -198,17 +200,14 @@ public class FileSystemDirectory implements PartitionedDirectoryBackend
 
         @Override
         public void delete( int partition, List< String > key )
-                throws DirectoryException
         {
-                log.trace( "Delete: " + partition + ":'" + key.toString() + "'" );
-
                 // guard
                 {
                         log.trace( "Delete: " + partition + ":'" + key.toString() + "'" );
 
                         if( ! isopen() )
                         {
-                                throw new DirectoryException( this.getClass(), new Exception( "Tried to operate on closed database." ) );
+                                throw new DirectoryException( "Tried to operate on closed database." );
                         }
                 }
 
@@ -253,7 +252,6 @@ public class FileSystemDirectory implements PartitionedDirectoryBackend
 
         @Override
         public List< String > lookup( int partition, List< String > key )
-                throws DirectoryException
         {
                 // guard
                 {
@@ -261,7 +259,7 @@ public class FileSystemDirectory implements PartitionedDirectoryBackend
 
                         if( ! isopen() )
                         {
-                                throw new DirectoryException( this.getClass(), new Exception( "Tried to operate on closed database." ) );
+                                throw new DirectoryException( "Tried to operate on closed database." );
                         }
                 }
 
@@ -305,7 +303,6 @@ public class FileSystemDirectory implements PartitionedDirectoryBackend
 
         @Override
         public Map< List< String >, List< String > > prefixlookup( int partition, List< String > key )
-                throws DirectoryException
         {
                 // guard
                 {
@@ -313,7 +310,7 @@ public class FileSystemDirectory implements PartitionedDirectoryBackend
 
                         if( ! isopen() )
                         {
-                                throw new DirectoryException( this.getClass(), new Exception( "Tried to operate on closed database." ) );
+                                throw new DirectoryException( "Tried to operate on closed database." );
                         }
                 }
 
@@ -367,13 +364,12 @@ public class FileSystemDirectory implements PartitionedDirectoryBackend
         }
 
         private void recursive_add( List< String > key, String dir, Map< List< String >, List< String > > map )
-                throws DirectoryException
         {
                 File _dir = new File( dir );
 
                 if( ! _dir.isDirectory() )
                 {
-                        throw new DirectoryException( this.getClass(), new Exception( "The path " + dir + " describes no directory, as excepted" ) );
+                        throw new DirectoryException( "The path " + dir + " describes no directory, as excepted" );
                 }
 
                 for( File file: _dir.listFiles() )
@@ -407,7 +403,6 @@ public class FileSystemDirectory implements PartitionedDirectoryBackend
         }
 
         private void file_add( List< String > key, String value, Map< List< String >, List< String > > map )
-                throws DirectoryException
         {
                 if( map.containsKey( key ) )
                 {
@@ -435,7 +430,6 @@ public class FileSystemDirectory implements PartitionedDirectoryBackend
         }
 
         private List< String > _get_partition_dir( int partition, List< String > dir )
-                throws DirectoryException
         {
                 List< String > l = new LinkedList< String >( );
 
@@ -449,8 +443,7 @@ public class FileSystemDirectory implements PartitionedDirectoryBackend
                         }
                         catch( DirectoryException e )
                         {
-                                e.prependMessage( "Could not determine Lowlevel directory of abstract directory " + partition + ":" + dir.toString() + ". " );
-                                throw e;
+                                throw new DirectoryException( "Could not determine Lowlevel directory of abstract directory " + partition + ":" + dir.toString() + ". ", e );
                         }
                 }
 
@@ -458,7 +451,6 @@ public class FileSystemDirectory implements PartitionedDirectoryBackend
         }
 
         private String _buildfile( String dir )
-                throws DirectoryException
         {
                 try
                 {
@@ -466,13 +458,11 @@ public class FileSystemDirectory implements PartitionedDirectoryBackend
                 }
                 catch( UnsupportedEncodingException e )
                 {
-                        log.error( "FileSystemDirectory could not encode directory name: {}", e.getMessage() );
-                        throw new DirectoryException( this.getClass(), e );
+                        throw new DirectoryException( "FileSystemDirectory could not encode directory name.", e );
                 }
         }
 
         private String buildfile( String dir )
-                throws DirectoryException
         {
                 try
                 {
@@ -481,13 +471,11 @@ public class FileSystemDirectory implements PartitionedDirectoryBackend
                 }
                 catch( UnsupportedEncodingException e )
                 {
-                        log.error( "Could not encode directory name: {}", e.getMessage() );
-                        throw new DirectoryException( this.getClass(), e );
+                        throw new DirectoryException( "Could not encode directory name.", e );
                 }
         }
 
         private String _builddir( String dir )
-                throws DirectoryException
         {
                 try
                 {
@@ -495,13 +483,11 @@ public class FileSystemDirectory implements PartitionedDirectoryBackend
                 }
                 catch( UnsupportedEncodingException e )
                 {
-                        log.error( "FileSystemDirectory could not encode directory name: {}", e.getMessage() );
-                        throw new DirectoryException( this.getClass(), e );
+                        throw new DirectoryException( "FileSystemDirectory could not encode directory name.", e );
                 }
         }
 
         private String builddir( String dir )
-                throws DirectoryException
         {
                 try
                 {
@@ -510,8 +496,7 @@ public class FileSystemDirectory implements PartitionedDirectoryBackend
                 }
                 catch( UnsupportedEncodingException e )
                 {
-                        log.error( "Could not encode directory name: {}", e.getMessage() );
-                        throw new DirectoryException( this.getClass(), e );
+                        throw new DirectoryException( "Could not encode directory name.", e );
                 }
         }
 

@@ -6,6 +6,6 @@ import java.util.Set;
 
 public interface Replicator
 {
-        void insert( List< String > key, Set< String > value ) throws DirectoryException;
-        void delete( List< String > key ) throws DirectoryException;
+        void insert( List< String > key, Set< String > value );
+        void delete( List< String > key );
 }
