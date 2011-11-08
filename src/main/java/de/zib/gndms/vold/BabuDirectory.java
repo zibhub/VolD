@@ -193,8 +193,7 @@ public class BabuDirectory implements PartitionedDirectoryBackend
 			}
 			catch( BabuDBException e2 )
 			{
-                                log.warn( "BabuDirectory could even not forcefully shutdown: " + e2.getMessage() );
-                                throw new DirectoryException( e2 );
+                                throw new DirectoryException( "BabuDirectory could even not forcefully shutdown.", e2 );
 			}
 		}
 
@@ -229,18 +228,15 @@ public class BabuDirectory implements PartitionedDirectoryBackend
 
                         if( partition < 0 )
                         {
-                                log.error( "Illegal argument in insert: partition (" + partition + ") may not be negative!" );
-                                throw new IllegalArgumentException( "BabuDirectory only has nonnegative partitions, thus " + partition + " is an illegal argument" );
+                                throw new IllegalArgumentException( "BabuDirectory only has nonnegative partitions, thus " + partition + " is an illegal argument." );
                         }
                         if( null == key )
                         {
-                                log.error( "Illegal argument in insert: key is null" );
-                                throw new IllegalArgumentException( "In " + this.getClass().getName() + ".insert is null no valid key!" );
+                                throw new IllegalArgumentException( "null is no valid key!" );
                         }
                         if( null == value )
                         {
-                                log.error( "Illegal argument in insert: value is null. Use delete instead to delete the key!" );
-                                throw new IllegalArgumentException( "In " + this.getClass().getName() + ".insert is null no valid value! Use delete instead, to delete the key!" );
+                                throw new IllegalArgumentException( "null is no valid value! Use delete instead, to delete the key!" );
                         }
                 }
 
@@ -260,13 +256,11 @@ public class BabuDirectory implements PartitionedDirectoryBackend
                 {
                         if( partition < 0 )
                         {
-                                log.error( "Illegal argument in insert: partition (" + partition + ") may not be negative!" );
-                                throw new IllegalArgumentException( "BabuDirectory only has nonnegative partitions, thus " + partition + " is an illegal argument" );
+                                throw new IllegalArgumentException( "BabuDirectory only has nonnegative partitions, thus " + partition + " is an illegal argument." );
                         }
                         if( null == key )
                         {
-                                log.error( "Illegal argument in insert: key is null" );
-                                throw new IllegalArgumentException( "In " + this.getClass().getName() + ".insert is null no valid key!" );
+                                throw new IllegalArgumentException( "null is no valid key!" );
                         }
                 }
 
@@ -296,13 +290,11 @@ public class BabuDirectory implements PartitionedDirectoryBackend
 
                         if( partition < 0 )
                         {
-                                log.error( "Illegal argument in delete: partition (" + partition + ") may not be negative!" );
-                                throw new IllegalArgumentException( "BabuDirectory only has nonnegative partitions, thus " + partition + " is an illegal argument" );
+                                throw new IllegalArgumentException( "BabuDirectory only has nonnegative partitions, thus " + partition + " is an illegal argument." );
                         }
                         if( null == key )
                         {
-                                log.error( "Illegal argument in delete: key is null" );
-                                throw new IllegalArgumentException( "In " + this.getClass().getName() + ".delete is null no valid key!" );
+                                throw new IllegalArgumentException( "null is no valid key!" );
                         }
                 }
 
@@ -332,7 +324,7 @@ public class BabuDirectory implements PartitionedDirectoryBackend
 
                         if( partition < 0 )
                         {
-                                throw new IllegalArgumentException( "BabuDirectory only has nonnegative partitions, thus " + partition + " is an illegal argument" );
+                                throw new IllegalArgumentException( "BabuDirectory only has nonnegative partitions, thus " + partition + " is an illegal argument." );
                         }
                         if( null == key )
                         {
@@ -376,13 +368,11 @@ public class BabuDirectory implements PartitionedDirectoryBackend
                 {
                         if( partition < 0 )
                         {
-                                log.error( "Illegal argument in prefixlookup: partition (" + partition + ") may not be negative!" );
-                                throw new IllegalArgumentException( "BabuDirectory only has nonnegative partitions, thus " + partition + " is an illegal argument" );
+                                throw new IllegalArgumentException( "BabuDirectory only has nonnegative partitions, thus " + partition + " is an illegal argument." );
                         }
                         if( null == key )
                         {
-                                log.error( "Illegal argument in prefixlookup: key is null" );
-                                throw new IllegalArgumentException( "In " + this.getClass().getName() + ".prefixlookup is null no valid key!" );
+                                throw new IllegalArgumentException( "null is no valid key!" );
                         }
                 }
 
@@ -435,13 +425,11 @@ public class BabuDirectory implements PartitionedDirectoryBackend
 
                         if( partition < 0 )
                         {
-                                log.error( "Illegal argument in lookup: partition (" + partition + ") may not be negative!" );
                                 throw new IllegalArgumentException( "BabuDirectory only has nonnegative partitions, thus " + partition + " is an illegal argument" );
                         }
                         if( null == key )
                         {
-                                log.error( "Illegal argument in lookup: key is null" );
-                                throw new IllegalArgumentException( "In " + this.getClass().getName() + ".lookup is null no valid key!" );
+                                throw new IllegalArgumentException( "null is no valid key!" );
                         }
                 }
 
@@ -514,19 +502,10 @@ public class BabuDirectory implements PartitionedDirectoryBackend
                                 }
                                 catch( UnsupportedEncodingException e )
                                 {
-                                        log.error( "Encoding exception: " + e.getMessage() );
                                         throw new DirectoryException( e );
                                 }
 
-                                try
-                                {
-                                        byteCopy( _s, result, offset );
-                                }
-                                catch( IllegalArgumentException e )
-                                {
-                                        log.error( "Internal error in " + this.getClass().getName() + "._buildkey( list )! " );
-                                        throw new DirectoryException( e );
-                                }
+                                byteCopy( _s, result, offset );
                                 result[ offset+s.length() ] = 0;
 
                                 offset += s.length()+1;
@@ -561,7 +540,6 @@ public class BabuDirectory implements PartitionedDirectoryBackend
                                 }
                                 catch( UnsupportedEncodingException e )
                                 {
-                                        log.error( "Encoding exception: " + e.getMessage() );
                                         throw new DirectoryException( e );
                                 }
 

@@ -263,7 +263,7 @@ public class Frontend
                                 }
                                 catch( IllegalArgumentException e )
                                 {
-                                        log.error( "Skipping invalid key in backend: " + entry.getKey().toString() );
+                                        log.error( "Internal Error: simply skipping invalid key in backend: " + entry.getKey().toString() );
                                         continue;
                                 }
 

@@ -176,9 +176,7 @@ public class FileSystemDirectory implements PartitionedDirectoryBackend
                                 }
                                 catch( DirectoryException e )
                                 {
-                                        // TODO: throw exception!
-                                        log.warn( "Skipping insertion of value " + filename + " for key " + key.toString() + "(" + path + "), since an error occured during format conversion of value: " + e.getMessage() );
-                                        continue;
+                                        throw new DirectoryException( "Error on insertion of value " + filename + " for key " + key.toString() + "(" + path + ").", e );
                                 }
 
                                 log.debug( "Creating value '" + filepath + "'" );
@@ -190,9 +188,7 @@ public class FileSystemDirectory implements PartitionedDirectoryBackend
                                 }
                                 catch( IOException e )
                                 {
-                                        // TODO: throw exception!
-                                        log.error( "Skipping creation of value " + filename + " for key " + key.toString() + "(" + path + "), since an error occured" + ": " + e.getMessage() );
-                                        continue;
+                                        throw new DirectoryException( "Error on insertion of value " + filename + " for key " + key.toString() + "(" + path + ").", e );
                                 }
                         }
                 }
@@ -369,7 +365,7 @@ public class FileSystemDirectory implements PartitionedDirectoryBackend
 
                 if( ! _dir.isDirectory() )
                 {
-                        throw new DirectoryException( "The path " + dir + " describes no directory, as excepted" );
+                        throw new DirectoryException( "The path " + dir + " describes no directory, as expected" );
                 }
 
                 for( File file: _dir.listFiles() )
@@ -458,7 +454,7 @@ public class FileSystemDirectory implements PartitionedDirectoryBackend
                 }
                 catch( UnsupportedEncodingException e )
                 {
-                        throw new DirectoryException( "FileSystemDirectory could not encode directory name.", e );
+                        throw new DirectoryException( "Could not encode directory name of " + dir + ".", e );
                 }
         }
 
@@ -471,7 +467,7 @@ public class FileSystemDirectory implements PartitionedDirectoryBackend
                 }
                 catch( UnsupportedEncodingException e )
                 {
-                        throw new DirectoryException( "Could not encode directory name.", e );
+                        throw new DirectoryException( "Could not decode directory name of " + dir + ".", e );
                 }
         }
 
@@ -483,7 +479,7 @@ public class FileSystemDirectory implements PartitionedDirectoryBackend
                 }
                 catch( UnsupportedEncodingException e )
                 {
-                        throw new DirectoryException( "FileSystemDirectory could not encode directory name.", e );
+                        throw new DirectoryException( "Could not encode directory name of " + dir + ".", e );
                 }
         }
 
@@ -496,7 +492,7 @@ public class FileSystemDirectory implements PartitionedDirectoryBackend
                 }
                 catch( UnsupportedEncodingException e )
                 {
-                        throw new DirectoryException( "Could not encode directory name.", e );
+                        throw new DirectoryException( "Could not decode directory name of " + dir + ".", e );
                 }
         }
 
