@@ -76,7 +76,7 @@ public class ABI
                                         }
                                         catch( DirectoryException e )
                                         {
-                                                System.out.println( "An internal error occured: " + e.getMessage() );
+                                                System.out.println( "An internal error occured: " + e.getClass().getName() + ": " + e.getMessage() );
                                                 continue;
                                         }
 
@@ -115,7 +115,7 @@ public class ABI
                                         }
                                         catch( DirectoryException e )
                                         {
-                                                System.out.println( "An internal error occured: " + e.getMessage() );
+                                                System.out.println( "An internal error occured: " + e.getClass().getName() + ": " + e.getMessage() );
                                                 continue;
                                         }
                                 }

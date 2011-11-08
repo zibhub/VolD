@@ -41,7 +41,7 @@ public class LocalReplicator implements Replicator
         {
                 // guard
                 {
-                        log.trace( "Insert: " + key.toString() + " |--> " + value.toString() );
+                        log.trace( "Insert into replica " + replica.getClass().getName() + ": " + key.toString() + " |--> " + value.toString() );
 
                         checkState();
                 }

@@ -16,6 +16,34 @@ public class DirectoryException extends Exception
                 this.extended_message = new String();
         }
 
+        public DirectoryException( )
+        {
+                super();
+                this.backend = null;
+                this.backend_exception = null;
+        }
+
+        public DirectoryException( String message )
+        {
+                super( message );
+                this.backend = null;
+                this.backend_exception = null;
+        }
+
+        public DirectoryException( String message, Throwable cause )
+        {
+                super( message, cause );
+                this.backend = null;
+                this.backend_exception = null;
+        }
+
+        public DirectoryException( Throwable cause )
+        {
+                super( cause );
+                this.backend = null;
+                this.backend_exception = null;
+        }
+
         public String getMessge( )
         {
                 return new String( backend.getName() + ": " + backend_exception.getMessage() + extended_message );

@@ -117,7 +117,6 @@ public class Frontend
                         }
                         catch( DirectoryException e )
                         {
-                                rwlock.writeLock().unlock();
                                 e.prependMessage( "In Frontend.insert: " );
                                 throw e;
                         }

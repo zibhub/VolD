@@ -88,11 +88,11 @@
         <!-- setup reaper -->
         <bean id="reaper" class="de.zib.gndms.vold.Reaper">
                 <property name="TTL" value="20000" />
-                <property name="slicedDirectory" ref="replication1" />
+                <property name="slicedDirectory" ref="replication2" />
         </bean>
 
         <!-- setup the frontend -->
         <bean id="frontend" class="de.zib.gndms.vold.Frontend">
-                <property name="volatileDirectory" ref="replication1" />
+                <property name="volatileDirectory" ref="replication2" />
         </bean>
 </beans>

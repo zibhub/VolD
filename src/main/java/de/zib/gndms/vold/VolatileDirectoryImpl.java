@@ -108,7 +108,19 @@ public class VolatileDirectoryImpl implements VolatileDirectory
                         }
                 }
 
-                List< String > oldtimeslice = directory.lookup( 1, key );
+                List< String > oldtimeslice;
+                try
+                {
+                        oldtimeslice = directory.lookup( 1, key );
+                }
+                // insert "key |--> value" entry only, if backend is write only
+                catch( NotSupportedException e )
+                {
+                        log.debug( "Backend is write-only. Performing pure insert..." );
+
+                        directory.insert( 0, key, new LinkedList< String >( value ) );
+                        return;
+                }
 		
 		long newtimeslice = timeslice.getActualSlice();
 
