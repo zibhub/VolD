@@ -11,25 +11,36 @@
         <!--scan for annotations-->
         <context:annotation-config/>
 
-        <!-- setup the frontend -->
-        <bean id="frontend" class="de.zib.gndms.vold.Frontend">
-                <property name="volatileDirectory" ref="replication" />
+        <!-- *************************************************************** -->
+        <!-- ** SETUP BACKENDS                                               -->
+
+        <!-- setup FileSystemDirectory backend -->
+        <bean id="backend1" class="de.zib.gndms.vold.FileSystemDirectory">
+                <property name="rootPath" value="/tmp/fs" />
+                <property name="enc" value="utf-8" />
         </bean>
 
-        <!-- setup reaper -->
-        <bean id="reaper" class="de.zib.gndms.vold.Reaper">
-                <property name="TTL" value="20000" />
-                <property name="slicedDirectory" ref="replication" />
+        <!-- setup BabuDirectory backend -->
+        <bean id="backend2" class="de.zib.gndms.vold.BabuDirectory">
+                <property name="dir" value="/tmp/babu/" />
+                <property name="logDir" value="/tmp/babu/log" />
+                <property name="sync" value="ASYNC" />
+                <property name="databaseName" value="testvold" />
+                <property name="enc" value="utf-8" />
         </bean>
 
-        <!-- setup replication -->
-        <bean id="replication" class="de.zib.gndms.vold.ReplicatedVolatileDirectory">
-                <property name="directory" ref="voldi1" />
-                <property name="replicator" ref="replicationwrapper" />
+        <!-- setup WriteLogger backend -->
+        <bean id="backend3" class="de.zib.gndms.vold.WriteLogger">
+                <property name="logfile" value="/tmp/vold-write.log" />
         </bean>
 
-        <bean id="replicationwrapper" class="de.zib.gndms.vold.LocalReplicator">
-                <property name="replica" ref="voldi2" />
+        <!-- *************************************************************** -->
+        <!-- ** SETUP VOLATILE LOGIC INTERFACES                              -->
+
+        <!-- setup TimeSlice configuration -->
+        <bean id="timeslice" class="de.zib.gndms.vold.TimeSlice">
+                <property name="timeSliceSize" value="1000" />
+                <property name="numberOfSlices" value="2" />
         </bean>
 
         <!-- setup VolatileDirectory for backend1 -->
@@ -44,43 +55,44 @@
                 <property name="timeslice" ref="timeslice" />
         </bean>
 
-        <!-- setup TimeSlice configuration -->
-        <bean id="timeslice" class="de.zib.gndms.vold.TimeSlice">
-                <property name="timeSliceSize" value="1000" />
-                <property name="numberOfSlices" value="2" />
+        <!-- setup VolatileDirectory for backend3 -->
+        <bean id="voldi3" class="de.zib.gndms.vold.VolatileDirectoryImpl">
+                <property name="backend" ref="backend3" />
+                <property name="timeslice" ref="timeslice" />
         </bean>
 
-        <!-- setup FileSystemDirectory backend -->
-        <bean id="backend2" class="de.zib.gndms.vold.FileSystemDirectory">
-                <property name="rootPath" value="/tmp/fs" />
-                <property name="enc" value="utf-8" />
+        <!-- *************************************************************** -->
+        <!-- ** SETUP REPLICATION TREE                                       -->
+
+        <bean id="replicationwrapper1" class="de.zib.gndms.vold.LocalReplicator">
+                <property name="replica" ref="voldi2" />
         </bean>
 
-        <!-- setup BabuDirectory backend -->
-        <bean id="backend1" class="de.zib.gndms.vold.BabuDirectory">
-                <property name="dir" value="/tmp/babu/" />
-                <property name="logDir" value="/tmp/babu/log" />
-                <property name="sync" value="ASYNC" />
-                <property name="databaseName" value="testvold" />
-                <property name="enc" value="utf-8" />
+        <bean id="replicationwrapper2" class="de.zib.gndms.vold.LocalReplicator">
+                <property name="replica" ref="voldi3" />
         </bean>
 
-        <!-- setup RESTController -->
-        <bean id="restcontroller" class="de.zib.gndms.vold.RESTController">
-                <property name="frontend">
-                        <ref bean="frontend" />
-                </property>
+        <bean id="replication1" class="de.zib.gndms.vold.ReplicatedVolatileDirectory">
+                <property name="directory" ref="replication2" />
+                <property name="replicator" ref="replicationwrapper1" />
         </bean>
 
-        <!--setup json message converter-->
-        <bean id="converter" class="org.springframework.http.converter.json.MappingJacksonHttpMessageConverter"/>
+        <bean id="replication2" class="de.zib.gndms.vold.ReplicatedVolatileDirectory">
+                <property name="directory" ref="voldi1" />
+                <property name="replicator" ref="replicationwrapper2" />
+        </bean>
 
-        <!--add it to the annotation controller-->
-        <bean class="org.springframework.web.servlet.mvc.annotation.AnnotationMethodHandlerAdapter">
-                <property name="messageConverters">
-                        <list>
-                                <ref bean="converter" />
-                        </list>
-                </property>
+        <!-- *************************************************************** -->
+        <!-- ** SETUP FRONTEND                                               -->
+
+        <!-- setup reaper -->
+        <bean id="reaper" class="de.zib.gndms.vold.Reaper">
+                <property name="TTL" value="20000" />
+                <property name="slicedDirectory" ref="replication1" />
+        </bean>
+
+        <!-- setup the frontend -->
+        <bean id="frontend" class="de.zib.gndms.vold.Frontend">
+                <property name="volatileDirectory" ref="replication1" />
         </bean>
 </beans>

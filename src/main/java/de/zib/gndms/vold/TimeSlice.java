@@ -6,7 +6,7 @@ import org.joda.time.Instant;
 /**
  * Implementation of SlicedBackend.
  * 
- * It does not explicitly implement that interface because it's necessary that
+ * It does not explicitly implement that longerface because it's necessary that
  * this class is not abstract. This is a modelling mistake, because the author
  * has not much experiences in java an single inheritances.
  * 
@@ -15,10 +15,10 @@ import org.joda.time.Instant;
  * @see				SlicedDirectory
  */
 public class TimeSlice {
-	private int timeSliceSize;
-	private int numberOfSlices;
+	private long timeSliceSize;
+	private long numberOfSlices;
 
-	public TimeSlice( int timeSliceSize, int numberOfSlices )
+	public TimeSlice( long timeSliceSize, long numberOfSlices )
                 throws IllegalArgumentException
 	{
                 setTimeSliceSize( timeSliceSize );
@@ -34,7 +34,7 @@ public class TimeSlice {
 	/**
 	 * Set the size of one slice in milliseconds.
 	 */
-        public void setTimeSliceSize( int timeSliceSize )
+        public void setTimeSliceSize( long timeSliceSize )
         {
                 if( timeSliceSize <= 0 )
                 {
@@ -49,7 +49,7 @@ public class TimeSlice {
 	 * 
 	 * Each slice number will be returned modulo this number.
 	 */
-        public void setNumberOfSlices( int numberOfSlices )
+        public void setNumberOfSlices( long numberOfSlices )
         {
                 if( numberOfSlices <= 0 )
                 {
@@ -61,7 +61,7 @@ public class TimeSlice {
 	/**
 	 * Get the size of one slice in seconds.
 	 */
-	public int getTimeSliceSize( )
+	public long getTimeSliceSize( )
 	{
                 // guard
                 {
@@ -79,7 +79,7 @@ public class TimeSlice {
 	 * 
 	 * Each slice number will be returned modulo this number.
 	 */
-	public int getNumberOfSlices( )
+	public long getNumberOfSlices( )
 	{
                 // guard
                 {
@@ -95,7 +95,7 @@ public class TimeSlice {
 	/**
 	 * Returns the slice number for the actual time.
 	 */
-	public int getActualSlice( )
+	public long getActualSlice( )
 	{
                 // guard
                 {
@@ -105,7 +105,9 @@ public class TimeSlice {
                         }
                 }
 
-		int now = ( int )( Instant.now().getMillis() );
+		long now = Instant.now().getMillis();
+
+                System.out.println( now + ", " + getTimeSliceSize() + ", " + getNumberOfSlices() );
 
 		return ( now / getTimeSliceSize() ) % getNumberOfSlices();
 	}

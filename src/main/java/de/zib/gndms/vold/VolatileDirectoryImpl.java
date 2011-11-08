@@ -110,7 +110,7 @@ public class VolatileDirectoryImpl implements VolatileDirectory
 
                 List< String > oldtimeslice = directory.lookup( 1, key );
 		
-		int newtimeslice = timeslice.getActualSlice();
+		long newtimeslice = timeslice.getActualSlice();
 
                 // insert new "slice/key |--> date" entry
                 {

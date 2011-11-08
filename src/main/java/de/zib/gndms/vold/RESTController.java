@@ -32,6 +32,14 @@ public class RESTController
 
         Frontend frontend;
 
+        private void checkState()
+        {
+                if( null == frontend )
+                {
+                        throw new IllegalStateException( "Tried to operate on REST controller while it had not been initialized yet. Set a frontend first!" );
+                }
+        }
+
         /**
         * Handles Post requests.
         *
@@ -50,6 +58,11 @@ public class RESTController
                         @RequestParam MultiValueMap< String, String > args,
                         HttpServletRequest request)
         {
+                // guard
+                {
+                        checkState();
+                }
+
                 log.debug( "POST: " + args.toString() );
 
                 Map< String, String > invalidKeys = new HashMap< String, String >();
@@ -129,6 +142,11 @@ public class RESTController
         @RequestMapping( method = RequestMethod.GET )
         public ResponseEntity< Map< Key, Set< String > > > get( @RequestParam Map< String, String > keys, HttpServletRequest request )
         {
+                // guard
+                {
+                        checkState();
+                }
+
                 log.debug( "GET: " + keys.toString() );
 
                 Map< Key, Set< String > > merged_result = new HashMap< Key, Set< String > >();

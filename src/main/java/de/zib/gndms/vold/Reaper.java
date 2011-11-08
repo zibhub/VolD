@@ -29,7 +29,7 @@ public class Reaper extends Thread
                 }
                 if( TTL < 0 )
                 {
-                        throw new IllegalArgumentException( "ReaperWorker needs nonnegative TTL to count with, but TTL=" + TTL + " was give!" );
+                        throw new IllegalArgumentException( "ReaperWorker needs nonnegative TTL to count with, but TTL=" + TTL + " was given!" );
                 }
 
                 this.ttl = TTL;
@@ -56,7 +56,7 @@ public class Reaper extends Thread
         {
                 if( ttl < 0 )
                 {
-                        throw new IllegalArgumentException( "ReaperWorker needs nonnegative TTL to count with, but TTL=" + ttl + " was give!" );
+                        throw new IllegalArgumentException( "ReaperWorker needs nonnegative TTL to count with, but TTL=" + ttl + " was given!" );
                 }
 
                 this.ttl = ttl;
@@ -173,7 +173,7 @@ public class Reaper extends Thread
                         }
                         if( timeslice < 0 || TTL < 0 )
                         {
-                                throw new IllegalArgumentException( "ReaperWorker needs nonnegative timeslice to reap for elements with nonnegative TTL, but timeslice=" + timeslice + " and TTL=" + TTL + " was give!" );
+                                throw new IllegalArgumentException( "ReaperWorker needs nonnegative timeslice to reap for elements with nonnegative TTL, but timeslice=" + timeslice + " and TTL=" + TTL + " was given!" );
                         }
 
                         this.directory = directory;

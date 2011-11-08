@@ -133,10 +133,10 @@ public class FileSystemDirectory implements PartitionedDirectoryBackend
         public void insert( int partition, List< String > key, List< String > value )
                 throws DirectoryException
         {
-                log.trace( "Insert: " + partition + ":'" + key.toString() + "' -> '" + value.toString() + "'" );
-
                 // guard
                 {
+                        log.trace( "Insert: " + partition + ":'" + key.toString() + "' -> '" + value.toString() + "'" );
+
                         if( ! isopen() )
                         {
                                 throw new DirectoryException( this.getClass(), new Exception( "Tried to operate on closed database." ) );
@@ -204,6 +204,8 @@ public class FileSystemDirectory implements PartitionedDirectoryBackend
 
                 // guard
                 {
+                        log.trace( "Delete: " + partition + ":'" + key.toString() + "'" );
+
                         if( ! isopen() )
                         {
                                 throw new DirectoryException( this.getClass(), new Exception( "Tried to operate on closed database." ) );
@@ -253,10 +255,10 @@ public class FileSystemDirectory implements PartitionedDirectoryBackend
         public List< String > lookup( int partition, List< String > key )
                 throws DirectoryException
         {
-                log.trace( "Lookup: " + partition + ":'" + key.toString() + "'" );
-
                 // guard
                 {
+                        log.trace( "Lookup: " + partition + ":'" + key.toString() + "'" );
+
                         if( ! isopen() )
                         {
                                 throw new DirectoryException( this.getClass(), new Exception( "Tried to operate on closed database." ) );
@@ -305,10 +307,10 @@ public class FileSystemDirectory implements PartitionedDirectoryBackend
         public Map< List< String >, List< String > > prefixlookup( int partition, List< String > key )
                 throws DirectoryException
         {
-                log.trace( "PrefixLookup: " + partition + ":'" + key.toString() + "'" );
-
                 // guard
                 {
+                        log.trace( "PrefixLookup: " + partition + ":'" + key.toString() + "'" );
+
                         if( ! isopen() )
                         {
                                 throw new DirectoryException( this.getClass(), new Exception( "Tried to operate on closed database." ) );
