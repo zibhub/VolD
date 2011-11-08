@@ -5,8 +5,8 @@ import java.util.Set;
 import java.util.HashSet;
 import java.util.Map;
 
-//import org.slf4j.Logger;
-//import org.slf4j.LoggerFactory;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -17,7 +17,7 @@ import org.springframework.context.support.ClassPathXmlApplicationContext;
 
 public class ABI
 {
-        //private final static Logger log = LoggerFactory.getLogger( ABI.class );
+        private final static Logger log = LoggerFactory.getLogger( ABI.class );
 
         final private Frontend frontend;
         //final private Reaper reaper;
@@ -35,6 +35,20 @@ public class ABI
         public static void main( String[] args )
         {
                 ABI abi = new ABI();
+
+                // test
+                {
+                        RESTClient r = new RESTClient( "http://localhost:8080/vold/" );
+
+                        //log.info( r.lookup( new Key( "/", "t", "k..." ) ).toString() );
+
+                        Set< String > values = new HashSet< String >();
+                        values.add( "Hello" );
+                        values.add( "World" );
+                        r.insert( new Key( "/", "t", "k1111" ), values );
+                }
+
+                System.exit( 0 );
 
                 while( true )
                 {

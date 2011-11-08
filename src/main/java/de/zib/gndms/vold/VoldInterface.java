@@ -6,6 +6,6 @@ import java.util.Map;
 
 public interface VoldInterface
 {
-        public long insert( Map< Key, Set< String > > map );
+        public Map< String, String > insert( Map< Key, Set< String > > map );
         public Map< Key, Set< String > > lookup( Set< Key > keys );
 }

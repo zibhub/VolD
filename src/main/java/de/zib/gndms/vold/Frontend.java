@@ -133,7 +133,7 @@ public class Frontend
 
                 // guard
                 {
-                        log.trace( "Lookup: " + key._buildkey().toString() );
+                        log.trace( "Lookup: " + key.toString() );
 
                         checkState();
                 }
@@ -284,4 +284,3 @@ public class Frontend
                 return result;
         }
 }
-

@@ -207,7 +207,7 @@ public class VolatileDirectoryImpl implements VolatileDirectory
 	{
                 // guard
                 {
-                        log.trace( "PrefixLookup: " + key );
+                        log.trace( "PrefixLookup: " + key.toString() );
 
                         checkState();
                 }

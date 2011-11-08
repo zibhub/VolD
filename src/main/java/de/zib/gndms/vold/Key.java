@@ -7,6 +7,8 @@ import java.util.LinkedList;
 import java.net.URI;
 import java.net.URISyntaxException;
 
+import org.apache.commons.lang3.StringEscapeUtils;
+
 public class Key {
         public Key( String scope, String type, String keyname )
                 throws IllegalArgumentException
@@ -60,7 +62,15 @@ public class Key {
 
         public String toString( )
         {
+                // TODO: build an injective function here!
+
                 return this._buildkey().toString();
+        }
+
+        public static Key fromString( String key )
+        {
+                // TODO: complement to toString
+                return null;
         }
 
         public static Key buildkey( List< String > key )

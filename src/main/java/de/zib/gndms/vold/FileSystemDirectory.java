@@ -302,7 +302,7 @@ public class FileSystemDirectory implements PartitionedDirectoryBackend
         {
                 // guard
                 {
-                        log.trace( "PrefixLookup: " + partition + ":'" + key.toString() + "'" );
+                        log.trace( "PrefixLookup: " + partition + ":" + key.toString() );
 
                         if( ! isopen() )
                         {

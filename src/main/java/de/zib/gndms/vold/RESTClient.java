@@ -6,12 +6,20 @@ import java.util.HashSet;
 import java.util.Map;
 import java.util.HashMap;
 
+import org.springframework.util.MultiValueMap;
+import org.springframework.util.LinkedMultiValueMap;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import org.springframework.web.client.RestTemplate;
 import org.springframework.http.ResponseEntity;
 import org.springframework.http.HttpStatus;
 
 public class RESTClient implements VoldInterface
 {
+        protected final Logger log = LoggerFactory.getLogger( this.getClass() );
+
         private String baseURL;
 
         private RestTemplate rest;
@@ -19,6 +27,13 @@ public class RESTClient implements VoldInterface
         public RESTClient( )
         {
                 this.baseURL = null;
+
+                this.rest = new RestTemplate();
+        }
+
+        public RESTClient( String baseURL )
+        {
+                this.baseURL = baseURL;
 
                 this.rest = new RestTemplate();
         }
@@ -37,10 +52,11 @@ public class RESTClient implements VoldInterface
         }
 
         @Override
-        public long insert( Map< Key, Set< String > > map )
+        public Map< String, String > insert( Map< Key, Set< String > > map )
         {
                 // guard
                 {
+                        log.trace( "Insert: " + map.toString() );
                         checkState();
 
                         if( null == map )
@@ -53,12 +69,17 @@ public class RESTClient implements VoldInterface
                 String uri;
                 {
                         uri = buildURI( null );
+                        log.debug( "URI: " + uri );
                 }
 
                 // get responseEntity from Server
                 ResponseEntity< Map< Key, Set< String > > > response;
                 {
-                        Object obj = rest.postForEntity( uri, map, Map.class, new HashMap< String, String >() );
+                        MultiValueMap< String, String > test = new LinkedMultiValueMap< String, String >();
+                        test.add( "kx", "111" );
+                        test.add( "kx", "222" );
+
+                        Object obj = rest.postForEntity( uri, null, Map.class, test );
 
                         if( obj instanceof ResponseEntity< ? > )
                         {
@@ -70,14 +91,18 @@ public class RESTClient implements VoldInterface
                         }
                 }
 
-                return 0;
+                return null;
         }
 
         @Override
         public Map< Key, Set< String > > lookup( Set< Key > keys )
         {
+                // TODO: lookup has to adjust scope appropriate and eventually merge different requests
+
                 // guard
                 {
+                        log.trace( "Lookup: " + keys.toString() );
+
                         checkState();
 
                         if( null == keys )
@@ -90,6 +115,7 @@ public class RESTClient implements VoldInterface
                 String uri;
                 {
                         uri = buildURI( keys );
+                        log.debug( "URI: " + uri );
                 }
 
                 // get responseEntity from Server
@@ -126,27 +152,18 @@ public class RESTClient implements VoldInterface
                 }
         }
 
-        public long insert( Key key, Set< String > values )
+        public Map< String, String > insert( Key key, Set< String > values )
         {
                 Map< Key, Set< String > > map = new HashMap< Key, Set< String > >();
                 map.put( key, values );
                 return insert( map );
         }
 
-        public Set< String > lookup( Key key )
+        public Map< Key, Set< String > > lookup( Key key )
         {
                 Set< Key > keys = new HashSet< Key >();
                 keys.add( key );
-                Map< Key, Set< String > > _result = lookup( keys );
-
-                if( null == _result || 1 != _result.size() )
-                {
-                        return null;
-                }
-                else
-                {
-                        return _result.get( key );
-                }
+                return lookup( keys );
         }
 
         String buildURI( Set< Key > keys )
@@ -156,14 +173,18 @@ public class RESTClient implements VoldInterface
                         return baseURL;
                 }
 
-                StringBuilder sb = new StringBuilder( baseURL );
+                StringBuilder sb = new StringBuilder( baseURL + "?" );
 
                 for( Key k: keys )
                 {
-                        sb.append( k.toString() );
+
+                        // TODO: urlencode keyname and type...
+                        sb.append( k.get_keyname() );
+                        sb.append( ":" );
+                        sb.append( k.get_type() );
+                        sb.append( "&" );
                 }
 
                 return sb.toString();
         }
 }
-

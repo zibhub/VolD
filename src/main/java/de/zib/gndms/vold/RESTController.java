@@ -19,6 +19,7 @@ import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.RequestBody;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -56,6 +57,7 @@ public class RESTController
         public ResponseEntity< Map< String, String > > post(
                         @ModelAttribute("clientIpAddress") String clientIpAddress,
                         @RequestParam MultiValueMap< String, String > args,
+                        @RequestBody MultiValueMap< String, String > argsbody,
                         HttpServletRequest request)
         {
                 // guard
@@ -77,54 +79,69 @@ public class RESTController
                 }
 
                 // process each key
-                for( Map.Entry< String, List< String > > entry: args.entrySet() )
                 {
-                        String[] splited = entry.getKey().split( ":" );
+                        MultiValueMap< String, String > mvm;
 
-                        String type;
-                        String keyname;
-                        Key k;
-
-                        // build key
+                        if( null != args )
                         {
-                                // malformed key given
-                                if( 2 < splited.length )
-                                {
-                                        log.info( "Illegal Argument given: " + entry.getKey() );
-
-                                        invalidKeys.put( entry.getKey(), "Key has invalid format: Either use format is keyname[:type]" );
-                                        log.error( "Invalid key: " + entry.getKey() );
-
-                                        continue;
-                                }
-                                // format: key:type
-                                else if( 2 == splited.length )
-                                {
-                                        keyname = splited[0];
-                                        type = splited[1];
-                                }
-                                else
-                                //if( 1 == args.length )
-                                // no type given -> empty type
-                                {
-                                        keyname = splited[0];
-                                        type = defaulttype;
-                                }
-
-                                k = new Key( scope, type, keyname );
+                                mvm = args;
+                                log.trace( "AAAAAAAAAAAAAAAAAAAAAA" );
+                        }
+                        else
+                        {
+                                mvm = argsbody;
+                                log.trace( "BBBBBBBBBBBBBBBBBBBBBB" );
                         }
 
-                        // insert list for that key
+                        for( Map.Entry< String, List< String > > entry: mvm.entrySet() )
                         {
-                                try
+                                String[] splited = entry.getKey().split( ":" );
+
+                                String type;
+                                String keyname;
+                                Key k;
+
+                                // build key
                                 {
-                                        frontend.insert( clientIpAddress, k, new HashSet< String >( entry.getValue() ) );
+                                        // malformed key given
+                                        if( 2 < splited.length )
+                                        {
+                                                log.info( "Illegal Argument given: " + entry.getKey() );
+
+                                                invalidKeys.put( entry.getKey(), "Key has invalid format: Either use format is keyname[:type]" );
+                                                log.error( "Invalid key: " + entry.getKey() );
+
+                                                continue;
+                                        }
+                                        // format: key:type
+                                        else if( 2 == splited.length )
+                                        {
+                                                keyname = splited[0];
+                                                type = splited[1];
+                                        }
+                                        else
+                                        //if( 1 == args.length )
+                                        // no type given -> empty type
+                                        {
+                                                keyname = splited[0];
+                                                type = defaulttype;
+                                        }
+
+                                        k = new Key( scope, type, keyname );
                                 }
-                                catch( DirectoryException e )
+
+                                // insert list for that key
                                 {
-                                        log.error( "Could not insert key " + entry.getKey() + ": " + e.getMessage() );
-                                        invalidKeys.put( entry.getKey().toString(), e.getMessage() );
-                                        continue;
+                                        try
+                                        {
+                                                frontend.insert( clientIpAddress, k, new HashSet< String >( entry.getValue() ) );
+                                        }
+                                        catch( DirectoryException e )
+                                        {
+                                                log.error( "Could not insert key " + entry.getKey() + ": " + e.getMessage() );
+                                                invalidKeys.put( entry.getKey().toString(), e.getMessage() );
+                                                continue;
+                                        }
                                 }
                         }
                 }
@@ -229,20 +246,6 @@ public class RESTController
                                 if( null != _result )
                                 {
                                         merged_result.putAll( _result );
-                                }
-                                // key not found
-                                else
-                                {
-                                        log.info( "Key not found: " + k );
-                                        Set< String > s = new HashSet< String >();
-                                        s.add( "Key not found" );
-
-                                        merged_result.clear();
-                                        merged_result.put( k, s );
-
-                                        return new ResponseEntity< Map< Key, Set< String > > >(
-                                                        merged_result,
-                                                        HttpStatus.NOT_FOUND );
                                 }
                         }
                 }
