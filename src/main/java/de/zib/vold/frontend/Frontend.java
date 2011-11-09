@@ -1,5 +1,8 @@
 
-package de.zib.gndms.vold;
+package de.zib.vold.frontend;
+
+import de.zib.vold.VoldException;
+import de.zib.vold.volatileLogic.VolatileDirectory;
 
 import java.util.List;
 import java.util.Set;
@@ -129,7 +132,7 @@ public class Frontend
          **/
 	public Map< Key, Set< String > > lookup( Key key )
 	{
-                DirectoryException found_exception = null;
+                VoldException found_exception = null;
 
                 // guard
                 {
@@ -153,7 +156,7 @@ public class Frontend
                                         {
                                                 result = scopeLookup( new Key( scope, key.get_type(), key.get_keyname() ) );
                                         }
-                                        catch( DirectoryException e )
+                                        catch( VoldException e )
                                         {
                                                 log.error( "Error in recursive lookup for key " + key._buildkey().toString() + " (actual scope: " + scope + ") - simply skipping: " + e.getMessage() );
                                                 found_exception = e;
@@ -204,7 +207,7 @@ public class Frontend
          *                      prefix lookup. Lists for Keys given by different hosts are
          *                      merged;
          *
-         * @throws DirectoryException
+         * @throws VoldException
          **/
         private Map< Key, Set< String > > scopeLookup( Key key )
         {
@@ -228,9 +231,9 @@ public class Frontend
                                 {
                                         _result = volatileDirectory.prefixLookup( key._buildkey() );
                                 }
-                                catch( DirectoryException e )
+                                catch( VoldException e )
                                 {
-                                        throw new DirectoryException( "In Frontend.scopeLookup( " + key._buildkey().toString() + "): ", e );
+                                        throw new VoldException( "In Frontend.scopeLookup( " + key._buildkey().toString() + "): ", e );
                                 }
                         }
                         else
@@ -245,9 +248,9 @@ public class Frontend
                                 {
                                         _result = volatileDirectory.prefixLookup( _key );
                                 }
-                                catch( DirectoryException e )
+                                catch( VoldException e )
                                 {
-                                        throw new DirectoryException( "In Frontend.scopeLookup( " + _key.toString() + "): ", e );
+                                        throw new VoldException( "In Frontend.scopeLookup( " + _key.toString() + "): ", e );
                                 }
                         }
                 }

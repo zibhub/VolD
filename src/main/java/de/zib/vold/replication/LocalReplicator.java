@@ -1,5 +1,7 @@
 
-package de.zib.gndms.vold;
+package de.zib.vold.replication;
+
+import de.zib.vold.volatileLogic.VolatileDirectory;
 
 import java.util.List;
 import java.util.Set;

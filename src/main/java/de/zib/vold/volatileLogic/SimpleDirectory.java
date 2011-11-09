@@ -1,5 +1,5 @@
 
-package de.zib.gndms.vold;
+package de.zib.vold.volatileLogic;
 
 import java.util.List;
 import java.util.Set;

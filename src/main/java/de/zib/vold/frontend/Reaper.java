@@ -1,5 +1,8 @@
 
-package de.zib.gndms.vold;
+package de.zib.vold.frontend;
+
+import de.zib.vold.VoldException;
+import de.zib.vold.volatileLogic.SlicedDirectory;
 
 import java.util.List;
 import java.util.Map;
@@ -189,7 +192,7 @@ public class Reaper extends Thread
                         {
                                 reap_timeslice( timeslice );
                         }
-                        catch( DirectoryException e )
+                        catch( VoldException e )
                         {
                                 log.error( e.getMessage() );
                                 return;
@@ -225,7 +228,7 @@ public class Reaper extends Thread
                                                 directory.delete( entry.getKey() );
                                                 ++deleted;
                                         }
-                                        catch( DirectoryException e )
+                                        catch( VoldException e )
                                         {
                                                 log.error( "Could not reap key " + entry.getKey().toString() + ". Reason: " + e.getMessage() );
                                                 continue;

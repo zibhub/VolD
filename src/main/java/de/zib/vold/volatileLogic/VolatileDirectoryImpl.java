@@ -1,5 +1,8 @@
 
-package de.zib.gndms.vold;
+package de.zib.vold.volatileLogic;
+
+import de.zib.vold.backend.PartitionedDirectory;
+import de.zib.vold.backend.NotSupportedException;
 
 import java.util.List;
 import java.util.LinkedList;

@@ -1,5 +1,5 @@
 
-package de.zib.gndms.vold;
+package de.zib.vold.backend;
 
 import java.util.List;
 import java.util.Map;

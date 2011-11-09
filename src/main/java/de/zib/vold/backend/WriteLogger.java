@@ -1,5 +1,7 @@
 
-package de.zib.gndms.vold;
+package de.zib.vold.backend;
+
+import de.zib.vold.VoldException;
 
 import java.util.List;
 import java.util.Map;
@@ -83,7 +85,7 @@ public class WriteLogger implements PartitionedDirectoryBackend
                 {
                         this.logfile = null;
                         this.out = null;
-                        throw new DirectoryException( e );
+                        throw new VoldException( e );
                 }
 
                 log.info( "Backend opened." );
@@ -116,7 +118,7 @@ public class WriteLogger implements PartitionedDirectoryBackend
                 }
                 catch( IOException e )
                 {
-                        throw new DirectoryException( e );
+                        throw new VoldException( e );
                 }
 
                 out = null;
@@ -142,7 +144,7 @@ public class WriteLogger implements PartitionedDirectoryBackend
 
                         if( ! this.isopen() )
                         {
-                                throw new DirectoryException( "Tried to operate on WriteLogger while it had not been initialized yet. Open it first!" );
+                                throw new VoldException( "Tried to operate on WriteLogger while it had not been initialized yet. Open it first!" );
                         }
                 }
 
@@ -153,7 +155,7 @@ public class WriteLogger implements PartitionedDirectoryBackend
                 }
                 catch( IOException e )
                 {
-                        throw new DirectoryException( e );
+                        throw new VoldException( e );
                 }
         }
 
@@ -168,7 +170,7 @@ public class WriteLogger implements PartitionedDirectoryBackend
 
                         if( ! this.isopen() )
                         {
-                                throw new DirectoryException( "Tried to operate on WriteLogger while it had not been initialized yet. Open it first!" );
+                                throw new VoldException( "Tried to operate on WriteLogger while it had not been initialized yet. Open it first!" );
                         }
                 }
 
@@ -179,7 +181,7 @@ public class WriteLogger implements PartitionedDirectoryBackend
                 }
                 catch( IOException e )
                 {
-                        throw new DirectoryException( e );
+                        throw new VoldException( e );
                 }
         }
 

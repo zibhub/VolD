@@ -1,5 +1,8 @@
 
-package de.zib.gndms.vold;
+package de.zib.vold.client;
+
+import de.zib.vold.VoldInterface;
+import de.zib.vold.frontend.Key;
 
 import java.util.Set;
 import java.util.HashSet;
@@ -75,9 +78,10 @@ public class RESTClient implements VoldInterface
                 // get responseEntity from Server
                 ResponseEntity< Map< Key, Set< String > > > response;
                 {
-                        MultiValueMap< String, String > test = new LinkedMultiValueMap< String, String >();
-                        test.add( "kx", "111" );
-                        test.add( "kx", "222" );
+                        //MultiValueMap< String, String > test = new LinkedMultiValueMap< String, String >();
+                        HashMap< String, String > test = new HashMap< String, String >();
+                        test.put( "kx", "111" );
+                        test.put( "kx", "222" );
 
                         Object obj = rest.postForEntity( uri, null, Map.class, test );
 

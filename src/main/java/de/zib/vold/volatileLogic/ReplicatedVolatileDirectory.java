@@ -1,5 +1,8 @@
 
-package de.zib.gndms.vold;
+package de.zib.vold.volatileLogic;
+
+import de.zib.vold.VoldException;
+import de.zib.vold.replication.Replicator;
 
 import java.util.List;
 import java.util.Set;
@@ -102,7 +105,7 @@ public class ReplicatedVolatileDirectory implements VolatileDirectory
                 }
                 catch( InterruptedException e )
                 {
-                        throw new DirectoryException( e );
+                        throw new VoldException( e );
                 }
 
                 if( null != insertion.exception )
@@ -131,7 +134,7 @@ public class ReplicatedVolatileDirectory implements VolatileDirectory
                 }
                 catch( InterruptedException e )
                 {
-                        throw new DirectoryException( e );
+                        throw new VoldException( e );
                 }
 
                 if( null != deletion.exception )
@@ -143,7 +146,7 @@ public class ReplicatedVolatileDirectory implements VolatileDirectory
                 private final VolatileDirectory directory;
                 private final List< String > key;
                 private final Set< String > values;
-                public DirectoryException exception = null;
+                public VoldException exception = null;
 
                 public InsertThread( VolatileDirectory directory, List< String > key, Set< String > values )
                 {
@@ -159,7 +162,7 @@ public class ReplicatedVolatileDirectory implements VolatileDirectory
                         {
                                 directory.insert( key, values );
                         }
-                        catch( DirectoryException e )
+                        catch( VoldException e )
                         {
                                 this.exception = e;
                         }
@@ -170,7 +173,7 @@ public class ReplicatedVolatileDirectory implements VolatileDirectory
         {
                 private final VolatileDirectory directory;
                 private final List< String > key;
-                public DirectoryException exception = null;
+                public VoldException exception = null;
 
                 public DeleteThread( VolatileDirectory directory, List< String > key )
                 {
@@ -185,7 +188,7 @@ public class ReplicatedVolatileDirectory implements VolatileDirectory
                         {
                                 directory.delete( key );
                         }
-                        catch( DirectoryException e )
+                        catch( VoldException e )
                         {
                                 this.exception = e;
                         }

@@ -1,5 +1,7 @@
 
-package de.zib.gndms.vold;
+package de.zib.vold.backend;
+
+import de.zib.vold.VoldException;
 
 import java.io.File;
 import java.io.FileFilter;
@@ -94,13 +96,13 @@ public class FileSystemDirectory implements PartitionedDirectoryBackend
                 catch( Exception e )
                 {
                         root = null;
-                        throw new DirectoryException( e );
+                        throw new VoldException( e );
                 }
 
                 if( ! root.isDirectory() )
                 {
                         root = null;
-                        throw new DirectoryException( "Directory could not be opened: " + rootPath + " is no directory!" );
+                        throw new VoldException( "Directory could not be opened: " + rootPath + " is no directory!" );
                 }
 
                 log.info( "Backend opened." );
@@ -139,7 +141,7 @@ public class FileSystemDirectory implements PartitionedDirectoryBackend
 
                         if( ! isopen() )
                         {
-                                throw new DirectoryException( "Tried to operate on closed database." );
+                                throw new VoldException( "Tried to operate on closed database." );
                         }
                 }
 
@@ -174,9 +176,9 @@ public class FileSystemDirectory implements PartitionedDirectoryBackend
                                 {
                                         filepath = path + "/" + _buildfile( filename );
                                 }
-                                catch( DirectoryException e )
+                                catch( VoldException e )
                                 {
-                                        throw new DirectoryException( "Error on insertion of value " + filename + " for key " + key.toString() + "(" + path + ").", e );
+                                        throw new VoldException( "Error on insertion of value " + filename + " for key " + key.toString() + "(" + path + ").", e );
                                 }
 
                                 log.debug( "Creating value '" + filepath + "'" );
@@ -188,7 +190,7 @@ public class FileSystemDirectory implements PartitionedDirectoryBackend
                                 }
                                 catch( IOException e )
                                 {
-                                        throw new DirectoryException( "Error on insertion of value " + filename + " for key " + key.toString() + "(" + path + ").", e );
+                                        throw new VoldException( "Error on insertion of value " + filename + " for key " + key.toString() + "(" + path + ").", e );
                                 }
                         }
                 }
@@ -203,7 +205,7 @@ public class FileSystemDirectory implements PartitionedDirectoryBackend
 
                         if( ! isopen() )
                         {
-                                throw new DirectoryException( "Tried to operate on closed database." );
+                                throw new VoldException( "Tried to operate on closed database." );
                         }
                 }
 
@@ -255,7 +257,7 @@ public class FileSystemDirectory implements PartitionedDirectoryBackend
 
                         if( ! isopen() )
                         {
-                                throw new DirectoryException( "Tried to operate on closed database." );
+                                throw new VoldException( "Tried to operate on closed database." );
                         }
                 }
 
@@ -279,7 +281,7 @@ public class FileSystemDirectory implements PartitionedDirectoryBackend
                                 {
                                         result.add( buildfile( file.getName() ) );
                                 }
-                                catch( DirectoryException e )
+                                catch( VoldException e )
                                 {
                                         log.warn( "Skipping file " + file.getName() + " while looking for " + key.toString() + ", since an error occured: " + e.getMessage() );
                                 }
@@ -306,7 +308,7 @@ public class FileSystemDirectory implements PartitionedDirectoryBackend
 
                         if( ! isopen() )
                         {
-                                throw new DirectoryException( "Tried to operate on closed database." );
+                                throw new VoldException( "Tried to operate on closed database." );
                         }
                 }
 
@@ -337,7 +339,7 @@ public class FileSystemDirectory implements PartitionedDirectoryBackend
                                 {
                                         recursive_add( k, path + "/" + file.getName(), result );
                                 }
-                                catch( DirectoryException e )
+                                catch( VoldException e )
                                 {
                                         log.warn( "Skipping directory " + path + "/" + file.getName() + ", since an error occured: " + e.getMessage() );
                                 }
@@ -348,7 +350,7 @@ public class FileSystemDirectory implements PartitionedDirectoryBackend
                                 {
                                         file_add( key, file.getName(), result );
                                 }
-                                catch( DirectoryException e )
+                                catch( VoldException e )
                                 {
                                         log.warn( "Skipping file " + file.getName() + " in recursive listing, since it has no valid format: " + e.getMessage() );
                                 }
@@ -365,7 +367,7 @@ public class FileSystemDirectory implements PartitionedDirectoryBackend
 
                 if( ! _dir.isDirectory() )
                 {
-                        throw new DirectoryException( "The path " + dir + " describes no directory, as expected" );
+                        throw new VoldException( "The path " + dir + " describes no directory, as expected" );
                 }
 
                 for( File file: _dir.listFiles() )
@@ -377,7 +379,7 @@ public class FileSystemDirectory implements PartitionedDirectoryBackend
                                 {
                                         k.add( builddir( file.getName() ) );
                                 }
-                                catch( DirectoryException e )
+                                catch( VoldException e )
                                 {
                                         log.warn( "Skipping directory " + file.getName() + " in recursive listing, since it has no valid format: " + e.getMessage() );
                                 }
@@ -390,7 +392,7 @@ public class FileSystemDirectory implements PartitionedDirectoryBackend
                                 {
                                         file_add( key, file.getName(), map );
                                 }
-                                catch( DirectoryException e )
+                                catch( VoldException e )
                                 {
                                         log.warn( "Skipping file " + file.getName() + " in recursive listing, since it has no valid format: " + e.getMessage() );
                                 }
@@ -437,9 +439,9 @@ public class FileSystemDirectory implements PartitionedDirectoryBackend
                         {
                                 l.add( _builddir( d ) );
                         }
-                        catch( DirectoryException e )
+                        catch( VoldException e )
                         {
-                                throw new DirectoryException( "Could not determine Lowlevel directory of abstract directory " + partition + ":" + dir.toString() + ". ", e );
+                                throw new VoldException( "Could not determine Lowlevel directory of abstract directory " + partition + ":" + dir.toString() + ". ", e );
                         }
                 }
 
@@ -454,7 +456,7 @@ public class FileSystemDirectory implements PartitionedDirectoryBackend
                 }
                 catch( UnsupportedEncodingException e )
                 {
-                        throw new DirectoryException( "Could not encode directory name of " + dir + ".", e );
+                        throw new VoldException( "Could not encode directory name of " + dir + ".", e );
                 }
         }
 
@@ -467,7 +469,7 @@ public class FileSystemDirectory implements PartitionedDirectoryBackend
                 }
                 catch( UnsupportedEncodingException e )
                 {
-                        throw new DirectoryException( "Could not decode directory name of " + dir + ".", e );
+                        throw new VoldException( "Could not decode directory name of " + dir + ".", e );
                 }
         }
 
@@ -479,7 +481,7 @@ public class FileSystemDirectory implements PartitionedDirectoryBackend
                 }
                 catch( UnsupportedEncodingException e )
                 {
-                        throw new DirectoryException( "Could not encode directory name of " + dir + ".", e );
+                        throw new VoldException( "Could not encode directory name of " + dir + ".", e );
                 }
         }
 
@@ -492,7 +494,7 @@ public class FileSystemDirectory implements PartitionedDirectoryBackend
                 }
                 catch( UnsupportedEncodingException e )
                 {
-                        throw new DirectoryException( "Could not decode directory name of " + dir + ".", e );
+                        throw new VoldException( "Could not decode directory name of " + dir + ".", e );
                 }
         }
 

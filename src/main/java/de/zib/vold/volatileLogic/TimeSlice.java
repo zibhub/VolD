@@ -1,5 +1,5 @@
 
-package de.zib.gndms.vold;
+package de.zib.vold.volatileLogic;
 
 import org.joda.time.Instant;
 

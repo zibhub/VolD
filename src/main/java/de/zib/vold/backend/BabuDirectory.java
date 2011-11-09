@@ -1,5 +1,7 @@
 
-package de.zib.gndms.vold;
+package de.zib.vold.backend;
+
+import de.zib.vold.VoldException;
 
 import java.util.Map.Entry;
 import java.util.List;
@@ -121,7 +123,7 @@ public class BabuDirectory implements PartitionedDirectoryBackend
                                 null == getProperty( "babudb.sync" )
                                 )
                         {
-                                throw new DirectoryException( "Need to proper initialize BabuDirectory before opening it! Necessary is setting dir (base directory to store files, created by BabuDB), logDir (directory where logfiles are stored), sync (sync method, see BabuDB docs) and database name." );
+                                throw new VoldException( "Need to proper initialize BabuDirectory before opening it! Necessary is setting dir (base directory to store files, created by BabuDB), logDir (directory where logfiles are stored), sync (sync method, see BabuDB docs) and database name." );
                         }
 		}
 
@@ -133,11 +135,11 @@ public class BabuDirectory implements PartitionedDirectoryBackend
 			}
 			catch( java.io.IOException e )
 			{
-                                throw new DirectoryException( e );
+                                throw new VoldException( e );
 			}
 			catch( BabuDBException e )
 			{
-				throw new DirectoryException( e );
+				throw new VoldException( e );
 			}
 		}
 
@@ -160,7 +162,7 @@ public class BabuDirectory implements PartitionedDirectoryBackend
 				}
 				catch( BabuDBException e2 )
 				{
-                                        throw new DirectoryException( e2 );
+                                        throw new VoldException( e2 );
 				}
 			}
 
@@ -193,7 +195,7 @@ public class BabuDirectory implements PartitionedDirectoryBackend
 			}
 			catch( BabuDBException e2 )
 			{
-                                throw new DirectoryException( "BabuDirectory could even not forcefully shutdown.", e2 );
+                                throw new VoldException( "BabuDirectory could even not forcefully shutdown.", e2 );
 			}
 		}
 
@@ -212,7 +214,7 @@ public class BabuDirectory implements PartitionedDirectoryBackend
 	 * 
 	 * The insert will be performed synchronously.
          *
-         * @throws DirectoryException
+         * @throws VoldException
 	 */
         @Override
         public void insert( int partition, List< String > key, List< String > value )
@@ -223,7 +225,7 @@ public class BabuDirectory implements PartitionedDirectoryBackend
                 {
                         if( ! isopen() )
                         {
-                                throw new DirectoryException( "Tried to operate on closed database." );
+                                throw new VoldException( "Tried to operate on closed database." );
                         }
 
                         if( partition < 0 )
@@ -272,7 +274,7 @@ public class BabuDirectory implements PartitionedDirectoryBackend
 	 * 
 	 * The insert will be performed synchronously.
          * 
-         * @throws DirectoryException
+         * @throws VoldException
 	 */
         @Override
         public void delete( int partition, List< String > key )
@@ -285,7 +287,7 @@ public class BabuDirectory implements PartitionedDirectoryBackend
                 {
                         if( ! isopen() )
                         {
-                                throw new DirectoryException( "Tried to operate on closed database." );
+                                throw new VoldException( "Tried to operate on closed database." );
                         }
 
                         if( partition < 0 )
@@ -308,7 +310,7 @@ public class BabuDirectory implements PartitionedDirectoryBackend
 	 * 
 	 * The query will be performed synchronously.
          *
-         * @throws DirectoryException
+         * @throws VoldException
 	 */
         @Override
         public Map< List< String >, List< String > > prefixlookup( int partition, List< String > key )
@@ -319,7 +321,7 @@ public class BabuDirectory implements PartitionedDirectoryBackend
                 {
                         if( ! isopen() )
                         {
-                                throw new DirectoryException( "Tried to operate on closed database." );
+                                throw new VoldException( "Tried to operate on closed database." );
                         }
 
                         if( partition < 0 )
@@ -346,7 +348,7 @@ public class BabuDirectory implements PartitionedDirectoryBackend
                         {
                                 if( null == entry.getKey() || null == entry.getValue() )
                                 {
-                                        throw new DirectoryException( "Internal error: got null key or value from BabuDB." );
+                                        throw new VoldException( "Internal error: got null key or value from BabuDB." );
                                 }
                                 map.put( buildkey( entry.getKey() ), buildkey( entry.getValue() ) );
                         }
@@ -360,7 +362,7 @@ public class BabuDirectory implements PartitionedDirectoryBackend
 	 * 
 	 * The query will be performed synchronously.
          *
-         * @throws DirectoryException
+         * @throws VoldException
 	 */
 	private Map< byte[], byte[] > prefixlookup( int partition, byte[] key )
 	{
@@ -397,7 +399,7 @@ public class BabuDirectory implements PartitionedDirectoryBackend
 			}
 			catch( BabuDBException e )
 			{
-                                throw new DirectoryException( e );
+                                throw new VoldException( e );
 			}
 		}
 
@@ -409,7 +411,7 @@ public class BabuDirectory implements PartitionedDirectoryBackend
 	 * 
 	 * The query will be performed synchronously.
          *
-         * @throws DirectoryException
+         * @throws VoldException
 	 */
         @Override
         public List< String > lookup( int partition, List< String > key )
@@ -420,7 +422,7 @@ public class BabuDirectory implements PartitionedDirectoryBackend
                 {
                         if( ! isopen() )
                         {
-                                throw new DirectoryException( "Tried to operate on closed database." );
+                                throw new VoldException( "Tried to operate on closed database." );
                         }
 
                         if( partition < 0 )
@@ -445,7 +447,7 @@ public class BabuDirectory implements PartitionedDirectoryBackend
 	 * 
 	 * The query will be performed synchronously.
          *
-         * @throws DirectoryException
+         * @throws VoldException
 	 */
 	private byte[] lookup( int partition, byte[] key )
 	{
@@ -461,7 +463,7 @@ public class BabuDirectory implements PartitionedDirectoryBackend
 			}
 			catch( BabuDBException e )
 			{
-                                throw new DirectoryException( e );
+                                throw new VoldException( e );
 			}
 		}
 	}
@@ -469,7 +471,7 @@ public class BabuDirectory implements PartitionedDirectoryBackend
         /**
          * Convert interface type of key to backend type of key.
          *
-         * @throws DirectoryException
+         * @throws VoldException
          **/
         private byte[] _buildkey( List< String > list )
         {
@@ -502,7 +504,7 @@ public class BabuDirectory implements PartitionedDirectoryBackend
                                 }
                                 catch( UnsupportedEncodingException e )
                                 {
-                                        throw new DirectoryException( e );
+                                        throw new VoldException( e );
                                 }
 
                                 byteCopy( _s, result, offset );
@@ -518,7 +520,7 @@ public class BabuDirectory implements PartitionedDirectoryBackend
         /**
          * Convert backend type of key to interface type of key.
          *
-         * @throws DirectoryException
+         * @throws VoldException
          **/
         private List< String > buildkey( byte[] _key )
         {
@@ -540,7 +542,7 @@ public class BabuDirectory implements PartitionedDirectoryBackend
                                 }
                                 catch( UnsupportedEncodingException e )
                                 {
-                                        throw new DirectoryException( e );
+                                        throw new VoldException( e );
                                 }
 
                                 offset = ++i;

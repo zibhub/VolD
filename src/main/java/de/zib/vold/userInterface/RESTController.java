@@ -1,5 +1,9 @@
 
-package de.zib.gndms.vold;
+package de.zib.vold.userInterface;
+
+import de.zib.vold.VoldException;
+import de.zib.vold.frontend.Frontend;
+import de.zib.vold.frontend.Key;
 
 import java.util.List;
 import java.util.Set;
@@ -136,7 +140,7 @@ public class RESTController
                                         {
                                                 frontend.insert( clientIpAddress, k, new HashSet< String >( entry.getValue() ) );
                                         }
-                                        catch( DirectoryException e )
+                                        catch( VoldException e )
                                         {
                                                 log.error( "Could not insert key " + entry.getKey() + ": " + e.getMessage() );
                                                 invalidKeys.put( entry.getKey().toString(), e.getMessage() );
@@ -189,6 +193,7 @@ public class RESTController
                         // build key
                         {
                                 // malformed key given
+                                // TODO: what to do with it
                                 if( 2 < args.length )
                                 {
                                         log.info( "Illegal Argument given: " + entry.getKey() );
@@ -227,7 +232,7 @@ public class RESTController
                                 {
                                         _result = frontend.lookup( k ); 
                                 }
-                                catch( DirectoryException e )
+                                catch( VoldException e )
                                 {
                                         log.error( "Error on lookup for key " + k + ": " + e.getMessage() );
 

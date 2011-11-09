@@ -1,5 +1,7 @@
 
-package de.zib.gndms.vold;
+package de.zib.vold;
+
+import de.zib.vold.frontend.Key;
 
 import java.util.Set;
 import java.util.Map;

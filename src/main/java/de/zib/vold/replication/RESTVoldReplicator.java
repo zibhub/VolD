@@ -1,5 +1,8 @@
 
-package de.zib.gndms.vold;
+package de.zib.vold.replication;
+
+import de.zib.vold.client.RESTClient;
+import de.zib.vold.frontend.Key;
 
 import java.util.List;
 import java.util.Set;

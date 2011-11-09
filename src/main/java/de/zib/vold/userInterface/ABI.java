@@ -1,5 +1,12 @@
 
-package de.zib.gndms.vold;
+package de.zib.vold.userInterface;
+
+import de.zib.vold.VoldException;
+import de.zib.vold.frontend.Frontend;
+import de.zib.vold.frontend.Key;
+
+
+import de.zib.vold.client.RESTClient;
 
 import java.util.Set;
 import java.util.HashSet;
@@ -88,7 +95,7 @@ public class ABI
                                         {
                                                 result = abi.frontend.lookup( new Key( a[1], a[2], a[3] ) );
                                         }
-                                        catch( DirectoryException e )
+                                        catch( VoldException e )
                                         {
                                                 System.out.println( "An internal error occured: " + e.getClass().getName() + ": " + e.getMessage() );
                                                 continue;
@@ -127,7 +134,7 @@ public class ABI
                                         {
                                                 abi.frontend.insert( a[1], k, values );
                                         }
-                                        catch( DirectoryException e )
+                                        catch( VoldException e )
                                         {
                                                 System.out.println( "An internal error occured: " + e.getClass().getName() + ": " + e.getMessage() );
                                                 continue;

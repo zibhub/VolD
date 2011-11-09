@@ -1,26 +1,26 @@
 
-package de.zib.gndms.vold;
+package de.zib.vold;
 
-public class DirectoryException extends RuntimeException
+public class VoldException extends RuntimeException
 {
         static final long serialVersionUID = 1;
 
-        public DirectoryException( )
+        public VoldException( )
         {
                 super();
         }
 
-        public DirectoryException( String message )
+        public VoldException( String message )
         {
                 super( message );
         }
 
-        public DirectoryException( String message, Throwable cause )
+        public VoldException( String message, Throwable cause )
         {
                 super( message, cause );
         }
 
-        public DirectoryException( Throwable cause )
+        public VoldException( Throwable cause )
         {
                 super( cause );
         }

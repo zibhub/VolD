@@ -1,7 +1,9 @@
 
-package de.zib.gndms.vold;
+package de.zib.vold.backend;
 
-public class NotSupportedException extends DirectoryException
+import de.zib.vold.VoldException;
+
+public class NotSupportedException extends VoldException
 {
         public NotSupportedException( )
         {
