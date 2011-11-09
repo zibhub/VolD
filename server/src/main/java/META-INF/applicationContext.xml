@@ -15,13 +15,13 @@
         <!-- ** SETUP BACKENDS                                               -->
 
         <!-- setup FileSystemDirectory backend -->
-        <bean id="backend1" class="de.zib.gndms.vold.FileSystemDirectory">
+        <bean id="backend1" class="de.zib.vold.backend.FileSystemDirectory">
                 <property name="rootPath" value="/tmp/fs" />
                 <property name="enc" value="utf-8" />
         </bean>
 
         <!-- setup BabuDirectory backend -->
-        <bean id="backend2" class="de.zib.gndms.vold.BabuDirectory">
+        <bean id="backend2" class="de.zib.vold.backend.BabuDirectory">
                 <property name="dir" value="/tmp/babu/" />
                 <property name="logDir" value="/tmp/babu/log" />
                 <property name="sync" value="ASYNC" />
@@ -30,7 +30,7 @@
         </bean>
 
         <!-- setup WriteLogger backend -->
-        <bean id="backend3" class="de.zib.gndms.vold.WriteLogger">
+        <bean id="backend3" class="de.zib.vold.backend.WriteLogger">
                 <property name="logfile" value="/tmp/vold-write.log" />
         </bean>
 
@@ -38,25 +38,25 @@
         <!-- ** SETUP VOLATILE LOGIC INTERFACES                              -->
 
         <!-- setup TimeSlice configuration -->
-        <bean id="timeslice" class="de.zib.gndms.vold.TimeSlice">
+        <bean id="timeslice" class="de.zib.vold.volatileLogic.TimeSlice">
                 <property name="timeSliceSize" value="1000" />
                 <property name="numberOfSlices" value="2" />
         </bean>
 
         <!-- setup VolatileDirectory for backend1 -->
-        <bean id="voldi1" class="de.zib.gndms.vold.VolatileDirectoryImpl">
+        <bean id="voldi1" class="de.zib.vold.volatileLogic.VolatileDirectoryImpl">
                 <property name="backend" ref="backend1" />
                 <property name="timeslice" ref="timeslice" />
         </bean>
 
         <!-- setup VolatileDirectory for backend2 -->
-        <bean id="voldi2" class="de.zib.gndms.vold.VolatileDirectoryImpl">
+        <bean id="voldi2" class="de.zib.vold.volatileLogic.VolatileDirectoryImpl">
                 <property name="backend" ref="backend2" />
                 <property name="timeslice" ref="timeslice" />
         </bean>
 
         <!-- setup VolatileDirectory for backend3 -->
-        <bean id="voldi3" class="de.zib.gndms.vold.VolatileDirectoryImpl">
+        <bean id="voldi3" class="de.zib.vold.volatileLogic.VolatileDirectoryImpl">
                 <property name="backend" ref="backend3" />
                 <property name="timeslice" ref="timeslice" />
         </bean>
@@ -64,20 +64,20 @@
         <!-- *************************************************************** -->
         <!-- ** SETUP REPLICATION TREE                                       -->
 
-        <bean id="replicationwrapper1" class="de.zib.gndms.vold.LocalReplicator">
+        <bean id="replicationwrapper1" class="de.zib.vold.replication.LocalReplicator">
                 <property name="replica" ref="voldi2" />
         </bean>
 
-        <bean id="replicationwrapper2" class="de.zib.gndms.vold.LocalReplicator">
+        <bean id="replicationwrapper2" class="de.zib.vold.replication.LocalReplicator">
                 <property name="replica" ref="voldi3" />
         </bean>
 
-        <bean id="replication1" class="de.zib.gndms.vold.ReplicatedVolatileDirectory">
+        <bean id="replication1" class="de.zib.vold.volatileLogic.ReplicatedVolatileDirectory">
                 <property name="directory" ref="replication2" />
                 <property name="replicator" ref="replicationwrapper1" />
         </bean>
 
-        <bean id="replication2" class="de.zib.gndms.vold.ReplicatedVolatileDirectory">
+        <bean id="replication2" class="de.zib.vold.volatileLogic.ReplicatedVolatileDirectory">
                 <property name="directory" ref="voldi1" />
                 <property name="replicator" ref="replicationwrapper2" />
         </bean>
@@ -87,14 +87,14 @@
 
         <!-- setup reaper -->
         <!--
-        <bean id="reaper" class="de.zib.gndms.vold.Reaper">
+        <bean id="reaper" class="de.zib.vold.frontend.Reaper">
                 <property name="TTL" value="20000" />
                 <property name="slicedDirectory" ref="replication2" />
         </bean>
         -->
 
         <!-- setup the frontend -->
-        <bean id="frontend" class="de.zib.gndms.vold.Frontend">
+        <bean id="frontend" class="de.zib.vold.frontend.Frontend">
                 <property name="volatileDirectory" ref="replication2" />
         </bean>
 </beans>

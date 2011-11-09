@@ -61,7 +61,7 @@ public class RESTController
         public ResponseEntity< Map< String, String > > post(
                         @ModelAttribute("clientIpAddress") String clientIpAddress,
                         @RequestParam MultiValueMap< String, String > args,
-                        @RequestBody MultiValueMap< String, String > argsbody,
+//                        @RequestBody MultiValueMap< String, String > argsbody,
                         HttpServletRequest request)
         {
                 // guard
@@ -84,20 +84,7 @@ public class RESTController
 
                 // process each key
                 {
-                        MultiValueMap< String, String > mvm;
-
-                        if( null != args )
-                        {
-                                mvm = args;
-                                log.trace( "AAAAAAAAAAAAAAAAAAAAAA" );
-                        }
-                        else
-                        {
-                                mvm = argsbody;
-                                log.trace( "BBBBBBBBBBBBBBBBBBBBBB" );
-                        }
-
-                        for( Map.Entry< String, List< String > > entry: mvm.entrySet() )
+                        for( Map.Entry< String, List< String > > entry: args.entrySet() )
                         {
                                 String[] splited = entry.getKey().split( ":" );
 

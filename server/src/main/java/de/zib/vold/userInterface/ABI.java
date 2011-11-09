@@ -33,7 +33,8 @@ public class ABI
 
         private ABI( )
         {
-                context = new ClassPathXmlApplicationContext( "classpath:META-INF/applicationContext.xml" );
+                //context = new ClassPathXmlApplicationContext( "classpath:META-INF/applicationContext.xml" );
+                context = new ClassPathXmlApplicationContext( "classpath:META-INF/server-context.xml" );
                 frontend = ( Frontend )context.getBean( "frontend", Frontend.class );
 
                 //reaper = ( Reaper )context.getBean( "reaper", Reaper.class );

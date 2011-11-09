@@ -60,7 +60,6 @@ JSON=['org.codehaus.jackson:jackson-core-lgpl:jar:1.7.4',
 
 desc "VolitaryDirectoryStorage"
 define "vold" do
-
   project.version = VERSION_NUMBER
   project.group = GROUP
   manifest["Implementation-Vendor"] = COPYRIGHT
@@ -69,7 +68,7 @@ define "vold" do
   define "server" do
 
       compile.with project('common'), project('client'), JODA_TIME, BABUDB, SLF4J, COMMONS_LOGGING, COMMONS_LANG, SPRING, XSTREAM, SERVLET
-      mainClass='de.zib.gndms.vold.ABI'
+      mainClass='de.zib.vold.userInterface.ABI'
 
       package(:jar).with :manifest=>manifest.merge('Main-Class'=>mainClass)
       package(:jar).include _('src/main/java/META-INF/*'), :path => 'META-INF/'
@@ -78,6 +77,7 @@ define "vold" do
       package(:war).with :manifest=>manifest.merge('Main-Class'=>mainClass)
       package(:war).include _('web/WEB-INF/*'), :path => 'WEB-INF/'
       package(:war).include _('src/main/java/META-INF/*'), :path => 'META-INF/'
+      package(:war).include _('src/main/java/META-INF/*'), :path => 'WEB-INF/classes/META-INF/'
       package(:war).include _('etc/*'), :path => 'WEB-INF/classes/'
 
       desc "run, voldi, run"
@@ -94,12 +94,12 @@ define "vold" do
 
   define "common" do
     compile.with COMMONS_LANG
-    package(:jar)
+    package(:jar).include _('src/main/java/META-INF/*'), :path => 'META-INF/'
   end
 
   define "client" do
     compile.with project( 'common' ), SPRING, COMMONS_LOGGING, SLF4J, XSTREAM
-    package(:jar)
+    package(:jar).include _('src/main/java/META-INF/*'), :path => 'META-INF/'
   end
 
 

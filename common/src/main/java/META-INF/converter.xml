@@ -11,13 +11,12 @@
 
         <!-- this is the marshaller -->
         <bean id="marshaller" class="org.springframework.oxm.xstream.XStreamMarshaller">
-            <property name="autodetectAnnotations" value="true"/>
+                <property name="autodetectAnnotations" value="true"/>
         </bean>
 
         <!-- this is the converter for POST -->
-        <bean id="converter"
-              class="org.springframework.http.converter.xml.MarshallingHttpMessageConverter">
-            <constructor-arg ref="marshaller" />
+        <bean id="converter" class="org.springframework.http.converter.xml.MarshallingHttpMessageConverter">
+                <constructor-arg ref="marshaller" />
         </bean>
 
         <!--setup json message converter-->
