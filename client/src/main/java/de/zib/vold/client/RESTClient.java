@@ -11,6 +11,9 @@ import java.util.HashMap;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import org.springframework.context.ApplicationContext;
+import org.springframework.context.support.ClassPathXmlApplicationContext;
+
 import org.springframework.web.client.RestTemplate;
 import org.springframework.http.ResponseEntity;
 import org.springframework.http.HttpStatus;
@@ -21,20 +24,33 @@ public class RESTClient implements VoldInterface
 
         private String baseURL;
 
+        private ApplicationContext context;
         private RestTemplate rest;
 
         public RESTClient( )
         {
-                this.baseURL = null;
+                baseURL = null;
 
-                this.rest = new RestTemplate();
+                context = new ClassPathXmlApplicationContext( "classpath:META-INF/server-context.xml" );
+                rest = ( RestTemplate )context.getBean( "restTemplate", RestTemplate.class );
+
+                if( null == rest )
+                {
+                        throw new IllegalStateException( "Could not get bean rest out of server-context.xml!" );
+                }
         }
 
         public RESTClient( String baseURL )
         {
-                this.baseURL = baseURL;
+                context = new ClassPathXmlApplicationContext( "classpath:META-INF/server-context.xml" );
+                rest = ( RestTemplate )context.getBean( "restTemplate", RestTemplate.class );
 
-                this.rest = new RestTemplate();
+                if( null == rest )
+                {
+                        throw new IllegalStateException( "Could not get bean rest out of server-context.xml!" );
+                }
+
+                this.baseURL = baseURL;
         }
 
         public void setBaseURL( String baseURL )
@@ -72,18 +88,13 @@ public class RESTClient implements VoldInterface
                 }
 
                 // get responseEntity from Server
-                ResponseEntity< Map< Key, Set< String > > > response;
+                ResponseEntity< Map< String, String > > response;
                 {
-                        //MultiValueMap< String, String > test = new LinkedMultiValueMap< String, String >();
-                        HashMap< String, String > test = new HashMap< String, String >();
-                        test.put( "kx", "111" );
-                        test.put( "kx", "222" );
-
-                        Object obj = rest.postForEntity( uri, null, Map.class, test );
+                        Object obj = rest.postForEntity( uri, map, HashMap.class );
 
                         if( obj instanceof ResponseEntity< ? > )
                         {
-                                response = ( ResponseEntity< Map< Key, Set< String > > > )obj;
+                                response = ( ResponseEntity< Map< String, String > > )obj;
                         }
                         else
                         {
@@ -91,7 +102,7 @@ public class RESTClient implements VoldInterface
                         }
                 }
 
-                return null;
+                return response.getBody();
         }
 
         @Override

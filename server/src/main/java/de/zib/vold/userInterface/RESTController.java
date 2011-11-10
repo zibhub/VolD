@@ -61,7 +61,7 @@ public class RESTController
         public ResponseEntity< Map< String, String > > post(
                         @ModelAttribute("clientIpAddress") String clientIpAddress,
                         @RequestParam MultiValueMap< String, String > args,
-//                        @RequestBody MultiValueMap< String, String > argsbody,
+                        @RequestBody MultiValueMap< String, String > argsbody,
                         HttpServletRequest request)
         {
                 // guard
@@ -80,6 +80,15 @@ public class RESTController
                         String removepath = request.getContextPath() + request.getServletPath();
 
                         scope = scope.substring( removepath.length(), scope.length() );
+                }
+
+                MultiValueMap< String, String > mvm;
+                // merge argsbody to args
+                {
+                        for( Map.Entry< String, List< String > > entry: argsbody.entrySet() )
+                        {
+                                args.put( entry.getKey(), entry.getValue() );
+                        }
                 }
 
                 // process each key
