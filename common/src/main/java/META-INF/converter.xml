@@ -20,7 +20,7 @@
         </bean>
 
         <!--setup json message converter-->
-        <!--&lt;!&ndash;&ndash;&gt;<bean id="converter" class="org.springframework.http.converter.json.MappingJacksonHttpMessageConverter"/>-->
+        <!--<bean id="converter" class="org.springframework.http.converter.json.MappingJacksonHttpMessageConverter"/>-->
 
         <!--add it to the annotation controller-->
         <bean class="org.springframework.web.servlet.mvc.annotation.AnnotationMethodHandlerAdapter">
