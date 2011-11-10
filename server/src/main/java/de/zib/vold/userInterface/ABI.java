@@ -44,20 +44,6 @@ public class ABI
         {
                 ABI abi = new ABI();
 
-                // test
-                {
-                        RESTClient r = new RESTClient( "http://localhost:8080/vold/" );
-
-                        Map< Key, Set< String > > m = new HashMap< Key, Set< String > >();
-                        Set< String > s = new HashSet< String >();
-                        s.add( "val1" );
-                        s.add( "val2" );
-                        m.put( new Key( "scope", "type", "keyname" ), s );
-                        log.info( r.insert( "localhost", m ).toString() );
-                }
-
-                System.exit( 0 );
-
                 while( true )
                 {
                         try {
