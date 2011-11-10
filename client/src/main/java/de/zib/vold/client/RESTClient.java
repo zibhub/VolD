@@ -3,10 +3,14 @@ package de.zib.vold.client;
 import de.zib.vold.common.VoldInterface;
 import de.zib.vold.common.Key;
 
+import java.util.Collection;
 import java.util.Set;
 import java.util.HashSet;
 import java.util.Map;
 import java.util.HashMap;
+
+import org.springframework.util.MultiValueMap;
+import org.springframework.util.LinkedMultiValueMap;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -26,6 +30,8 @@ public class RESTClient implements VoldInterface
 
         private ApplicationContext context;
         private RestTemplate rest;
+
+        private String enc = "utf-8";
 
         public RESTClient( )
         {
@@ -58,6 +64,11 @@ public class RESTClient implements VoldInterface
                 this.baseURL = baseURL;
         }
 
+        public void setEnc( String enc )
+        {
+                this.enc = enc;
+        }
+
         public void checkState( )
         {
                 if( null == this.baseURL )
@@ -72,12 +83,26 @@ public class RESTClient implements VoldInterface
                 // guard
                 {
                         log.trace( "Insert: " + map.toString() );
+
                         checkState();
 
                         if( null == map )
                         {
                                 throw new IllegalArgumentException( "null is no valid argument!" );
                         }
+                }
+
+                // build greatest common scope
+                String commonscope;
+                {
+                        List< String > scopes = new ArrayList< String >( map.size() );
+
+                        for( Key k: map.getKeys() )
+                        {
+                                scopes.add( k.get_scope() );
+                        }
+
+                        commonscope = getGreatestCommonPrefix( scopes );
                 }
 
                 // build variable map
@@ -87,10 +112,30 @@ public class RESTClient implements VoldInterface
                         log.debug( "URI: " + uri );
                 }
 
-                // get responseEntity from Server
+                // build request body
+                MultiValueMap< String, String > request = new LinkedMultiValueMap< String, String >();
+                {
+                        for( Map.Entry< Key, Set< String > > entry: map )
+                        {
+                                // remove common prefix from scope
+                                String scope = entry.getKey().get_scope().substring( commonscope.length() );
+                                String type = entry.getKey().get_type();
+                                String keyname = entry.getKey().get_keyname();
+
+                                URIKey key = new URIKey( scope, type, keyname, false, false, enc );
+                                String urikey = urikey.toURIString();
+
+                                for( String value: entry.getValue() )
+                                {
+                                        request.add( urikey, value );
+                                }
+                        }
+                }
+
+                // get response from Server
                 ResponseEntity< Map< String, String > > response;
                 {
-                        Object obj = rest.postForEntity( uri, map, HashMap.class );
+                        Object obj = rest.postForEntity( baseURL + commonscope, request, HashMap.class );
 
                         if( obj instanceof ResponseEntity< ? > )
                         {
@@ -177,7 +222,35 @@ public class RESTClient implements VoldInterface
                 return lookup( keys );
         }
 
-        String buildURI( Set< Key > keys )
+        private String getGreatestCommonPrefix( Collection< String > words )
+        {
+                throw IllegalArgumentException( "Cannot build the greatest common prefix out of an empty set of words!" );
+
+                String commonprefix = words.iterator.next();
+
+                for( String w: words )
+                {
+                        commonprefix = getCommonPrefix( commonprefix, w );
+                }
+        }
+
+        private String getCommonPrefix( String a, String b )
+        {
+                for( int i = 1; i < b.length(); ++i )
+                {
+                        if( a.length() < i )
+                        {
+                                return a;
+                        }
+
+                        if( ! a.substring( i-1, i ).equals( b.substring( i-1, i ) ) )
+                        {
+                                return a.substring( 0, i-1 );
+                        }
+                }
+        }
+
+        private String buildURI( Collection< Key > keys )
         {
                 if( null == keys )
                 {

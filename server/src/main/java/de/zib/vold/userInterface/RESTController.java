@@ -3,6 +3,7 @@ package de.zib.vold.userInterface;
 
 import de.zib.vold.common.VoldException;
 import de.zib.vold.common.Key;
+import de.zib.vold.common.URIKey;
 import de.zib.vold.frontend.Frontend;
 
 import java.util.List;
@@ -35,7 +36,8 @@ public class RESTController
         protected final Logger log = LoggerFactory.getLogger( this.getClass() );
         private static String defaulttype = "list";
 
-        Frontend frontend;
+        private Frontend frontend;
+        private String enc = "utf-8";
 
         private void checkState()
         {
@@ -66,10 +68,10 @@ public class RESTController
         {
                 // guard
                 {
+                        log.debug( "POST: " + args.toString() );
+
                         checkState();
                 }
-
-                log.debug( "POST: " + args.toString() );
 
                 Map< String, String > invalidKeys = new HashMap< String, String >();
 
@@ -82,78 +84,70 @@ public class RESTController
                         scope = scope.substring( removepath.length(), scope.length() );
                 }
 
-                MultiValueMap< String, String > mvm;
-                // merge argsbody to args
+                // merge args to argsbody
                 {
-                        for( Map.Entry< String, List< String > > entry: argsbody.entrySet() )
+                        if( null == argsbody )
                         {
-                                args.put( entry.getKey(), entry.getValue() );
+                                if( null == args )
+                                {
+                                        log.warn( "Got a totally empty request from " + clientIpAddress + "." );
+                                        return invalidKeys;
+                                }
+
+                                argsbody = args;
+                        }
+                        else if( null != args )
+                        {
+                                argsbody.putAll( args );
                         }
                 }
 
                 // process each key
                 {
-                        for( Map.Entry< String, List< String > > entry: args.entrySet() )
+                        for( Map.Entry< String, List< String > > entry: argsbody.entrySet() )
                         {
-                                String[] splited = entry.getKey().split( ":" );
-
-                                String type;
-                                String keyname;
+                                URIKey urikey;
                                 Key k;
 
                                 // build key
                                 {
-                                        // malformed key given
-                                        if( 2 < splited.length )
-                                        {
-                                                log.info( "Illegal Argument given: " + entry.getKey() );
+                                        urikey = URIKey.fromURIString( entry.getKey(), enc );
 
-                                                invalidKeys.put( entry.getKey(), "Key has invalid format: Either use format is keyname[:type]" );
-                                                log.error( "Invalid key: " + entry.getKey() );
-
-                                                continue;
-                                        }
-                                        // format: key:type
-                                        else if( 2 == splited.length )
-                                        {
-                                                keyname = splited[0];
-                                                type = splited[1];
-                                        }
-                                        else
-                                        //if( 1 == args.length )
-                                        // no type given -> empty type
-                                        {
-                                                keyname = splited[0];
-                                                type = defaulttype;
-                                        }
-
-                                        k = new Key( scope, type, keyname );
+                                        k = new Key(
+                                                        scope + urikey.getKey().get_scope(),
+                                                        urikey.getKey().get_type(),
+                                                        urikey.getKey().get_keyname()
+                                                        );
                                 }
 
-                                // insert list for that key
+                                // handle write request for that key
                                 {
                                         try
                                         {
-                                                frontend.insert( clientIpAddress, k, new HashSet< String >( entry.getValue() ) );
+                                                if( urikey.isDelete() )
+                                                {
+                                                        // TODO
+                                                }
+                                                else if( urikey.isRefresh() )
+                                                {
+                                                        // TODO
+                                                }
+                                                else
+                                                {
+                                                        frontend.insert( clientIpAddress, k, new HashSet< String >( entry.getValue() ) );
+                                                }
                                         }
                                         catch( VoldException e )
                                         {
-                                                log.error( "Could not insert key " + entry.getKey() + ": " + e.getMessage() );
-                                                invalidKeys.put( entry.getKey().toString(), e.getMessage() );
+                                                log.error( "Could not handle write request for key " + entry.getKey() + ". ", e );
+                                                invalidKeys.put( entry.getKey().toString(), "ERROR: " + e.getMessage() );
                                                 continue;
                                         }
                                 }
                         }
                 }
 
-                if( 0 != invalidKeys.size() )
-                {
-                        return new ResponseEntity< Map < String, String > >( invalidKeys, HttpStatus.BAD_REQUEST );
-                }
-                else
-                {
-                        return new ResponseEntity< Map < String, String > >( invalidKeys, HttpStatus.OK );
-                }
+                return new ResponseEntity< Map < String, String > >( invalidKeys, HttpStatus.OK );
         }
 
         @RequestMapping( method = RequestMethod.GET )
@@ -161,10 +155,10 @@ public class RESTController
         {
                 // guard
                 {
+                        log.debug( "GET: " + keys.toString() );
+
                         checkState();
                 }
-
-                log.debug( "GET: " + keys.toString() );
 
                 Map< Key, Set< String > > merged_result = new HashMap< Key, Set< String > >();
 
@@ -180,44 +174,18 @@ public class RESTController
                 // process each key
                 for( Map.Entry< String, String > entry: keys.entrySet() )
                 {
-                        String[] args = entry.getKey().split( ":" );
-
-                        String type;
-                        String keyname;
+                        URIKey urikey;
                         Key k;
 
                         // build key
                         {
-                                // malformed key given
-                                // TODO: what to do with it
-                                if( 2 < args.length )
-                                {
-                                        log.info( "Illegal Argument given: " + entry.getKey() );
-                                        Set< String > s = new HashSet< String >();
-                                        s.add( "Key has invalid format" );
+                                urikey = URIKey.fromURIString( entry.getKey(), enc );
 
-                                        merged_result.clear();
-                                        merged_result.put( new Key( scope, "", entry.getKey() ), s );
-
-                                        return new ResponseEntity< Map< Key, Set< String > > >(
-                                                        merged_result,
-                                                        HttpStatus.BAD_REQUEST );
-                                }
-                                // format: key:type
-                                else if( 2 == args.length )
-                                {
-                                        keyname = args[0];
-                                        type = args[1];
-                                }
-                                else
-                                //if( 1 == args.length )
-                                // no type given -> empty type
-                                {
-                                        keyname = args[0];
-                                        type = defaulttype;
-                                }
-
-                                k = new Key( scope, type, keyname );
+                                k = new Key(
+                                                scope + urikey.getKey().get_scope(),
+                                                urikey.getKey().get_type(),
+                                                urikey.getKey().get_keyname()
+                                                );
                         }
 
                         // lookup and remember result
@@ -230,8 +198,9 @@ public class RESTController
                                 }
                                 catch( VoldException e )
                                 {
-                                        log.error( "Error on lookup for key " + k + ": " + e.getMessage() );
-
+                                        log.error( "Error on lookup for key " + k + " (" + entry.getKey() + "): ", e );
+                                        continue;
+/*
                                         Set< String > s = new HashSet< String >();
                                         s.add( e.getMessage() );
 
@@ -241,6 +210,7 @@ public class RESTController
                                         return new ResponseEntity< Map< Key, Set< String > > >(
                                                         merged_result,
                                                         HttpStatus.INTERNAL_SERVER_ERROR );
+*/
                                 }
 
                                 // found something
@@ -264,5 +234,10 @@ public class RESTController
         public void setFrontend( Frontend frontend )
         {
                 this.frontend = frontend;
+        }
+
+        public void setEnc( String enc )
+        {
+                this.enc = enc;
         }
 }
