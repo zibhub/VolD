@@ -107,6 +107,7 @@ public class RESTController
                         for( Map.Entry< String, List< String > > entry: argsbody.entrySet() )
                         {
                                 URIKey urikey;
+                                String source;
                                 Key k;
 
                                 // build key
@@ -118,6 +119,15 @@ public class RESTController
                                                         urikey.getKey().get_type(),
                                                         urikey.getKey().get_keyname()
                                                         );
+
+                                        if( null == urikey.getSource() )
+                                        {
+                                                source = clientIpAddress;
+                                        }
+                                        else
+                                        {
+                                                source = urikey.getSource();
+                                        }
                                 }
 
                                 // handle write request for that key
@@ -134,7 +144,7 @@ public class RESTController
                                                 }
                                                 else
                                                 {
-                                                        frontend.insert( clientIpAddress, k, new HashSet< String >( entry.getValue() ) );
+                                                        frontend.insert( source, k, new HashSet< String >( entry.getValue() ) );
                                                 }
                                         }
                                         catch( VoldException e )

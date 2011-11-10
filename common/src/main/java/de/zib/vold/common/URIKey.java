@@ -55,7 +55,12 @@ public class URIKey
                 
                 try
                 {
-                        sb.append( URLEncoder.encode( source, enc ) );
+                        if( null != source )
+                        {
+                                sb.append( URLEncoder.encode( source, enc ) );
+                        }
+
+                        sb.append( "/" );
                         sb.append( URLEncoder.encode( key.get_scope(), enc ) );
                         sb.append( "/" );
                         sb.append( URLEncoder.encode( key.get_type(), enc ) );
@@ -96,11 +101,11 @@ public class URIKey
                         if( slashindex > 0 )
                         {
                                 source = uri.substring( 0, slashindex );
-                                uri = uri.substring( slashindex+1 );
+                                uri = uri.substring( slashindex );
                         }
                         else
                         {
-                                source = "";
+                                source = null;
                         }
                 }
 
@@ -114,7 +119,7 @@ public class URIKey
                         }
                         else
                         {
-                                scope = uri.substring( 0, slashindex );
+                                scope = uri.substring( 1, slashindex );
                                 uri = uri.substring( slashindex+1 );
                         }
                 }
