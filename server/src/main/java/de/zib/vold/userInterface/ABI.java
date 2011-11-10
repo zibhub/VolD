@@ -11,6 +11,7 @@ import de.zib.vold.client.RESTClient;
 import java.util.Set;
 import java.util.HashSet;
 import java.util.Map;
+import java.util.HashMap;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -33,7 +34,6 @@ public class ABI
 
         private ABI( )
         {
-                //context = new ClassPathXmlApplicationContext( "classpath:META-INF/applicationContext.xml" );
                 context = new ClassPathXmlApplicationContext( "classpath:META-INF/server-context.xml" );
                 frontend = ( Frontend )context.getBean( "frontend", Frontend.class );
 
@@ -48,12 +48,12 @@ public class ABI
                 {
                         RESTClient r = new RESTClient( "http://localhost:8080/vold/" );
 
-                        //log.info( r.lookup( new Key( "/", "t", "k..." ) ).toString() );
-
-                        Set< String > values = new HashSet< String >();
-                        values.add( "Hello" );
-                        values.add( "World" );
-                        r.insert( new Key( "/", "t", "k1111" ), values );
+                        Map< Key, Set< String > > m = new HashMap< Key, Set< String > >();
+                        Set< String > s = new HashSet< String >();
+                        s.add( "val1" );
+                        s.add( "val2" );
+                        m.put( new Key( "scope", "type", "keyname" ), s );
+                        log.info( r.insert( "localhost", m ).toString() );
                 }
 
                 System.exit( 0 );

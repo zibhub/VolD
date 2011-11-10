@@ -29,13 +29,20 @@ public class Key {
 
                 // check for "/" at beginning and end (and add it if not present)
                 {
-                        if( ! scope.substring( 0, 1 ).equals( "/" ) )
+                        if( 0 == scope.length() )
                         {
-                                scope = "/" + scope;
+                                scope = "/";
                         }
-                        if( ! scope.substring( scope.length()-1, scope.length() ).equals( "/" ) )
+                        else
                         {
-                                scope = scope + "/";
+                                if( ! scope.substring( 0, 1 ).equals( "/" ) )
+                                {
+                                        scope = "/" + scope;
+                                }
+                                if( ! scope.substring( scope.length()-1, scope.length() ).equals( "/" ) )
+                                {
+                                        scope = scope + "/";
+                                }
                         }
                 }
 
@@ -61,15 +68,7 @@ public class Key {
 
         public String toString( )
         {
-                // TODO: build an injective function here!
-
                 return this._buildkey().toString();
-        }
-
-        public static Key fromString( String key )
-        {
-                // TODO: complement to toString
-                return null;
         }
 
         public static Key buildkey( List< String > key )

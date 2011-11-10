@@ -7,14 +7,16 @@ import java.io.UnsupportedEncodingException;
 
 public class URIKey
 {
+        private final String source;
         private final Key key;
 
         private final boolean refresh;
         private final boolean delete;
         private final String enc;
 
-        public URIKey( String scope, String type, String keyname, boolean refresh, boolean delete, String enc )
+        public URIKey( String source, String scope, String type, String keyname, boolean refresh, boolean delete, String enc )
         {
+                this.source = source;
                 this.key = new Key( scope, type, keyname );
                 this.refresh = refresh;
                 this.delete = delete;
@@ -25,6 +27,11 @@ public class URIKey
                 {
                         throw new IllegalArgumentException( "Cannot mark a URIKey with refresh and delete operation." );
                 }
+        }
+
+        public String getSource( )
+        {
+                return source;
         }
 
         public Key getKey( )
@@ -48,7 +55,9 @@ public class URIKey
                 
                 try
                 {
+                        sb.append( URLEncoder.encode( source, enc ) );
                         sb.append( URLEncoder.encode( key.get_scope(), enc ) );
+                        sb.append( "/" );
                         sb.append( URLEncoder.encode( key.get_type(), enc ) );
                         sb.append( ":" );
                         sb.append( URLEncoder.encode( key.get_keyname(), enc ) );
@@ -72,12 +81,28 @@ public class URIKey
 
         public static URIKey fromURIString( String uri, String enc )
         {
+                String source;
                 String scope;
                 String type;
                 String keyname;
 
                 boolean refresh = false;
                 boolean delete = false;
+
+                // get source
+                {
+                        int slashindex = uri.indexOf( "/" );
+
+                        if( slashindex > 0 )
+                        {
+                                source = uri.substring( 0, slashindex );
+                                uri = uri.substring( slashindex+1 );
+                        }
+                        else
+                        {
+                                source = "";
+                        }
+                }
 
                 // get scope
                 {
@@ -134,6 +159,7 @@ public class URIKey
 
                 try
                 {
+                        source = URLDecoder.decode( source, enc );
                         scope = URLDecoder.decode( scope, enc );
                         type = URLDecoder.decode( type, enc );
                         keyname = URLDecoder.decode( keyname, enc );
@@ -144,6 +170,6 @@ public class URIKey
                 }
 
 
-                return new URIKey( scope, type, keyname, refresh, delete, enc );
+                return new URIKey( source, scope, type, keyname, refresh, delete, enc );
         }
 }

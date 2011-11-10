@@ -91,7 +91,7 @@ public class RESTController
                                 if( null == args )
                                 {
                                         log.warn( "Got a totally empty request from " + clientIpAddress + "." );
-                                        return invalidKeys;
+                                        return new ResponseEntity< Map < String, String > >( invalidKeys, HttpStatus.OK );
                                 }
 
                                 argsbody = args;

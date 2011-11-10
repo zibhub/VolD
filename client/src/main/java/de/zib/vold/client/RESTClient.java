@@ -2,8 +2,11 @@ package de.zib.vold.client;
 
 import de.zib.vold.common.VoldInterface;
 import de.zib.vold.common.Key;
+import de.zib.vold.common.URIKey;
 
 import java.util.Collection;
+import java.util.List;
+import java.util.ArrayList;
 import java.util.Set;
 import java.util.HashSet;
 import java.util.Map;
@@ -78,7 +81,7 @@ public class RESTClient implements VoldInterface
         }
 
         @Override
-        public Map< String, String > insert( Map< Key, Set< String > > map )
+        public Map< String, String > insert( String source, Map< Key, Set< String > > map )
         {
                 // guard
                 {
@@ -97,7 +100,7 @@ public class RESTClient implements VoldInterface
                 {
                         List< String > scopes = new ArrayList< String >( map.size() );
 
-                        for( Key k: map.getKeys() )
+                        for( Key k: map.keySet() )
                         {
                                 scopes.add( k.get_scope() );
                         }
@@ -115,15 +118,15 @@ public class RESTClient implements VoldInterface
                 // build request body
                 MultiValueMap< String, String > request = new LinkedMultiValueMap< String, String >();
                 {
-                        for( Map.Entry< Key, Set< String > > entry: map )
+                        for( Map.Entry< Key, Set< String > > entry: map.entrySet() )
                         {
                                 // remove common prefix from scope
                                 String scope = entry.getKey().get_scope().substring( commonscope.length() );
                                 String type = entry.getKey().get_type();
                                 String keyname = entry.getKey().get_keyname();
 
-                                URIKey key = new URIKey( scope, type, keyname, false, false, enc );
-                                String urikey = urikey.toURIString();
+                                URIKey key = new URIKey( source, scope, type, keyname, false, false, enc );
+                                String urikey = key.toURIString();
 
                                 for( String value: entry.getValue() )
                                 {
@@ -190,7 +193,14 @@ public class RESTClient implements VoldInterface
 
                         if( response.getStatusCode() != HttpStatus.OK )
                         {
-                                throw new RuntimeException( "Something went wrong on server..." );
+                                if( response.hasBody() )
+                                {
+                                        throw new RuntimeException( "Something went wrong on server (" + baseURL + ")... Got body: " + response.getBody() );
+                                }
+                                else
+                                {
+                                        throw new RuntimeException( "Something went wrong on remote server (" + baseURL + ")..." );
+                                }
                         }
                 }
 
@@ -198,8 +208,7 @@ public class RESTClient implements VoldInterface
                 {
                         if( response.hasBody() )
                         {
-                                Map< Key, Set< String > > result = response.getBody();
-                                return result;
+                                return response.getBody();
                         }
                         else
                         {
@@ -208,11 +217,11 @@ public class RESTClient implements VoldInterface
                 }
         }
 
-        public Map< String, String > insert( Key key, Set< String > values )
+        public Map< String, String > insert( String source, Key key, Set< String > values )
         {
                 Map< Key, Set< String > > map = new HashMap< Key, Set< String > >();
                 map.put( key, values );
-                return insert( map );
+                return insert( source, map );
         }
 
         public Map< Key, Set< String > > lookup( Key key )
@@ -224,14 +233,19 @@ public class RESTClient implements VoldInterface
 
         private String getGreatestCommonPrefix( Collection< String > words )
         {
-                throw IllegalArgumentException( "Cannot build the greatest common prefix out of an empty set of words!" );
+                if( null == words )
+                {
+                        throw new IllegalArgumentException( "Cannot build the greatest common prefix out of an empty set of words!" );
+                }
 
-                String commonprefix = words.iterator.next();
+                String commonprefix = words.iterator().next();
 
                 for( String w: words )
                 {
                         commonprefix = getCommonPrefix( commonprefix, w );
                 }
+
+                return commonprefix;
         }
 
         private String getCommonPrefix( String a, String b )
@@ -248,6 +262,8 @@ public class RESTClient implements VoldInterface
                                 return a.substring( 0, i-1 );
                         }
                 }
+
+                return b;
         }
 
         private String buildURI( Collection< Key > keys )

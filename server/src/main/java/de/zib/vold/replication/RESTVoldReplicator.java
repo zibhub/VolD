@@ -38,6 +38,11 @@ public class RESTVoldReplicator implements Replicator
         {
                 // guard
                 {
+                        if( 4 != key.size() )
+                        {
+                                throw new IllegalArgumentException( "key does not seem to come from Frontend." );
+                        }
+
                         log.trace( "Insert: " + key.toString() + " |--> " + value.toString() );
 
                         checkState();
@@ -49,7 +54,7 @@ public class RESTVoldReplicator implements Replicator
                         k = Key.buildkey( key );
                 }
 
-                rest.insert( k, value );
+                rest.insert( key.get( 3 ), k, value );
         }
 
         public void delete( List< String > key )
