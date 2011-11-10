@@ -10,15 +10,4 @@
 
         <import resource="classpath:/META-INF/converter.xml"/>
         <import resource="classpath:/META-INF/applicationContext.xml"/>
-
-        <bean id="restTemplate" class="org.springframework.web.client.RestTemplate">
-                <property name="messageConverters">
-                        <list>
-                                <bean  class="org.springframework.http.converter.xml.MarshallingHttpMessageConverter">
-                                        <constructor-arg ref="marshaller" />
-                                </bean>
-                                <!--<ref bean="converter"/>-->
-                        </list>
-                </property>
-        </bean>
 </beans>
