@@ -40,7 +40,7 @@ public class RESTClient implements VoldInterface
         {
                 baseURL = null;
 
-                context = new ClassPathXmlApplicationContext( "classpath:META-INF/server-context.xml" );
+                context = new ClassPathXmlApplicationContext( "classpath:META-INF/client-context.xml" );
                 rest = ( RestTemplate )context.getBean( "restTemplate", RestTemplate.class );
 
                 if( null == rest )
