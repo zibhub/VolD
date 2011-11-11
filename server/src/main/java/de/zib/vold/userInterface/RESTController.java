@@ -68,7 +68,7 @@ public class RESTController
         {
                 // guard
                 {
-                        log.debug( "POST: " + args.toString() );
+                        log.debug( "POST: " + args.toString() + " AND " + argsbody.toString() );
 
                         checkState();
                 }

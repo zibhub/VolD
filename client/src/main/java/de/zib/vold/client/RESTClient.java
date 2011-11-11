@@ -45,18 +45,18 @@ public class RESTClient implements VoldInterface
 
                 if( null == rest )
                 {
-                        throw new IllegalStateException( "Could not get bean rest out of server-context.xml!" );
+                        throw new IllegalStateException( "Could not get bean rest out of client-context.xml!" );
                 }
         }
 
         public RESTClient( String baseURL )
         {
-                context = new ClassPathXmlApplicationContext( "classpath:META-INF/server-context.xml" );
+                context = new ClassPathXmlApplicationContext( "classpath:META-INF/client-context.xml" );
                 rest = ( RestTemplate )context.getBean( "restTemplate", RestTemplate.class );
 
                 if( null == rest )
                 {
-                        throw new IllegalStateException( "Could not get bean rest out of server-context.xml!" );
+                        throw new IllegalStateException( "Could not get bean rest out of client-context.xml!" );
                 }
 
                 this.baseURL = baseURL;

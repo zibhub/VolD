@@ -164,7 +164,8 @@ public class URIKey
 
                 try
                 {
-                        source = URLDecoder.decode( source, enc );
+                        if( null != source )
+                                source = URLDecoder.decode( source, enc );
                         scope = URLDecoder.decode( scope, enc );
                         type = URLDecoder.decode( type, enc );
                         keyname = URLDecoder.decode( keyname, enc );
