@@ -21,7 +21,7 @@ public class Key {
                         }
                         catch( URISyntaxException e )
                         {
-                                throw new IllegalArgumentException( "Scope for a key must be a valid UNIX-Style path. " + e.getMessage() );
+                                throw new IllegalArgumentException( "Scope (\"" + scope + "\") for a key must be a valid UNIX-Style path. " + e.getMessage() );
                         }
 
                         scope = new String( uri.normalize().getPath() );
