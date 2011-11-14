@@ -169,7 +169,7 @@ public class BabuDirectory implements PartitionedDirectoryBackend
 			opened = true;
 		}
 
-                log.info( "FileSystemDirectory opened." );
+                log.info( "BabuDirectory opened." );
 	}
 
         @Override
@@ -200,7 +200,7 @@ public class BabuDirectory implements PartitionedDirectoryBackend
 		}
 
 		opened = false;
-                log.info( "FileSystemDirectory closed." );
+                log.info( "BabuDirectory closed." );
 	}
 
         @Override
