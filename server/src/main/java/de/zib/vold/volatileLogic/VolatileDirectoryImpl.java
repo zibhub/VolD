@@ -320,7 +320,7 @@ public class VolatileDirectoryImpl implements VolatileDirectory
         {
                 if( 1 != slice.size() )
                 {
-                        throw new IllegalArgumentException( "The parameter must be a list with one String!" );
+                        throw new IllegalArgumentException( "The parameter must be a list with one String! (" + slice.toString() + ")" );
                 }
 
                 return Long.parseLong( slice.get( 0 ) );

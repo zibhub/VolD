@@ -471,8 +471,10 @@ public class BabuDirectory implements PartitionedDirectoryBackend
          *
          * @throws VoldException
          **/
-        private byte[] _buildkey( List< String > list )
+        private byte[] _buildkey( List< String > l )
         {
+                List< String > list = new LinkedList< String >( l );
+
                 if( null == list )
                 {
                         throw new IllegalArgumentException( "Illegal argument null for " + this.getClass().getName() + "._buildkey( list ). " );
@@ -550,9 +552,9 @@ public class BabuDirectory implements PartitionedDirectoryBackend
 
                 int offset = 0;
 
-                for( int i = 0; i < _key.length; ++i )
+                for( int i = 0; i <= _key.length; ++i )
                 {
-                        if( 0 == _key[ i ] || i == _key.length-1 )
+                        if( i == _key.length || 0 == _key[ i ] )
                         {
                                 try
                                 {
@@ -564,7 +566,7 @@ public class BabuDirectory implements PartitionedDirectoryBackend
                                         throw new VoldException( e );
                                 }
 
-                                offset = ++i;
+                                offset = i+1;
                         }
                 }
 
