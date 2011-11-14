@@ -68,9 +68,13 @@ public class RESTController
                         @RequestBody MultiValueMap< String, String > argsbody,
                         HttpServletRequest request)
         {
+
                 // guard
                 {
-                        log.debug( "POST: " + args.toString() + " AND " + argsbody.toString() );
+                        if( argsbody != null )
+                                log.debug( "POST: " + args.toString() + " AND " + argsbody.toString() );
+                        else
+                                log.debug( "POST: " + args.toString() );
 
                         checkState();
                 }
@@ -116,8 +120,10 @@ public class RESTController
                                 {
                                         urikey = URIKey.fromURIString( entry.getKey(), enc );
 
+                                        File path_correction = new File( scope + "/" + urikey.getKey().get_scope() );
+
                                         k = new Key(
-                                                        scope + urikey.getKey().get_scope(),
+                                                        path_correction.getPath(),
                                                         urikey.getKey().get_type(),
                                                         urikey.getKey().get_keyname()
                                                         );
