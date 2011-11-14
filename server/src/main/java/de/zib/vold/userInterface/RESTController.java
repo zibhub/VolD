@@ -29,6 +29,8 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.io.File;
+
 @Controller
 @RequestMapping( "*" )
 public class RESTController
@@ -190,9 +192,12 @@ public class RESTController
                         // build key
                         {
                                 urikey = URIKey.fromURIString( entry.getKey(), enc );
+                                log.info( "AAAAAA: " + entry.getKey() );
+
+                                File path_correction = new File( scope + "/" + urikey.getKey().get_scope() );
 
                                 k = new Key(
-                                                scope + urikey.getKey().get_scope(),
+                                                path_correction.getPath(),
                                                 urikey.getKey().get_type(),
                                                 urikey.getKey().get_keyname()
                                                 );
