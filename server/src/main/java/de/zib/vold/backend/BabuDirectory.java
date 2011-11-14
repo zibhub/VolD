@@ -416,10 +416,10 @@ public class BabuDirectory implements PartitionedDirectoryBackend
         @Override
         public List< String > lookup( int partition, List< String > key )
 	{
-                log.trace( "Lookup: " + partition + ":'" + key.toString() + "'" );
-
                 // guard
                 {
+                        log.trace( "Lookup: " + partition + ":'" + key.toString() + "'" );
+
                         if( ! isopen() )
                         {
                                 throw new VoldException( "Tried to operate on closed database." );
@@ -434,8 +434,6 @@ public class BabuDirectory implements PartitionedDirectoryBackend
                                 throw new IllegalArgumentException( "null is no valid key!" );
                         }
                 }
-
-                log.trace( "Lookup: " + partition + ":'" + key.toString() + "'" );
 
                 byte[] _key = _buildkey( key );
 
