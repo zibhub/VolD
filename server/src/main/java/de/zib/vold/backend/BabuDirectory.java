@@ -315,10 +315,10 @@ public class BabuDirectory implements PartitionedDirectoryBackend
         @Override
         public Map< List< String >, List< String > > prefixlookup( int partition, List< String > key )
 	{
-                log.trace( "PrefixLookup: " + partition + ":'" + key.toString() + "'" );
-
                 // guard
                 {
+                        log.trace( "PrefixLookup: " + partition + ":'" + key.toString() + "'" );
+
                         if( ! isopen() )
                         {
                                 throw new VoldException( "Tried to operate on closed database." );
@@ -487,14 +487,36 @@ public class BabuDirectory implements PartitionedDirectoryBackend
                         }
                 }
 
+                if( 0 == size )
+                        return new byte[0];
+
+                size--; // remove the last '\0'
+
                 byte[] result = new byte[ size ];
 
                 // append all strings of list to byte array
                 {
                         int offset = 0;
+
+                        byte[] _s;
+
+                        try
+                        {
+                                _s = list.remove( 0 ).getBytes( enc );
+                        }
+                        catch( UnsupportedEncodingException e )
+                        {
+                                throw new VoldException( e );
+                        }
+
+                        byteCopy( _s, result, offset );
+
+                        offset += _s.length;
+
                         for( String s: list )
                         {
-                                byte[] _s;
+                                result[ offset ] = 0;
+                                offset++;
 
                                 try
                                 {
@@ -506,9 +528,8 @@ public class BabuDirectory implements PartitionedDirectoryBackend
                                 }
 
                                 byteCopy( _s, result, offset );
-                                result[ offset+s.length() ] = 0;
 
-                                offset += s.length()+1;
+                                offset += s.length();
                         }
                 }
 
