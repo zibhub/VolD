@@ -145,11 +145,12 @@ public class VolatileDirectoryImpl implements VolatileDirectory
 
                 // delete old "slice/key |--> date" entry
                 {
-                        long oldts = to_timeslice( oldtimeslice );
-
-                        if( oldts != newtimeslice && null != oldtimeslice )
+                        if( null != oldtimeslice )
                         {
-                                directory.delete( 2, get_timeslice_key( to_timeslice( oldtimeslice ), key ) );
+                                long oldts = to_timeslice( oldtimeslice );
+
+                                if( oldts != newtimeslice )
+                                        directory.delete( 2, get_timeslice_key( to_timeslice( oldtimeslice ), key ) );
                         }
                 }
 	}
