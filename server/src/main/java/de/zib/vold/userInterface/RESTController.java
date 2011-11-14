@@ -192,7 +192,6 @@ public class RESTController
                         // build key
                         {
                                 urikey = URIKey.fromURIString( entry.getKey(), enc );
-                                log.info( "AAAAAA: " + entry.getKey() );
 
                                 File path_correction = new File( scope + "/" + urikey.getKey().get_scope() );
 
