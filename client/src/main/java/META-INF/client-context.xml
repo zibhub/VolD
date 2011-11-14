@@ -9,10 +9,7 @@
         <bean id="restTemplate" class="org.springframework.web.client.RestTemplate">
                 <property name="messageConverters">
                         <list>
-                                <bean  class="org.springframework.http.converter.xml.MarshallingHttpMessageConverter">
-                                        <constructor-arg ref="marshaller" />
-                                </bean>
-                                <!--<ref bean="converter"/>-->
+                                <ref bean="converter"/>
                         </list>
                 </property>
         </bean>
