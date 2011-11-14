@@ -115,7 +115,7 @@ public class URIKey
 
                         if( -1 == slashindex )
                         {
-                                scope = new String();
+                                scope = "/";
                         }
                         else
                         {
