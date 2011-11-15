@@ -8,7 +8,7 @@
         http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-2.5.xsd
         http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context-2.5.xsd">
 
-        <import resource="classpath:/META-INF/server-context.xml"/>
+        <import resource="classpath:META-INF/server-context.xml"/>
 
         <!-- setup RESTController -->
         <bean id="restcontroller" class="de.zib.vold.userInterface.RESTController">
@@ -16,5 +16,21 @@
                         <ref bean="frontend" />
                 </property>
         </bean>
+
+    <!-- setup RESTController -->
+    <bean id="restslavecontroller" class="de.zib.vold.userInterface.RESTController">
+        <property name="frontend">
+            <ref bean="slavefrontend" />
+        </property>
+    </bean>
+
+    <bean class="org.springframework.web.servlet.handler.SimpleUrlHandlerMapping">
+        <property name="mappings">
+            <props>
+                <prop key="/slave/*">restslavecontroller</prop>
+                <prop key="/*">restcontroller</prop>
+            </props>
+        </property>
+    </bean>
 
 </beans>

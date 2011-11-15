@@ -74,9 +74,9 @@ define "vold" do
       package(:jar).include _('src/main/java/META-INF/*'), :path => 'META-INF/'
       package(:jar).include _('etc/*'), :path => ''
 
-      package(:war).with :manifest=>manifest.merge('Main-Class'=>mainClass)
+      #package(:war).with :manifest=>manifest.merge('Main-Class'=>mainClass)
       package(:war).include _('web/WEB-INF/*'), :path => 'WEB-INF/'
-      package(:war).include _('src/main/java/META-INF/*'), :path => 'META-INF/'
+      #package(:war).include _('src/main/java/META-INF/*'), :path => 'META-INF/'
       package(:war).include _('src/main/java/META-INF/*'), :path => 'WEB-INF/classes/META-INF/'
       package(:war).include _('etc/*'), :path => 'WEB-INF/classes/'
 
