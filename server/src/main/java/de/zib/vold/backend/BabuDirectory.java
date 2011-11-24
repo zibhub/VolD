@@ -26,11 +26,19 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
- * Implementation of a SimpleDirectory based on BabuDB.
+ * Implementation of PartitionedDirectoryBackend based on BabuDB.
  * 
+ * Since this class implements a PartitionedDirectory and BabuDB only knows
+ * about byte arrays, the directories need to be transformed. This is done
+ * by joining the directory structere with a null byte as delimiter.
+ * The same will be done for the values of a key (i.e. of a directory). All
+ * values of a set are joined into one byte array using a null byte as
+ * delimiter.
+ *
+ * @see PartitionedDirectoryBackend
  * @see org.xtreemfs.babudb
  * 
- * @author			Jörg Bachmann
+ * @author Jörg Bachmann (bachmann@zib.de)
  */
 public class BabuDirectory implements PartitionedDirectoryBackend
 {
@@ -45,6 +53,18 @@ public class BabuDirectory implements PartitionedDirectoryBackend
 
         protected final Logger log = LoggerFactory.getLogger( this.getClass() );
 
+        /**
+         * Construct a BabuDirectory with all necessary informations.
+         *
+         * @note                This constructor will not open the interface. This still has to be done
+         *                      using the open method.
+         *
+         * @param basedir       The directory, where the BabuDB is stored.
+         * @param logdir        The directory, where all logfiles of BabuDB are stored.
+         * @param sync          The sync method used in BabuDB.
+         *                      Usual values are ASYNC and FSYNC.
+         * @param encoding      The encoding which will be used.
+         */
 	public BabuDirectory( String basedir, String logdir, String sync, String databasename, String encoding )
 	{
 		props = new java.util.Properties();
@@ -59,6 +79,9 @@ public class BabuDirectory implements PartitionedDirectoryBackend
 		enc = encoding;
 	}
 
+        /**
+         * Construct a BabuDirectory without initialization.
+         */
         public BabuDirectory( )
         {
                 props = new java.util.Properties();
@@ -69,41 +92,113 @@ public class BabuDirectory implements PartitionedDirectoryBackend
                 enc = "utf-8";
         }
 
+        /**
+         * Set a BabuDirectory property.
+         *
+         * @note                If the babudirectoy is already opened, the
+         *                      properties will only take effect on restart
+         *                      (close and immediate open).
+         *
+         * @param key           The property to set.
+         * @param value         The value for the property.
+         */
 	public void setProperty( String key, String value )
 	{
 		props.setProperty( key, value );
 	}
 
+        /**
+         * Get a BabuDirectory property.
+         *
+         * @param key           The property to query
+         */
 	public String getProperty( String key )
 	{
 		return props.getProperty( key );
 	}
 
+        /**
+         * Set the base directory BabuDB should use.
+         *
+         * @note                This is an essential property.
+         *
+         * @param dir           The base directory for BabuDB.
+         */
         public void setDir( String dir )
         {
                 setProperty( "babudb.baseDir", dir );
         }
 
+        /**
+         * Set the log directory BabuDB should use.
+         *
+         * @note                This is an essential property.
+         *
+         * @param dir           The log directroy for BabuDB.
+         */
         public void setLogDir( String logDir )
         {
                 setProperty( "babudb.logDir", logDir );
         }
 
+        /**
+         * Set the sync method BabuDB should use.
+         *
+         * Possible values are ASYNC, FDATASYNC, FSYNC, SYNC_WRITE and SYNC_WRITE_METADATA.
+         *
+         * - ASYNC: asynchronously write log entries (data is lost when system crashes).
+         * - FDATASYNC: TODO: not documented in BabuDB
+         * - FSYNC: executes an fsync on the logfile before acknowledging the operation.
+         * - SYNC_WRITE: synchronously writes the log entry to disk before ack.
+         * - SYNC_WRITE_METADATA: synchronously writes the log entry to disk and updates the metadata before ack.
+         *
+         * @note                This is an essential property.
+         *
+         * @param dir           The sync method for BabuDB.
+         */
         public void setSync( String sync )
         {
                 setProperty( "babudb.sync", sync );
         }
 
+        /**
+         * Set the database name for BabuDB.
+         *
+         * Since BabuDB is capable of storing different databases, a database
+         * name need to be given. When sharing the BabuDB instance (base
+         * directory and log directory) with other processes, database names
+         * should be unique.
+         *
+         * @note                This is an essential property.
+         *
+         * @param dir           The database name for the BabuDB internal database.
+         */
         public void setDatabaseName( String databasename )
         {
                 this.dbname = databasename;
         }
 
+        /**
+         * Set the encoding BabuDB should use.
+         *
+         * Nowadays, "utf-8" is a common setting.
+         *
+         * @note                This is an essential property.
+         *
+         * @param dir           The encoding for BabuDB.
+         */
         public void setEnc( String enc )
         {
                 this.enc = enc;
         }
 
+        /**
+         * Open the database.
+         *
+         * @note                The annotation PostConstruct is used by the
+         *                      spring framework to call this method right
+         *                      after all properties have been set.
+         */
         @Override
         @PostConstruct
 	public void open( )
@@ -172,6 +267,13 @@ public class BabuDirectory implements PartitionedDirectoryBackend
                 log.info( "BabuDirectory opened." );
 	}
 
+        /**
+         * Close the database.
+         *
+         * @note                The annotation PreDestroy is used by the
+         *                      spring framework to call this method right
+         *                      before it will be destroyed.
+         */
         @Override
         @PreDestroy
 	public void close( )
@@ -203,6 +305,11 @@ public class BabuDirectory implements PartitionedDirectoryBackend
                 log.info( "BabuDirectory closed." );
 	}
 
+        /**
+         * Query the state of the database.
+         *
+         * @return true iff the database is open.
+         */
         @Override
 	public boolean isopen( )
 	{
@@ -210,9 +317,13 @@ public class BabuDirectory implements PartitionedDirectoryBackend
 	}
 
 	/**
-	 * Insert the key-value pair in the given table.
+	 * Insert a key with its set of values into a partition.
 	 * 
-	 * The insert will be performed synchronously.
+         * @note                Already existing keys will be overwritten.
+         *
+         * @param partition     The partition to store the key in.
+         * @param key           The key to store.
+         * @param param         The values to store.
          *
          * @throws VoldException
 	 */
@@ -248,32 +359,11 @@ public class BabuDirectory implements PartitionedDirectoryBackend
 	}
 
 	/**
-	 * Insert the key-value pair in the given table.
+	 * Delete the key and its values from a partition.
+         *
+         * @param partition             The partition to delete the key from.
+         * @param key                   The key to delete.
 	 * 
-	 * The insert will be performed synchronously.
-	 */
-	private void insert( int partition, byte[] key, byte[] value )
-	{
-                // guard
-                {
-                        if( partition < 0 )
-                        {
-                                throw new IllegalArgumentException( "BabuDirectory only has nonnegative partitions, thus " + partition + " is an illegal argument." );
-                        }
-                        if( null == key )
-                        {
-                                throw new IllegalArgumentException( "null is no valid key!" );
-                        }
-                }
-
-		db.singleInsert( partition, key, value, null );
-	}
-
-	/**
-	 * Delete the key and its value from the given table.
-	 * 
-	 * The insert will be performed synchronously.
-         * 
          * @throws VoldException
 	 */
         @Override
@@ -302,22 +392,24 @@ public class BabuDirectory implements PartitionedDirectoryBackend
 
                 _key = _buildkey( key );
 
-                db.singleInsert( partition, _key, null, null );
+                insert( partition, _key, null );
 	}
 
 	/**
-	 * Query the values for keys with the given prefix in the given table.
+	 * Query the entries with all keys beginning with a prefix.
 	 * 
-	 * The query will be performed synchronously.
+         * @param partition             The partition to search in.
+         * @param prefix                The prefix of the keys to search for.
+         * @return                      A map storing all results (mapping from a key to the set of values).
          *
          * @throws VoldException
 	 */
         @Override
-        public Map< List< String >, List< String > > prefixlookup( int partition, List< String > key )
+        public Map< List< String >, List< String > > prefixlookup( int partition, List< String > prefix )
 	{
                 // guard
                 {
-                        log.trace( "PrefixLookup: " + partition + ":'" + key.toString() + "'" );
+                        log.trace( "PrefixLookup: " + partition + ":'" + prefix.toString() + "'" );
 
                         if( ! isopen() )
                         {
@@ -336,11 +428,11 @@ public class BabuDirectory implements PartitionedDirectoryBackend
 
                 Map< List< String >, List< String > > map = new HashMap< List< String >, List< String > >();
 
-                byte[] _key;
-                _key = _buildkey( key );
+                byte[] _prefix;
+                _prefix = _buildkey( prefix );
 
                 Map< byte[], byte[] > _map;
-                _map = prefixlookup( partition, _key );
+                _map = prefixlookup( partition, _prefix );
 
                 // transform results from BabuDB
 		{
@@ -348,7 +440,7 @@ public class BabuDirectory implements PartitionedDirectoryBackend
                         {
                                 if( null == entry.getKey() || null == entry.getValue() )
                                 {
-                                        throw new VoldException( "Internal error: got null key or value from BabuDB." );
+                                        throw new VoldException( "Internal error: got null prefix or value from BabuDB." );
                                 }
                                 map.put( buildkey( entry.getKey() ), buildkey( entry.getValue() ) );
                         }
@@ -358,9 +450,38 @@ public class BabuDirectory implements PartitionedDirectoryBackend
 	}
 
 	/**
-	 * Query the values for keys with the given prefix in the given table.
+	 * Insert the key-value pair in a partition.
+         *
+         * @param partition             The partition to store the pair in.
+         * @param key                   The key to store.
+         * @param value                 The value to store.
+	 */
+	private void insert( int partition, byte[] key, byte[] value )
+	{
+                // guard
+                {
+                        if( partition < 0 )
+                        {
+                                throw new IllegalArgumentException( "BabuDirectory only has nonnegative partitions, thus " + partition + " is an illegal argument." );
+                        }
+                        if( null == key )
+                        {
+                                throw new IllegalArgumentException( "null is no valid key!" );
+                        }
+                }
+
+		db.singleInsert( partition, key, value, null );
+	}
+
+	/**
+	 * Query the values for all keys beginning with a prefix in a partition.
 	 * 
 	 * The query will be performed synchronously.
+         *
+         * @param partition             The partition to search in.
+         * @param key                   The prefix of the keys to search for.
+         * @return                      All found results, i.e. a map from all
+         *                              found keys to its values.
          *
          * @throws VoldException
 	 */
@@ -407,9 +528,13 @@ public class BabuDirectory implements PartitionedDirectoryBackend
 	}
 
 	/**
-	 * Query the value for a key in the given table.
-	 * 
+	 * Query the values for a key in a partition.
+         *
 	 * The query will be performed synchronously.
+         *
+         * @param partition             The partition to search in.
+         * @param key                   The key to search for.
+         * @return                      The set of values for that key.
          *
          * @throws VoldException
 	 */
@@ -445,6 +570,10 @@ public class BabuDirectory implements PartitionedDirectoryBackend
 	 * 
 	 * The query will be performed synchronously.
          *
+         * @param partition             The partition to search in.
+         * @param key                   The key to search for.
+         * @return                      null if the key was not found and otherwise the value.
+         *
          * @throws VoldException
 	 */
 	private byte[] lookup( int partition, byte[] key )
@@ -467,7 +596,10 @@ public class BabuDirectory implements PartitionedDirectoryBackend
 	}
 
         /**
-         * Convert interface type of key to backend type of key.
+         * Convert a directory (interface language) to a byte array (backend language).
+         *
+         * @param l             The directory to transform to lower level.
+         * @return              The byte array which can be used in BabuDB.
          *
          * @throws VoldException
          **/
@@ -511,7 +643,7 @@ public class BabuDirectory implements PartitionedDirectoryBackend
                                 throw new VoldException( e );
                         }
 
-                        byteCopy( _s, result, offset );
+                        byteCopy( result, _s, offset );
 
                         offset += _s.length;
 
@@ -529,7 +661,7 @@ public class BabuDirectory implements PartitionedDirectoryBackend
                                         throw new VoldException( e );
                                 }
 
-                                byteCopy( _s, result, offset );
+                                byteCopy( result, _s, offset );
 
                                 offset += s.length();
                         }
@@ -539,7 +671,10 @@ public class BabuDirectory implements PartitionedDirectoryBackend
         }
 
         /**
-         * Convert backend type of key to interface type of key.
+         * Convert a byte array (backend language) to a directory (interface language).
+         *
+         * @param _key          The key to transform to higher level.
+         * @return              The directory.
          *
          * @throws VoldException
          **/
@@ -578,7 +713,7 @@ public class BabuDirectory implements PartitionedDirectoryBackend
          *
          * @throws IllegalArgumentException
          **/
-        private void byteCopy( byte[] src, byte[] dest, int offset )
+        private void byteCopy( byte[] dest, byte[] src, int offset )
         {
                 if( offset < 0 || dest.length-offset < src.length )
                 {

@@ -3,6 +3,11 @@ package de.zib.vold.backend;
 
 import de.zib.vold.common.VoldException;
 
+/**
+ * The Exception which will be thrown on actions which are not supported.
+ * 
+ * @see WriteLogger
+ */
 public class NotSupportedException extends VoldException
 {
         public NotSupportedException( )

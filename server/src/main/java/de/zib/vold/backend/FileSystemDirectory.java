@@ -22,6 +22,19 @@ import javax.annotation.PreDestroy;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+/**
+ * Implementation of PartitionedDirectoryBackend based on a file system structure.
+ *
+ * Here, a key will be a subdirectory and the values will be its files. To avoid
+ * name clashing of keys and files, a plus ('+') will be prepended to keys
+ * (i.e. to directory names) and a minus ('-') will be prepended to files (i.e.
+ * to values). Different partitions will be represented by different directories
+ * in the root.
+ *
+ * @see PartitionedDirectoryBackend
+ *
+ * @author Jörg Bachmann (bachmann@zib.de)
+ */
 public class FileSystemDirectory implements PartitionedDirectoryBackend
 {
         private File root;
@@ -30,12 +43,15 @@ public class FileSystemDirectory implements PartitionedDirectoryBackend
 
         private String enc = "utf-8";
 
-        public FileSystemDirectory( )
-        {
-                this.rootPath = null;
-                this.root = null;
-        }
-
+        /**
+         * Construct a FileSystemDirectory with all necessary informations.
+         *
+         * @note                This constructor will not open the interface. This still has to be done
+         *                      using the open method.
+         *
+         * @param root          The root directory where to store the database.
+         * @param encoding      The encoding which will be used.
+         */
         public FileSystemDirectory( String path, String enc )
         {
                 this.rootPath = path;
@@ -43,6 +59,22 @@ public class FileSystemDirectory implements PartitionedDirectoryBackend
                 this.enc = enc;
         }
 
+        /**
+         * Construct a FileSystemDirectory without initialization.
+         */
+        public FileSystemDirectory( )
+        {
+                this.rootPath = null;
+                this.root = null;
+        }
+
+        /**
+         * Set the root directory where to store the database.
+         *
+         * @note                Setting the root path while the database is open
+         *                      will result in closing it. It has to be opened
+         *                      again to use it afterwards.
+         */
         public void setRootPath( String rootPath )
         {
                 if( isopen() )
@@ -54,6 +86,13 @@ public class FileSystemDirectory implements PartitionedDirectoryBackend
                 this.rootPath = rootPath;
         }
 
+        /**
+         * Set the encoding.
+         *
+         * @note                Setting the encoding while the database is open
+         *                      will result in closing it. It has to be opened
+         *                      again to use it afterwards.
+         */
         public void setEnc( String enc )
         {
                 if( isopen() )
@@ -66,7 +105,10 @@ public class FileSystemDirectory implements PartitionedDirectoryBackend
         
         }
 
-        private void checkState( )
+        /**
+         * Internal method which acts as part of the guard of all public methods.
+         */
+        public void checkState( )
         {
                 if( null == rootPath )
                 {
@@ -74,6 +116,13 @@ public class FileSystemDirectory implements PartitionedDirectoryBackend
                 }
         }
 
+        /**
+         * Open the database.
+         *
+         * @note                The annotation PostConstruct is used by the
+         *                      spring framework to call this method right
+         *                      after all properties have been set.
+         */
         @Override
         @PostConstruct
         public void open( )
@@ -108,6 +157,13 @@ public class FileSystemDirectory implements PartitionedDirectoryBackend
                 log.info( "Backend opened." );
         }
 
+        /**
+         * Close the database.
+         *
+         * @note                The annotation PreDestroy is used by the
+         *                      spring framework to call this method right
+         *                      before it will be destroyed.
+         */
         @Override
         @PreDestroy
         public void close( )
@@ -123,6 +179,11 @@ public class FileSystemDirectory implements PartitionedDirectoryBackend
                 log.info( "Backend closed." );
         }
 
+        /**
+         * Query the state of the database.
+         *
+         * @return true iff the database is open.
+         */
         @Override
         public boolean isopen( )
         {
@@ -132,6 +193,20 @@ public class FileSystemDirectory implements PartitionedDirectoryBackend
                         return true;
         }
 
+	/**
+	 * Insert a key with its set of values into a partition.
+	 * 
+         * @note                Already existing keys will be overwritten. This
+         *                      means especially, that all files in that
+         *                      directory will be deleted, before the new files
+         *                      will be created. Hence, no old values remain.
+         *
+         * @param partition     The partition to store the key in.
+         * @param key           The key to store.
+         * @param param         The values to store.
+         *
+         * @throws VoldException
+	 */
         @Override
         public void insert( int partition, List< String > key, List< String > value )
         {
@@ -196,6 +271,14 @@ public class FileSystemDirectory implements PartitionedDirectoryBackend
                 }
         }
 
+	/**
+	 * Delete the key and its values from a partition.
+         *
+         * @param partition             The partition to delete the key from.
+         * @param key                   The key to delete.
+	 * 
+         * @throws VoldException
+	 */
         @Override
         public void delete( int partition, List< String > key )
         {
@@ -248,6 +331,15 @@ public class FileSystemDirectory implements PartitionedDirectoryBackend
                 }
         }
 
+	/**
+	 * Query the values for a key in a partition (root subdirectory).
+         *
+         * @param partition             The partition to search in.
+         * @param key                   The key to search for.
+         * @return                      The set of values for that key.
+         *
+         * @throws VoldException
+	 */
         @Override
         public List< String > lookup( int partition, List< String > key )
         {
@@ -299,6 +391,15 @@ public class FileSystemDirectory implements PartitionedDirectoryBackend
                 return result;
         }
 
+	/**
+	 * Query the entries with all keys beginning with a prefix.
+	 * 
+         * @param partition             The partition to search in.
+         * @param prefix                The prefix of the keys to search for.
+         * @return                      A map storing all results (mapping from a key to the set of values).
+         *
+         * @throws VoldException
+	 */
         @Override
         public Map< List< String >, List< String > > prefixlookup( int partition, List< String > key )
         {
@@ -361,6 +462,9 @@ public class FileSystemDirectory implements PartitionedDirectoryBackend
                 return result;
         }
 
+        /**
+         * Recursively add all keys with its values to the map.
+         */
         private void recursive_add( List< String > key, String dir, Map< List< String >, List< String > > map )
         {
                 File _dir = new File( dir );
@@ -400,6 +504,9 @@ public class FileSystemDirectory implements PartitionedDirectoryBackend
                 }
         }
 
+        /**
+         * Add a key with its values to the map.
+         */
         private void file_add( List< String > key, String value, Map< List< String >, List< String > > map )
         {
                 if( map.containsKey( key ) )
@@ -415,6 +522,9 @@ public class FileSystemDirectory implements PartitionedDirectoryBackend
                 }
         }
 
+        /**
+         * Convert the key to a path.
+         */
         private String _buildpath( List< String > dir )
         {
                 String path = new String( rootPath );
@@ -427,6 +537,9 @@ public class FileSystemDirectory implements PartitionedDirectoryBackend
                 return path;
         }
 
+        /**
+         * Prepend the partition to a key.
+         */
         private List< String > _get_partition_dir( int partition, List< String > dir )
         {
                 List< String > l = new LinkedList< String >( );
@@ -448,6 +561,9 @@ public class FileSystemDirectory implements PartitionedDirectoryBackend
                 return l;
         }
 
+        /**
+         * Convert the value to a filename.
+         */
         private String _buildfile( String dir )
         {
                 try
@@ -460,6 +576,9 @@ public class FileSystemDirectory implements PartitionedDirectoryBackend
                 }
         }
 
+        /**
+         * Convert the filename to a value.
+         */
         private String buildfile( String dir )
         {
                 try
@@ -473,6 +592,9 @@ public class FileSystemDirectory implements PartitionedDirectoryBackend
                 }
         }
 
+        /**
+         * Convert to key (only one part of it) to a directory name.
+         */
         private String _builddir( String dir )
         {
                 try
@@ -485,6 +607,9 @@ public class FileSystemDirectory implements PartitionedDirectoryBackend
                 }
         }
 
+        /**
+         * Convert the directory name to a part of key.
+         */
         private String builddir( String dir )
         {
                 try
@@ -498,6 +623,12 @@ public class FileSystemDirectory implements PartitionedDirectoryBackend
                 }
         }
 
+        /**
+         * The prefix filter helps filtering files with a certain prefix.
+         *
+         * @TODO                This could be an anonymous class, since it is
+         *                      only used once.
+         */
         private class PrefixFilter implements FileFilter
         {
                 private final String prefix;

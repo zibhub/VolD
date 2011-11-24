@@ -16,6 +16,15 @@ import javax.annotation.PreDestroy;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+/**
+ * Incomplete implementation of PartitionedDirectoryBackend which serves as logfile.
+ * 
+ * This backend simply log all write requests on the database to a single logfile.
+ *
+ * @see PartitionedDirectoryBackend
+ * 
+ * @author Jörg Bachmann (bachmann@zib.de)
+ */
 public class WriteLogger implements PartitionedDirectoryBackend
 {
         protected final Logger log = LoggerFactory.getLogger( this.getClass() );
@@ -24,6 +33,14 @@ public class WriteLogger implements PartitionedDirectoryBackend
         private FileWriter logfile;
         private BufferedWriter out;
 
+        /**
+         * Construct a WriteLogger with all necessary informations.
+         *
+         * @note                This constructor will not open the interface. This still has to be done
+         *                      using the open method.
+         *
+         * @param logfilename   The path to the logfile.
+         */
         public WriteLogger( String logfilename )
         {
                 this.logfilename = logfilename;
@@ -32,6 +49,9 @@ public class WriteLogger implements PartitionedDirectoryBackend
                 this.out = null;
         }
 
+        /**
+         * Construct a BabuDirectory without initialization.
+         */
         public WriteLogger( )
         {
                 this.logfilename = null;
@@ -40,6 +60,15 @@ public class WriteLogger implements PartitionedDirectoryBackend
                 this.out = null;
         }
 
+        /**
+         * Set the path to the logfile.
+         *
+         * @note                If the writelogger is already opened, the
+         *                      properties will only take effect on restart
+         *                      (close and immediate open).
+         *
+         * @param logfilename   The path to the logfile.
+         */
         public void setLogfile( String logfilename )
         {
                 // guard
@@ -53,6 +82,9 @@ public class WriteLogger implements PartitionedDirectoryBackend
                 this.logfilename = logfilename;
         }
 
+        /**
+         * Internal method which acts as part of the guard of all public methods.
+         */
         public void checkState( )
         {
                 if( null == this.logfilename )
@@ -61,6 +93,13 @@ public class WriteLogger implements PartitionedDirectoryBackend
                 }
         }
 
+        /**
+         * Open the database.
+         *
+         * @note                The annotation PostConstruct is used by the
+         *                      spring framework to call this method right
+         *                      after all properties have been set.
+         */
         @Override
         @PostConstruct
         public void open( )
@@ -91,6 +130,13 @@ public class WriteLogger implements PartitionedDirectoryBackend
                 log.info( "Backend opened." );
         }
 
+        /**
+         * Close the database.
+         *
+         * @note                The annotation PreDestroy is used by the
+         *                      spring framework to call this method right
+         *                      before it will be destroyed.
+         */
         @Override
         @PreDestroy
         public void close( )
@@ -127,12 +173,26 @@ public class WriteLogger implements PartitionedDirectoryBackend
                 log.info( "Backend closed." );
         }
 
+        /**
+         * Query the state of the database.
+         *
+         * @return true iff the logfile is set and open.
+         */
         @Override
         public boolean isopen( )
         {
                 return logfile != null && out != null;
         }
 
+	/**
+         * Log the request for an insert.
+	 * 
+         * @param partition     The partition to store the key in.
+         * @param key           The key to store.
+         * @param param         The values to store.
+         *
+         * @throws VoldException
+	 */
         @Override
         public void insert( int partition, List< String > key, List< String > value )
         {
@@ -159,6 +219,14 @@ public class WriteLogger implements PartitionedDirectoryBackend
                 }
         }
 
+	/**
+	 * Log a request for a delete.
+         *
+         * @param partition             The partition to delete the key from.
+         * @param key                   The key to delete.
+	 * 
+         * @throws VoldException
+	 */
         @Override
         public void delete( int partition, List< String > key )
         {
@@ -185,6 +253,9 @@ public class WriteLogger implements PartitionedDirectoryBackend
                 }
         }
 
+        /**
+         * Not implemented.
+         */
         @Override
         public List< String > lookup( int partition, List< String > key )
         {
@@ -196,6 +267,9 @@ public class WriteLogger implements PartitionedDirectoryBackend
                 throw new NotSupportedException( "WriteLogger does not have the ability to lookup. It's a write-only backend!" );
         }
 
+        /**
+         * Not implemented.
+         */
         @Override
         public Map< List< String >, List< String > > prefixlookup( int partition, List< String > key )
         {
