@@ -14,12 +14,6 @@
         <!-- *************************************************************** -->
         <!-- ** SETUP BACKENDS                                               -->
 
-        <!-- setup FileSystemDirectory backend -->
-        <bean id="backend1" class="de.zib.vold.backend.FileSystemDirectory">
-                <property name="rootPath" value="/tmp/fs" />
-                <property name="enc" value="utf-8" />
-        </bean>
-
         <!-- setup BabuDirectory backend -->
         <bean id="backend2" class="de.zib.vold.backend.BabuDirectory">
                 <property name="dir" value="/tmp/babu/" />
@@ -27,11 +21,6 @@
                 <property name="sync" value="ASYNC" />
                 <property name="databaseName" value="testvold" />
                 <property name="enc" value="utf-8" />
-        </bean>
-
-        <!-- setup WriteLogger backend -->
-        <bean id="backend3" class="de.zib.vold.backend.WriteLogger">
-                <property name="logfile" value="/tmp/vold-write.log" />
         </bean>
 
         <!-- *************************************************************** -->
@@ -43,44 +32,14 @@
                 <property name="numberOfSlices" value="2" />
         </bean>
 
-        <!-- setup VolatileDirectory for backend1 -->
-        <bean id="voldi1" class="de.zib.vold.volatileLogic.VolatileDirectoryImpl">
-                <property name="backend" ref="backend1" />
-                <property name="timeslice" ref="timeslice" />
-        </bean>
-
         <!-- setup VolatileDirectory for backend2 -->
         <bean id="voldi2" class="de.zib.vold.volatileLogic.VolatileDirectoryImpl">
                 <property name="backend" ref="backend2" />
                 <property name="timeslice" ref="timeslice" />
         </bean>
 
-        <!-- setup VolatileDirectory for backend3 -->
-        <bean id="voldi3" class="de.zib.vold.volatileLogic.VolatileDirectoryImpl">
-                <property name="backend" ref="backend3" />
-                <property name="timeslice" ref="timeslice" />
-        </bean>
-
         <!-- *************************************************************** -->
         <!-- ** SETUP REPLICATION TREE                                       -->
-
-        <bean id="replicationwrapper1" class="de.zib.vold.replication.LocalReplicator">
-                <property name="replica" ref="voldi2" />
-        </bean>
-
-        <bean id="replicationwrapper2" class="de.zib.vold.replication.LocalReplicator">
-                <property name="replica" ref="voldi3" />
-        </bean>
-
-        <bean id="replication1" class="de.zib.vold.volatileLogic.ReplicatedVolatileDirectory">
-                <property name="directory" ref="replication2" />
-                <property name="replicator" ref="replicationwrapper1" />
-        </bean>
-
-        <bean id="replication2" class="de.zib.vold.volatileLogic.ReplicatedVolatileDirectory">
-                <property name="directory" ref="voldi1" />
-                <property name="replicator" ref="replicationwrapper2" />
-        </bean>
 
         <!-- *************************************************************** -->
         <!-- ** SETUP FRONTEND                                               -->
@@ -93,8 +52,12 @@
         </bean>
         -->
 
-        <!-- setup the frontend -->
-        <bean id="frontend" class="de.zib.vold.frontend.Frontend">
-                <property name="volatileDirectory" ref="replication2" />
+        <!-- setup the frontends for master and slave (replication) -->
+        <bean id="masterfrontend" class="de.zib.vold.frontend.Frontend">
+                <property name="volatileDirectory" ref="voldi2" />
+        </bean>
+
+        <bean id="slavefrontend" class="de.zib.vold.frontend.Frontend">
+                <property name="volatileDirectory" ref="voldi2" />
         </bean>
 </beans>

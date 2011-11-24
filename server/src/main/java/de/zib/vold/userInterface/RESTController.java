@@ -144,11 +144,11 @@ public class RESTController
                                         {
                                                 if( urikey.isDelete() )
                                                 {
-                                                        // TODO
+                                                        frontend.delete( source, k );
                                                 }
                                                 else if( urikey.isRefresh() )
                                                 {
-                                                        // TODO
+                                                        frontend.refresh( source, k );
                                                 }
                                                 else
                                                 {

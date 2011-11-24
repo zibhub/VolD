@@ -6,10 +6,14 @@ import de.zib.vold.common.Key;
 
 import java.util.List;
 import java.util.Set;
+import java.util.HashSet;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+/**
+ *
+ */
 public class RESTVoldReplicator implements Replicator
 {
         protected final Logger log = LoggerFactory.getLogger( this.getClass() );
@@ -55,6 +59,32 @@ public class RESTVoldReplicator implements Replicator
                 }
 
                 rest.insert( key.get( 3 ), k, value );
+        }
+
+        public void refresh( List< String > key )
+        {
+                // guard
+                {
+                        if( 4 != key.size() )
+                        {
+                                throw new IllegalArgumentException( "key does not seem to come from Frontend." );
+                        }
+
+                        log.trace( "Refresh: " + key.toString() );
+
+                        checkState();
+                }
+
+                // build key
+                Key k;
+                {
+                        k = Key.buildkey( key );
+                }
+
+                Set< Key > keys = new HashSet< Key >();
+                keys.add( k );
+
+                rest.refresh( key.get( 3 ), keys );
         }
 
         public void delete( List< String > key )

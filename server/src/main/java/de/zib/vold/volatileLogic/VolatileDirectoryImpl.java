@@ -156,6 +156,61 @@ public class VolatileDirectoryImpl implements VolatileDirectory
 	}
 
         @Override
+        public void refresh( List< String > key )
+        {
+                // guard
+                {
+                        log.trace( "Refresh: " + key.toString() );
+
+                        checkState();
+
+                        if( null == key )
+                        {
+                                throw new IllegalArgumentException( "SimpleDirectory.delete excepts key to be not null!" );
+                        }
+                }
+
+                List< String > oldtimeslice;
+                try
+                {
+                        oldtimeslice = directory.lookup( 1, key );
+                }
+                // insert "key |--> value" entry only, if backend is write only
+                catch( NotSupportedException e )
+                {
+                        log.debug( "Backend is write-only. Performing pure insert..." );
+
+                        directory.insert( 0, key, new LinkedList< String >( ) );
+                        return;
+                }
+		
+		long newtimeslice = timeslice.getActualSlice();
+
+                // insert new "slice/key |--> date" entry
+                {
+                        List< String > timeslicekey = get_timeslice_key( newtimeslice, key );
+
+                        directory.insert( 2, timeslicekey, to_date( DateTime.now() ) );
+                }
+
+                // insert "key |--> timeslice" entry
+                {
+                        directory.insert( 1, key, to_value( newtimeslice ) );
+                }
+
+                // delete old "slice/key |--> date" entry
+                {
+                        if( null != oldtimeslice )
+                        {
+                                long oldts = to_timeslice( oldtimeslice );
+
+                                if( oldts != newtimeslice )
+                                        directory.delete( 2, get_timeslice_key( to_timeslice( oldtimeslice ), key ) );
+                        }
+                }
+        }
+
+        @Override
         public void delete( List< String > key )
         {
                 // guard

@@ -122,6 +122,54 @@ public class Frontend
                 }
 	}
 
+        public void refresh( String source, Key key )
+        {
+                // guard
+                {
+                        log.trace( "Refresh: from source " + source + ": " + key._buildkey().toString()  );
+
+                        checkState();
+                }
+
+                try
+                {
+                        rwlock.writeLock().lock();
+                        
+                        List< String > _key = key._buildkey();
+                        _key.add( source );
+
+                        volatileDirectory.refresh( _key );
+                }
+                finally
+                {
+                        rwlock.writeLock().unlock();
+                }
+        }
+
+        public void delete( String source, Key key )
+        {
+                // guard
+                {
+                        log.trace( "Delete: from source " + source + ": " + key._buildkey().toString() );
+
+                        checkState();
+                }
+
+                try
+                {
+                        rwlock.writeLock().lock();
+                        
+                        List< String > _key = key._buildkey();
+                        _key.add( source );
+
+                        volatileDirectory.delete( _key );
+                }
+                finally
+                {
+                        rwlock.writeLock().unlock();
+                }
+        }
+
         /**
          * @short               Lookup the specified key.
          *

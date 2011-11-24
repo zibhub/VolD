@@ -113,6 +113,35 @@ public class ReplicatedVolatileDirectory implements VolatileDirectory
 	}
 
         @Override
+        public void refresh( List< String > key )
+        {
+                // guard
+                {
+                        checkState();
+                }
+
+                log.debug( "Replicating refresh: " + key.toString() );
+
+                RefreshThread freshen = new RefreshThread( backend, key );
+                
+                try
+                {
+                        freshen.start();
+
+                        replicator.refresh( key );
+                        
+                        freshen.join();
+                }
+                catch( InterruptedException e )
+                {
+                        throw new VoldException( e );
+                }
+
+                if( null != freshen.exception )
+                        throw freshen.exception;
+        }
+
+        @Override
         public void delete( List< String > key )
         {
                 // guard
@@ -161,6 +190,32 @@ public class ReplicatedVolatileDirectory implements VolatileDirectory
                         try
                         {
                                 directory.insert( key, values );
+                        }
+                        catch( VoldException e )
+                        {
+                                this.exception = e;
+                        }
+                }
+        }
+
+        private class RefreshThread extends Thread
+        {
+                private final VolatileDirectory directory;
+                private final List< String > key;
+                public VoldException exception = null;
+
+                public RefreshThread( VolatileDirectory directory, List< String > key )
+                {
+                        this.directory = directory;
+                        this.key = key;
+                }
+
+                @Override
+                public void run()
+                {
+                        try
+                        {
+                                directory.refresh( key );
                         }
                         catch( VoldException e )
                         {

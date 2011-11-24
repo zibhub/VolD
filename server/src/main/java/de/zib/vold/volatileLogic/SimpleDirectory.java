@@ -8,6 +8,7 @@ import java.util.Map;
 public interface SimpleDirectory
 {
         void insert( List< String > key, Set< String > value );
+        void refresh( List< String > key );
         void delete( List< String > key );
 
         Set< String > lookup( List< String > key );

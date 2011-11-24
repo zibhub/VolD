@@ -51,6 +51,19 @@ public class LocalReplicator implements Replicator
         }
 
         @Override
+        public void refresh( List< String > key )
+        {
+                // guard
+                {
+                        log.trace( "Refresh on replica " + replica.getClass().getName() + ": " + key.toString() );
+
+                        checkState();
+                }
+
+                replica.refresh( key );
+        }
+
+        @Override
         public void delete( List< String > key )
         {
                 // guard

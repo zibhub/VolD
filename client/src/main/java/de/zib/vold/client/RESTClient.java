@@ -154,6 +154,146 @@ public class RESTClient implements VoldInterface
         }
 
         @Override
+        public Map< String, String > refresh( String source, Set< Key > set )
+        {
+                // guard
+                {
+                        log.trace( "Refresh: " + set.toString() );
+
+                        checkState();
+
+                        if( null == set )
+                        {
+                                throw new IllegalArgumentException( "null is no valid argument!" );
+                        }
+                }
+
+                // build greatest common scope
+                String commonscope;
+                {
+                        List< String > scopes = new ArrayList< String >( set.size() );
+
+                        for( Key k: set )
+                        {
+                                scopes.add( k.get_scope() );
+                        }
+
+                        commonscope = getGreatestCommonPrefix( scopes );
+                }
+
+                // build variable map
+                String uri;
+                {
+                        uri = buildURI( null );
+                        log.debug( "URI: " + uri );
+                }
+
+                // build request body
+                MultiValueMap< String, String > request = new LinkedMultiValueMap< String, String >();
+                {
+                        for( Key entry: set )
+                        {
+                                // remove common prefix from scope
+                                String scope = entry.get_scope().substring( commonscope.length() );
+                                String type = entry.get_type();
+                                String keyname = entry.get_keyname();
+
+                                URIKey key = new URIKey( source, scope, type, keyname, true, false, enc );
+                                String urikey = key.toURIString();
+
+                                request.add( urikey, "" );
+                        }
+                }
+
+                // get response from Server
+                ResponseEntity< Map< String, String > > response;
+                {
+                        Object obj = rest.postForEntity( baseURL + commonscope, request, HashMap.class );
+
+                        if( obj instanceof ResponseEntity< ? > )
+                        {
+                                response = ( ResponseEntity< Map< String, String > > )obj;
+                        }
+                        else
+                        {
+                                throw new RuntimeException( "THIS SHOULD NEVER HAPPEN!" );
+                        }
+                }
+
+                return response.getBody();
+        }
+
+        @Override
+        public Map< String, String > delete( String source, Set< Key > set )
+        {
+                // guard
+                {
+                        log.trace( "Delete: " + set.toString() );
+
+                        checkState();
+
+                        if( null == set )
+                        {
+                                throw new IllegalArgumentException( "null is no valid argument!" );
+                        }
+                }
+
+                // build greatest common scope
+                String commonscope;
+                {
+                        List< String > scopes = new ArrayList< String >( set.size() );
+
+                        for( Key k: set )
+                        {
+                                scopes.add( k.get_scope() );
+                        }
+
+                        commonscope = getGreatestCommonPrefix( scopes );
+                }
+
+                // build variable map
+                String uri;
+                {
+                        uri = buildURI( null );
+                        log.debug( "URI: " + uri );
+                }
+
+                // build request body
+                MultiValueMap< String, String > request = new LinkedMultiValueMap< String, String >();
+                {
+                        for( Key entry: set )
+                        {
+                                // remove common prefix from scope
+                                String scope = entry.get_scope().substring( commonscope.length() );
+                                String type = entry.get_type();
+                                String keyname = entry.get_keyname();
+
+                                URIKey key = new URIKey( source, scope, type, keyname, false, true, enc );
+                                String urikey = key.toURIString();
+
+                                request.add( urikey, "" );
+                        }
+                }
+
+                // get response from Server
+                ResponseEntity< Map< String, String > > response;
+                {
+                        Object obj = rest.postForEntity( baseURL + commonscope, request, HashMap.class );
+
+                        if( obj instanceof ResponseEntity< ? > )
+                        {
+                                response = ( ResponseEntity< Map< String, String > > )obj;
+                        }
+                        else
+                        {
+                                throw new RuntimeException( "THIS SHOULD NEVER HAPPEN!" );
+                        }
+                }
+
+                return response.getBody();
+        }
+
+        @Override
         public Map< Key, Set< String > > lookup( Set< Key > keys )
         {
                 // TODO: lookup has to adjust scope appropriate and eventually merge different requests
