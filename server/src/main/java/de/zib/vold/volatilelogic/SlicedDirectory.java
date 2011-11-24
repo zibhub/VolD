@@ -16,19 +16,25 @@ import org.joda.time.DateTime;
  * by timeslicesize and taking the first representative in the ring mod
  * numberofslices. Hence, the slice is a number between 0 and numberofslices-1.
  * 
- * @author			Jörg Bachmann
+ * @see VolatileDirectory
+ * @see Reaper
  * 
- * @see				Backend
- * 
+ * @author			Jörg Bachmann (bachmann@zib.de)
  */
 public interface SlicedDirectory {
 	/**
 	 * Returns the slice number for the actual time.
+         *
+         * @return      The actual slice number.
+         *
+         * @note        The slice number may no more be actual on return.
 	 */
 	long getActualSlice( );
 
 	/**
-	 * Get the size of one slice in seconds.
+	 * Get the size of one slice in milliseconds.
+         *
+         * @return The time slice size in milliseconds.
 	 */
 	long getTimeSliceSize( );
 
@@ -36,13 +42,26 @@ public interface SlicedDirectory {
 	 * Get the number of slices.
 	 * 
 	 * Each slice number will be returned modulo this number.
+         *
+         * @return The number of slices in this SlicedDirectory.
 	 */
 	long getNumberOfSlices( );
 
+        /**
+         * Delete a key.
+         *
+         * @note        Since this interface is used by the Reaper and the
+         *              Reaper needs to delete keys, the interface requires
+         *              this method although the SimpleDirectory provides this
+         *              method too. When changing its signature, the signature
+         *              should also be changed in SimpleDirectory.
+         *
+         * @param key   The key to delete.
+         */
         void delete( List< String > key );
 
 	/**
-	 * Query for all Key-Iinsertiontime pairs of a given timeslice.
+	 * Query for all Key-insertiontime pairs of a given timeslice.
 	 * 
 	 * @param timeslice	The timeslice to get the keys from.
 	 * 

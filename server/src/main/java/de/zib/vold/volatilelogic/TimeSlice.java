@@ -4,20 +4,32 @@ package de.zib.vold.volatilelogic;
 import org.joda.time.Instant;
 
 /**
- * Implementation of SlicedBackend.
+ * A factor ring implementation.
  * 
- * It does not explicitly implement that longerface because it's necessary that
- * this class is not abstract. This is a modelling mistake, because the author
- * has not much experiences in java an single inheritances.
- * 
- * @author			Jörg Bachmann
- * 
+ * This implementation of a factor ring is called TimeSlice, since it provides a
+ * method returning an element of the actual factor ring which is associated
+ * with the current time.
+ *
+ * The purpose of this class targets the Reaper, which deletes too old keys by
+ * requesting all keys in a certain time slice and thus is just filtering a
+ * small set of keys at one time instead of loading the database into the
+ * memory completely.
+ *
  * @see				SlicedDirectory
+ * @see                         Reaper
+ * 
+ * @author			Jörg Bachmann (bachmann@zib.de)
  */
 public class TimeSlice {
 	private long timeSliceSize;
 	private long numberOfSlices;
 
+        /**
+         * Construct a certain factor ring.
+         *
+         * @param tileSliceSize         The size of one time slice in milliseconds.
+         * @param numberOfSlices        The number of elements in the factor ring.
+         */
 	public TimeSlice( long timeSliceSize, long numberOfSlices )
                 throws IllegalArgumentException
 	{
@@ -25,14 +37,21 @@ public class TimeSlice {
                 setNumberOfSlices( numberOfSlices );
 	}
 
+        /**
+         * Construct a trivial TimeSlice.
+         *
+         * This constructor intializes the trivial factor ring with one element.
+         */
         public TimeSlice( )
         {
-                this.timeSliceSize = 0;
-                this.numberOfSlices = 0;
+                this.timeSliceSize = 1;
+                this.numberOfSlices = 1;
         }
 
 	/**
 	 * Set the size of one slice in milliseconds.
+         *
+         * @param timeSliceSize The time slice size in milliseconds.
 	 */
         public void setTimeSliceSize( long timeSliceSize )
         {
@@ -48,6 +67,8 @@ public class TimeSlice {
 	 * Set the number of slices.
 	 * 
 	 * Each slice number will be returned modulo this number.
+         *
+         * @param numberOfSlices The identifier for the factor ring.
 	 */
         public void setNumberOfSlices( long numberOfSlices )
         {
@@ -59,7 +80,9 @@ public class TimeSlice {
         }
 
 	/**
-	 * Get the size of one slice in seconds.
+	 * Get the size of one slice in milliseconds.
+         *
+         * @return The time slice size in milliseconds.
 	 */
 	public long getTimeSliceSize( )
 	{
@@ -78,6 +101,8 @@ public class TimeSlice {
 	 * Get the number of slices.
 	 * 
 	 * Each slice number will be returned modulo this number.
+         *
+         * @return The factor ring identifier.
 	 */
 	public long getNumberOfSlices( )
 	{
@@ -94,6 +119,12 @@ public class TimeSlice {
 
 	/**
 	 * Returns the slice number for the actual time.
+         *
+         * @note        Its return value may change each time, the method is
+         *              called. Furthermore, the value may no more be valid
+         *              after the method returned.
+         *
+         * @return The current time slice.
 	 */
 	public long getActualSlice( )
 	{
