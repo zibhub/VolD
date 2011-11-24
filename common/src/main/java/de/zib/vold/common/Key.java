@@ -8,7 +8,23 @@ import java.net.URISyntaxException;
 
 import org.apache.commons.lang3.StringEscapeUtils;
 
-public class Key {
+/**
+ * A Key as a part of VolD entries.
+ *
+ * A Key is defined by a scope, a type and a keyname. The scope is any valid
+ * UNIX-style path. The type and keyname are arbitrary strings.
+ *
+ * @see URIKey
+ */
+public class Key
+{
+        /**
+         * Construct a Key with all necessary informations.
+         *
+         * @param scope The scope of the key.
+         * @param type The type of the key.
+         * @param keyname The name of the key.
+         */
         public Key( String scope, String type, String keyname )
                 throws IllegalArgumentException
         {
@@ -51,26 +67,52 @@ public class Key {
                 this.keyname = keyname;
         }
 
+        /**
+         * Get the scope of the key.
+         *
+         * @return The scope of the key.
+         */
         public String get_scope( )
         {
                 return scope;
         }
 
+        /**
+         * Get the type of the key.
+         *
+         * @return The type of the key.
+         */
         public String get_type( )
         {
                 return type;
         }
 
+        /**
+         * Get the name of the key.
+         *
+         * @return The name of the key.
+         */
         public String get_keyname( )
         {
                 return keyname;
         }
 
+        /**
+         * Convert the key to readable and printable version.
+         *
+         * @return A readable and printable version of the key.
+         */
         public String toString( )
         {
                 return this._buildkey().toString();
         }
 
+        /**
+         * Construct a key from list of strings.
+         *
+         * @param key The key in a format used in the volatilelogic package.
+         * @return The appropriate Key object.
+         */
         public static Key buildkey( List< String > key )
                 throws IllegalArgumentException
         {
@@ -82,6 +124,11 @@ public class Key {
                 return new Key( key.get( 0 ), key.get( 1 ), key.get( 2 ) );
         }
 
+        /**
+         * Convert the key to the language used in volatilelogic.
+         *
+         * @return The converted key.
+         */
         public List< String > _buildkey( )
         {
                 List< String > key = new LinkedList< String >();
@@ -93,6 +140,11 @@ public class Key {
                 return key;
         }
 
+        /**
+         * Compare this key with another key.
+         *
+         * @return true, iff this key represents the same key as obj.
+         */
         public boolean equals( Object obj )
         {
                 // same instance
@@ -115,6 +167,11 @@ public class Key {
                 }
         }
 
+        /**
+         * Compute the hash code of this key.
+         *
+         * @return The hash code of this key.
+         */
         public int hashCode( )
         {
                 return  get_scope().hashCode() +

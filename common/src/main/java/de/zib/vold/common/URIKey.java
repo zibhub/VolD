@@ -5,6 +5,11 @@ import java.net.URLDecoder;
 
 import java.io.UnsupportedEncodingException;
 
+/**
+ * A normalized Key used in REST language.
+ *
+ * @see Key
+ */
 public class URIKey
 {
         private final String source;
@@ -14,6 +19,17 @@ public class URIKey
         private final boolean delete;
         private final String enc;
 
+        /**
+         * Construct a URIKey with all necessary informations.
+         *
+         * @param source The source where the key comes from.
+         * @param scope The scope of the key.
+         * @param type The type of the key.
+         * @param keyname The name of the key.
+         * @param refresh Whether this is a refresh request.
+         * @param delete Whether this is a delete request.
+         * @param enc The encoding used to encode the key to a string.
+         */
         public URIKey( String source, String scope, String type, String keyname, boolean refresh, boolean delete, String enc )
         {
                 this.source = source;
@@ -29,26 +45,49 @@ public class URIKey
                 }
         }
 
+        /**
+         * Get the source of the key.
+         *
+         * @return The source of the key.
+         */
         public String getSource( )
         {
                 return source;
         }
 
+        /**
+         * Reduce the key to a Key.
+         *
+         * @return The Key object.
+         *
+         * @see Key
+         */
         public Key getKey( )
         {
                 return key;
         }
 
+        /**
+         * Flag whether this URIKey is a refresh request.
+         */
         public boolean isRefresh( )
         {
                 return refresh;
         }
 
+        /**
+         * Flag whether this URIKey is a delete request.
+         */
         public boolean isDelete( )
         {
                 return delete;
         }
 
+        /**
+         * Get the normalized key.
+         *
+         * @return a unique string identifying this URIKey.
+         */
         public String toURIString( )
         {
                 StringBuilder sb = new StringBuilder( );
@@ -84,6 +123,13 @@ public class URIKey
                 return sb.toString();
         }
 
+        /**
+         * Build a URIKey from a normalized URIKey.
+         *
+         * @param uri The normalized key to decode.
+         * @param enc The encoding which had been used to encode/normalize the string.
+         * @return The URIKey.
+         */
         public static URIKey fromURIString( String uri, String enc )
         {
                 String source;

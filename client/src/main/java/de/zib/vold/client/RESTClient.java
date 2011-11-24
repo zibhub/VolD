@@ -25,6 +25,11 @@ import org.springframework.web.client.RestTemplate;
 import org.springframework.http.ResponseEntity;
 import org.springframework.http.HttpStatus;
 
+/**
+ * The VolD REST based client api.
+ *
+ * @see RESTController
+ */
 public class RESTClient implements VoldInterface
 {
         protected final Logger log = LoggerFactory.getLogger( this.getClass() );
@@ -36,6 +41,9 @@ public class RESTClient implements VoldInterface
 
         private String enc = "utf-8";
 
+        /**
+         * Construct an uninitialized RESTClient.
+         */
         public RESTClient( )
         {
                 baseURL = null;
@@ -49,6 +57,11 @@ public class RESTClient implements VoldInterface
                 }
         }
 
+        /**
+         * Construct a RESTClient with all necessary informations.
+         *
+         * @param baseURL The URL of the remote REST based VolD service.
+         */
         public RESTClient( String baseURL )
         {
                 context = new ClassPathXmlApplicationContext( "classpath:META-INF/client-context.xml" );
@@ -62,16 +75,27 @@ public class RESTClient implements VoldInterface
                 this.baseURL = baseURL;
         }
 
+        /**
+         * Set the URL of the remote REST based VolD service.
+         *
+         * @param baseURL The remote URL of VolD.
+         */
         public void setBaseURL( String baseURL )
         {
                 this.baseURL = baseURL;
         }
 
+        /**
+         * Set the encoding used to encode all keys.
+         */
         public void setEnc( String enc )
         {
                 this.enc = enc;
         }
 
+        /**
+         * Check the state of the object.
+         */
         public void checkState( )
         {
                 if( null == this.baseURL )
@@ -80,6 +104,9 @@ public class RESTClient implements VoldInterface
                 }
         }
 
+        /**
+         * Insert a set of keys.
+         */
         @Override
         public Map< String, String > insert( String source, Map< Key, Set< String > > map )
         {
@@ -153,6 +180,12 @@ public class RESTClient implements VoldInterface
                 return response.getBody();
         }
 
+        /**
+         * Refresh a set of keys.
+         *
+         * @param source The source of the keys.
+         * @param set The set keys to refresh.
+         */
         @Override
         public Map< String, String > refresh( String source, Set< Key > set )
         {
@@ -223,6 +256,12 @@ public class RESTClient implements VoldInterface
                 return response.getBody();
         }
 
+        /**
+         * Delete a set of keys.
+         *
+         * @param source The source of the keys to delete.
+         * @param set The set of keys to delete.
+         */
         @Override
         public Map< String, String > delete( String source, Set< Key > set )
         {
@@ -293,6 +332,12 @@ public class RESTClient implements VoldInterface
                 return response.getBody();
         }
 
+        /**
+         * Query a set of keys.
+         *
+         * @param keys The set of keys to query
+         * @return The set of found keys with its values.
+         */
         @Override
         public Map< Key, Set< String > > lookup( Set< Key > keys )
         {
@@ -357,6 +402,13 @@ public class RESTClient implements VoldInterface
                 }
         }
 
+        /**
+         * Insert a single key.
+         *
+         * @param source The source of the key.
+         * @param key The key to store.
+         * @param values The values associated with the key.
+         */
         public Map< String, String > insert( String source, Key key, Set< String > values )
         {
                 Map< Key, Set< String > > map = new HashMap< Key, Set< String > >();
@@ -364,6 +416,12 @@ public class RESTClient implements VoldInterface
                 return insert( source, map );
         }
 
+        /**
+         * Query a key.
+         *
+         * @param key the key to lookup.
+         * @return A map containing the key and its values if found, an empty map otherwise.
+         */
         public Map< Key, Set< String > > lookup( Key key )
         {
                 Set< Key > keys = new HashSet< Key >();
@@ -371,6 +429,12 @@ public class RESTClient implements VoldInterface
                 return lookup( keys );
         }
 
+        /**
+         * Get the largest prefix shared by a set of words.
+         *
+         * @param words The set of words to get the largest prefix from.
+         * @return The greatest common prefix.
+         */
         private String getGreatestCommonPrefix( Collection< String > words )
         {
                 if( null == words )
@@ -388,6 +452,13 @@ public class RESTClient implements VoldInterface
                 return commonprefix;
         }
 
+        /**
+         * Get the greatest common prefix of two strings.
+         *
+         * @param a A string.
+         * @param b A string.
+         * @return The greatest common prefix of both strings.
+         */
         private String getCommonPrefix( String a, String b )
         {
                 for( int i = 1; i < b.length(); ++i )
@@ -406,6 +477,12 @@ public class RESTClient implements VoldInterface
                 return b;
         }
 
+        /**
+         * Build a URI requesting a set of keys from the remote VolD.
+         *
+         * @param keys The set of keys to request.
+         * @return The URL defining the request.
+         */
         private String buildURI( Collection< Key > keys )
         {
                 if( null == keys )

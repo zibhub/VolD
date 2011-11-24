@@ -1,5 +1,8 @@
 package de.zib.vold.common;
 
+/**
+ * The base for all exceptions thrown in VolD.
+ */
 public class VoldException extends RuntimeException
 {
         static final long serialVersionUID = 1;
