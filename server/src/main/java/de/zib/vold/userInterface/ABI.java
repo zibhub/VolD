@@ -23,6 +23,11 @@ import java.io.InputStreamReader;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
 
+/**
+ * Application Binary Interface to VolD.
+ *
+ * The ABI reads commands from stdin and prints the results to stdout.
+ */
 public class ABI
 {
         private final static Logger log = LoggerFactory.getLogger( ABI.class );

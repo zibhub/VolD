@@ -31,6 +31,12 @@ import org.slf4j.LoggerFactory;
 
 import java.io.File;
 
+/**
+ * REST Controller for Spring framework.
+ *
+ * This class provides a REST based interface to VolD. It is built to act as a
+ * Controller in the Spring framework.
+ */
 @Controller
 @RequestMapping( "*" )
 public class RESTController
@@ -52,14 +58,12 @@ public class RESTController
         /**
         * Handles Post requests.
         *
-        * This method is used by clients to submit new keys, or refresh their registration.
-        *
-        * @note this doesn't handle post requests with grid name.
+        * This method is used by clients to submit new keys, refresh their registration or delete them.
         *
         * @param clientIpAddress The ip of the sending client, it's extracted from the request itself.
         * @param args The URL arguments of the request.
-        * @return A list of invalid key if any + HTTPStatus 220 if some keys were added.
-        * @throws NoValidAttributes If no valid keys were found in the request.
+        * @param argsbody The POST body arguments of the request.
+        * @return A map of keys with its lifetime, whereas the livetime is zero if an error for that key occured.
         */
         @RequestMapping( method = RequestMethod.POST )
         public ResponseEntity< Map< String, String > > post(
@@ -168,8 +172,18 @@ public class RESTController
                 return new ResponseEntity< Map < String, String > >( invalidKeys, HttpStatus.OK );
         }
 
+        /**
+        * Handles Get requests.
+        *
+        * This method is used by clients to lookup some keys.
+        *
+        * @param keys The URL arguments of the request.
+        * @return A map of found keys with its associated values.
+        */
         @RequestMapping( method = RequestMethod.GET )
-        public ResponseEntity< Map< Key, Set< String > > > get( @RequestParam Map< String, String > keys, HttpServletRequest request )
+        public ResponseEntity< Map< Key, Set< String > > > get(
+                        @RequestParam Map< String, String > keys,
+                        HttpServletRequest request )
         {
                 // guard
                 {
