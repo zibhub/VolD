@@ -15,6 +15,18 @@ import java.util.concurrent.locks.ReentrantReadWriteLock;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+/**
+ * The Frontend used by the user interfaces for VolD.
+ *
+ * This class implements the key/value logic offered by VolD:
+ * Each key stored on the volatile directory is associated with a source. When
+ * a key will be inserted from two different sources, a lookup for that key
+ * will result in the merged set of values. A Deletion or freshening of a key
+ * is associated with a certain source, thus just a part of the values will
+ * deleted or renewed.
+ *
+ * @see Key
+ */
 public class Frontend
 {
         private static final Logger log = LoggerFactory.getLogger( Frontend.class );
@@ -28,6 +40,9 @@ public class Frontend
         private boolean recursiveScopeLookups;
         private boolean prefixLookupsAllowed;
 
+        /**
+         * Construct an uninitialized Frontend.
+         */
         public Frontend( )
         {
                 this.volatileDirectory = null;
@@ -39,31 +54,56 @@ public class Frontend
                 setPrefixLookupsAllowed( true );
         }
 
+        /**
+         * Set the volatile directory to store the informations in.
+         */
         public void setVolatileDirectory( VolatileDirectory volatileDirectory )
         {
                 this.volatileDirectory = volatileDirectory;
         }
 
+        /**
+         * Are recursive scope lookups enabled?
+         */
         public boolean getRecursiveScopeLookups( )
         {
                 return this.recursiveScopeLookups;
         }
 
+        /**
+         * Enable/disable recursive scope lookups.
+         *
+         * When recursive scope lookups are enabled, a key will be searched
+         * not only in the given scope but also in each parent directory,
+         * until a result has been found.
+         */
         public void setRecursiveScopeLookups( boolean recursiveScopeLookups )
         {
                 this.recursiveScopeLookups = recursiveScopeLookups;
         }
 
+        /**
+         * Are prefix lookups allowed?
+         */
         public boolean getPrefixLookupsAllowed( )
         {
                 return this.prefixLookupsAllowed;
         }
 
+        /**
+         * (Do not) allow prefix lookups.
+         *
+         * Prefix lookups are indicated by appending three dots ("...") to the
+         * key, searched for.
+         */
         public void setPrefixLookupsAllowed( boolean prefixLookupsAllowed )
         {
                 this.prefixLookupsAllowed = prefixLookupsAllowed;
         }
 
+        /**
+         * Internal method which acts as part of the guard of all public methods.
+         */
         protected void checkState( )
         {
                 if( null == volatileDirectory )
@@ -73,11 +113,9 @@ public class Frontend
         }
 	
         /**
-	 * @short               Prepare key for (prefix-) lookup.
+	 * Prepare key for (prefix-) lookup.
 	 * 
-	 * @brief               Returns three dots at the end if they are given.
-	 * 
-	 * @return              Returns true iff key is made for prefix search.
+	 * Removes three dots at the end if they are appended.
 	 */
 	private String prepare_prefix_key( String key )
         {
@@ -96,7 +134,13 @@ public class Frontend
         }
 
         /**
-         * @short               Store the key-valuelist.
+         * Insert a key.
+         *
+         * @note This method is reentrant.
+         *
+         * @param source The source where the key comes from.
+         * @param key The key to insert.
+         * @param value The values associated with that key.
          **/
 	public void insert( String source, Key key, Set<String> value )
 	{
@@ -122,6 +166,12 @@ public class Frontend
                 }
 	}
 
+        /**
+         * Refresh a key.
+         *
+         * @param source The source for which the keys timestamp should be updated.
+         * @param key The key to refresh.
+         */
         public void refresh( String source, Key key )
         {
                 // guard
@@ -146,6 +196,12 @@ public class Frontend
                 }
         }
 
+        /**
+         * Delete a key.
+         *
+         * @param source The source for which the key should be deleted.
+         * @param key The key to delete.
+         */
         public void delete( String source, Key key )
         {
                 // guard
@@ -171,14 +227,14 @@ public class Frontend
         }
 
         /**
-         * @short               Lookup the specified key.
+         * Lookup the specified key.
          *
-         * @brief               If recursive lookups are enabled in the configuration, the key
-         *                      will be searched recursive to the root scope until one is found.
-         *                      If prefix lookups are enabled, the suffix "..." indicates a
-         *                      prefix lookup. Lists for search keys given by different hosts
-         *                      are merged.
-         **/
+         * If recursive lookups are enabled , the key
+         * will be searched recursive to the root scope until one is found.
+         * If prefix lookups are enabled, the suffix "..." indicates a
+         * prefix lookup. Lists for search keys given by different hosts
+         * are merged.
+         */
 	public Map< Key, Set< String > > lookup( Key key )
 	{
                 VoldException found_exception = null;
@@ -239,6 +295,12 @@ public class Frontend
                 }
 	}
 
+        /**
+         * Get the parent of a scope.
+         *
+         * @param scope The scope to get the parent for.
+         * @return The parent of the scope.
+         */
         private String scope_base( String scope )
         {
                 int lastdelim = scope.lastIndexOf( scopeDelimiter, scope.length()-2 );
@@ -250,11 +312,11 @@ public class Frontend
         }
 
         /**
-         * @short               Lookup the specified key only in the given scope
+         * Lookup the specified key only in the given scope.
          *
-         * @brief               If prefix lookups are enabled, the suffix "..." indicates a
-         *                      prefix lookup. Lists for Keys given by different hosts are
-         *                      merged;
+         * If prefix lookups are enabled, the suffix "..." indicates a
+         * prefix lookup. Lists for Keys given by different hosts are
+         * merged;
          *
          * @throws VoldException
          **/

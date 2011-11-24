@@ -14,6 +14,13 @@ import javax.annotation.PreDestroy;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+/**
+ * GarbageCollector for VolD.
+ *
+ * The Reaper deletes keys which are older than a certain time to live (TTL).
+ * The TTL is a soft limit. Hence, a key may exist longer than the TTL but never
+ * twice as much.
+ */
 public class Reaper extends Thread
 {
         private boolean run;
@@ -24,6 +31,12 @@ public class Reaper extends Thread
 
         protected final Logger log = LoggerFactory.getLogger( this.getClass() );
 
+        /**
+         * Construct an initialized Reaper.
+         *
+         * @param directory The directory to collect the garbage in.
+         * @param TTL The age a key is allowed to reach.
+         */
         public Reaper( SlicedDirectory directory, long TTL )
         {
                 if( null == directory )
@@ -40,6 +53,9 @@ public class Reaper extends Thread
                 this.run = false;
         }
 
+        /**
+         * Construct an uninitialized Reaper.
+         */
         public Reaper( )
         {
                 this.ttl = -1;
@@ -47,6 +63,9 @@ public class Reaper extends Thread
                 this.run = false;
         }
 
+        /**
+         * Internal method which acts as part of the guard of all public methods.
+         */
         protected void checkState( )
         {
                 if( this.ttl < 0 || null == this.directory )
@@ -55,6 +74,11 @@ public class Reaper extends Thread
                 }
         }
 
+        /**
+         * Set the time a key may live.
+         *
+         * @param ttl The age a key may reach.
+         */
         public void setTTL( long ttl )
         {
                 if( ttl <= 0 )
@@ -65,6 +89,9 @@ public class Reaper extends Thread
                 this.ttl = ttl;
         }
 
+        /**
+         * Set the directory the Reaper should work on.
+         */
         public void setSlicedDirectory( SlicedDirectory slicedDirectory )
         {
                 if( null != this.directory )
@@ -75,6 +102,9 @@ public class Reaper extends Thread
                 this.directory = slicedDirectory;
         }
 
+        /**
+         * Stop the thread running in the background.
+         */
         @PreDestroy
         public void stop_service( )
         {
@@ -97,12 +127,18 @@ public class Reaper extends Thread
                 }
         }
 
+        /**
+         * Start the Reaper in background.
+         */
         @PostConstruct
         public void start()
         {
                 super.start();
         }
 
+        /**
+         * Start the reaper in foreground.
+         */
         public void run()
         {
                 // guard
@@ -114,6 +150,9 @@ public class Reaper extends Thread
                 reap();
         }
 
+        /**
+         * Work until the run flag is set to false.
+         */
         public void reap( )
         {
                 log.info( "Reaper started." );
@@ -162,6 +201,11 @@ public class Reaper extends Thread
                 log.info( "Reaper finished working." );
         }
 
+        /**
+         * The Worker class for the reaper.
+         *
+         * This class reaps too old keys for a certain timeslice.
+         */
         private class ReaperWorker extends Thread
         {
                 private SlicedDirectory directory;
