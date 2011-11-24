@@ -16,6 +16,29 @@ import org.joda.time.DateTime;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+/**
+ * Implementation of the volatile directory logic.
+ *
+ * The purpose of this class is the correct storage of a key in the backend in
+ * such a way, that each key always holds its timestamp. This timestamp is the
+ * time of the last write request (which is an insert and a refresh).
+ * Furthermore these timestamps will be deleted too, when the according keys are
+ * deleted.
+ *
+ * Using the backend, three partitions will be used.
+ * - a "key - value" partition storing all key value pairs
+ * - a "key - timeslice" partition
+ * - a "slice/key - date" partition
+ *
+ * The last partition is used by the Reaper to request all keys in a certain
+ * timeslice an check their age. The second partition is used to determine the
+ * "slice/key - date" entry when a key is deleted.
+ *
+ * @see                 VolatileDirectory
+ * @see                 PartitionedDirectory
+ *
+ * @author              Jörg Bachmann (bachmann@zib.de)
+ */
 public class VolatileDirectoryImpl implements VolatileDirectory
 {
         private PartitionedDirectory directory;
@@ -23,18 +46,30 @@ public class VolatileDirectoryImpl implements VolatileDirectory
 
         protected final Logger log = LoggerFactory.getLogger( this.getClass() );
 
+        /**
+         * Construct a VolatileDirectoryImpl.
+         *
+         * @param backend       The backend used to store the keys.
+         * @param timeslice     The timeslice configuration.
+         */
         public VolatileDirectoryImpl( PartitionedDirectory backend, TimeSlice timeslice )
         {
                 this.directory = backend;
                 this.timeslice = timeslice;
         }
 
+        /**
+         * Construct an uninitialized VolatileDirectoryImpl.
+         */
         public VolatileDirectoryImpl( )
         {
                 this.directory = null;
                 this.timeslice = null;
         }
 
+        /**
+         * Internal method which acts as part of the guard of all public methods.
+         */
         protected void checkState( )
         {
                 if( null == timeslice || null == directory )
@@ -43,6 +78,11 @@ public class VolatileDirectoryImpl implements VolatileDirectory
                 }
         }
 
+        /**
+         * Set the timeslice configuration.
+         *
+         * @param timeslice     The TimeSlice used by all write requests to determine the actual timeslice.
+         */
         public void setTimeslice( TimeSlice timeslice )
         {
                 if( null != this.timeslice )
@@ -53,11 +93,19 @@ public class VolatileDirectoryImpl implements VolatileDirectory
                 this.timeslice = timeslice;
         }
 
+        /**
+         * Set the backend used to store all informations.
+         */
         public void setBackend( PartitionedDirectory backend )
         {
                 this.directory = backend;
         }
 
+        /**
+         * A delegator for TimeSlice.getActualSlice().
+         *
+         * @see TimeSlice
+         */
 	@Override
 	public long getActualSlice( )
 	{
@@ -69,6 +117,11 @@ public class VolatileDirectoryImpl implements VolatileDirectory
 		return timeslice.getActualSlice();
 	}
 
+        /**
+         * A delegator for TimeSlice.getNumberOfSlices().
+         *
+         * @see TimeSlice
+         */
 	@Override
 	public long getNumberOfSlices( )
 	{
@@ -80,6 +133,11 @@ public class VolatileDirectoryImpl implements VolatileDirectory
 		return timeslice.getNumberOfSlices();
 	}
 
+        /**
+         * A delegator for TimeSlice.getTimeSliceSize().
+         *
+         * @see TimeSlice
+         */
 	@Override
 	public long getTimeSliceSize( )
 	{
@@ -91,6 +149,18 @@ public class VolatileDirectoryImpl implements VolatileDirectory
 		return timeslice.getTimeSliceSize();
 	}
 
+        /**
+         * Insert a key with its set of values.
+         *
+         * The method for inserting the key works as follows:
+         * 1. insert the new "slice/key -- date" entry
+         * 2. insert "key -- timeslice" entry
+         * 3. insert "key -- value" entry
+         * 4. delete old "slice/key -- date" entry (when existant)
+         *
+         * @param key The key to insert.
+         * @param value The values associated to the key.
+         */
 	@Override
 	public void insert( List< String > key, Set< String > value )
 	{
@@ -155,6 +225,21 @@ public class VolatileDirectoryImpl implements VolatileDirectory
                 }
 	}
 
+        /**
+         * Refresh a key.
+         *
+         * This method resets the timestamp of the key to the actual time and
+         * also resets the timeslice.
+         *
+         * The method for refreshing the key works similar to VolatileDirectorImpl.insert(..):
+         * 1. insert the new "slice/key -- date" entry
+         * 2. insert "key -- timeslice" entry
+         * 3. delete old "slice/key -- date" entry (when existant)
+         * The only difference is, that there is no need to insert the key/date entry, since it
+         * had already been inserted.
+         *
+         * @param key The key to refresh.
+         */
         @Override
         public void refresh( List< String > key )
         {
@@ -210,6 +295,14 @@ public class VolatileDirectoryImpl implements VolatileDirectory
                 }
         }
 
+        /**
+         * Delete a key.
+         *
+         * Deleting the key means deleting the "key -- value" entry, the
+         * "key -- timeslice" entry and the "slice/key -- date" entry.
+         *
+         * @param key The key to delete.
+         */
         @Override
         public void delete( List< String > key )
         {
@@ -246,6 +339,11 @@ public class VolatileDirectoryImpl implements VolatileDirectory
                 }
         }
 
+        /**
+         * Query the values for a key.
+         *
+         * @return null if the key could not be found and the set of values otherwise.
+         */
 	@Override
 	public Set< String > lookup( List< String > key )
 	{
@@ -263,6 +361,12 @@ public class VolatileDirectoryImpl implements VolatileDirectory
                         return new HashSet< String >( _result );
 	}
 
+        /**
+         * Query all keys beginning with a certain prefix.
+         *
+         * @param key The prefix of the keys to be returned.
+         * @return The map of all found keys and its associated values.
+         */
 	@Override
 	public Map< List< String >, Set< String > > prefixLookup( List< String > key )
 	{
@@ -290,6 +394,12 @@ public class VolatileDirectoryImpl implements VolatileDirectory
                 }
 	}
 
+        /**
+         * Query all keys in a certain time slice.
+         *
+         * @param slice The time slice to query all key--date pairs for.
+         * @return A map of all "key -- date" entries of that slice.
+         */
         @Override
         public Map< List< String >, DateTime > sliceLookup( long slice )
         {
@@ -352,6 +462,13 @@ public class VolatileDirectoryImpl implements VolatileDirectory
         }
 
         /**
+         * Convert a date value to a DateTime object.
+         *
+         * @param date The date value.
+         * @return The according DateTime object.
+         *
+         * @note The date value may only have exactly one element!
+         *
          * @throws NumberFormatException
          **/
         private DateTime to_date( List< String > date )
@@ -364,6 +481,12 @@ public class VolatileDirectoryImpl implements VolatileDirectory
                 return new DateTime( Long.parseLong( date.get( 0 ) ) );
         }
 
+        /**
+         * Convert a time to a value.
+         *
+         * @param date The date to convert.
+         * @return The value holding the date.
+         */
         private List< String > to_date( DateTime date )
         {
                 List< String > result = new LinkedList< String >();
@@ -371,6 +494,14 @@ public class VolatileDirectoryImpl implements VolatileDirectory
                 return result;
         }
 
+        /**
+         * Convert a key holding a timeslice only to a timeslice.
+         *
+         * @param slice The key holding the slice.
+         * @return The timeslice extracted out of the key.
+         *
+         * @note The key may only have exactly one element!
+         */
         private long to_timeslice( List< String > slice )
         {
                 if( 1 != slice.size() )
@@ -381,6 +512,17 @@ public class VolatileDirectoryImpl implements VolatileDirectory
                 return Long.parseLong( slice.get( 0 ) );
         }
 
+        /**
+         * Melt a timeslice and key to a complete key.
+         *
+         * The timeslice will be prepended to the key using to_value.
+         *
+         * @param timeslice The timeslice to prepend.
+         * @param key The key which will be completed.
+         * @return The complete key.
+         *
+         * @see to_value
+         */
         private List< String > get_timeslice_key( long slice, List< String > key )
         {
                 if( slice < 0 )
@@ -394,6 +536,12 @@ public class VolatileDirectoryImpl implements VolatileDirectory
                 return timeslicekey;
         }
 
+        /**
+         * Convert a timeslice to a key.
+         *
+         * @param slice The timeslice to convert.
+         * @return The key containing the slice as first and only element.
+         */
         private List< String > to_value( long slice )
         {
                 if( slice < 0 )
