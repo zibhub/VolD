@@ -20,7 +20,8 @@ import org.joda.time.Instant;
  * 
  * @author			Jörg Bachmann (bachmann@zib.de)
  */
-public class TimeSlice {
+public class TimeSlice
+{
 	private long timeSliceSize;
 	private long numberOfSlices;
 

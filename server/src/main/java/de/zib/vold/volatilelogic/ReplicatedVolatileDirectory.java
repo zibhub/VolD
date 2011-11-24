@@ -13,6 +13,11 @@ import org.apache.commons.logging.LogFactory;
 
 import org.joda.time.DateTime;
 
+/**
+ * Proxy for VolatileDirectory replicating all write requests.
+ *
+ * @author              Jörg Bachmann (bachmann@zib.de)
+ */
 public class ReplicatedVolatileDirectory implements VolatileDirectory
 {
         protected final Log log = LogFactory.getLog( this.getClass() );
@@ -20,28 +25,46 @@ public class ReplicatedVolatileDirectory implements VolatileDirectory
         private VolatileDirectory backend;
         private Replicator replicator;
 
+        /**
+         * Construct an initialized ReplicatedVolatileDirectory.
+         *
+         * @param backend The backend which this class is the proxy for.
+         * @param replicator The replicator to replicate all write requests to.
+         */
         public ReplicatedVolatileDirectory( VolatileDirectory backend, Replicator replicator )
         {
                 this.backend = backend;
                 this.replicator = replicator;
         }
 
+        /**
+         * Construct an uninitialized ReplicatedVolatileDirectory.
+         */
         public ReplicatedVolatileDirectory( )
         {
                 this.backend = null;
                 this.replicator = null;
         }
 
+        /**
+         * Set the backend to delegate all requests to.
+         */
         public void setDirectory( VolatileDirectory directory )
         {
                 this.backend = directory;
         }
 
+        /**
+         * Set the replicator to replicate all write requests to.
+         */
         public void setReplicator( Replicator replicator )
         {
                 this.replicator = replicator;
         }
 
+        /**
+         * Internal method which acts as part of the guard of all public methods.
+         */
         public void checkState( )
         {
                 if( null == backend || null == replicator )
@@ -50,6 +73,11 @@ public class ReplicatedVolatileDirectory implements VolatileDirectory
                 }
         }
 
+        /**
+         * A delegator for TimeSlice.getActualSlice().
+         *
+         * @see TimeSlice
+         */
 	@Override
 	public long getActualSlice( )
 	{
@@ -61,6 +89,11 @@ public class ReplicatedVolatileDirectory implements VolatileDirectory
 		return backend.getActualSlice();
 	}
 
+        /**
+         * A delegator for TimeSlice.getNumberOfSlices().
+         *
+         * @see TimeSlice
+         */
 	@Override
 	public long getNumberOfSlices( )
 	{
@@ -72,6 +105,11 @@ public class ReplicatedVolatileDirectory implements VolatileDirectory
 		return backend.getNumberOfSlices();
 	}
 
+        /**
+         * A delegator for TimeSlice.getTimeSliceSize().
+         *
+         * @see TimeSlice
+         */
 	@Override
 	public long getTimeSliceSize( )
 	{
@@ -83,6 +121,15 @@ public class ReplicatedVolatileDirectory implements VolatileDirectory
 		return backend.getTimeSliceSize();
 	}
 
+        /**
+         * Insert a key with its set of values.
+         *
+         * The insertion will be done concurrently at the replicator and the
+         * backend.
+         *
+         * @param key The key to insert.
+         * @param value The values associated to the key.
+         */
 	@Override
 	public void insert( List< String > key, Set< String > value )
 	{
@@ -112,6 +159,14 @@ public class ReplicatedVolatileDirectory implements VolatileDirectory
                         throw insertion.exception;
 	}
 
+        /**
+         * Refresh a key.
+         *
+         * The request will be handled concurrently at the replicator and the
+         * backend.
+         *
+         * @param key The key to refresh.
+         */
         @Override
         public void refresh( List< String > key )
         {
@@ -141,6 +196,14 @@ public class ReplicatedVolatileDirectory implements VolatileDirectory
                         throw freshen.exception;
         }
 
+        /**
+         * Delete a key.
+         *
+         * The request handled be done concurrently at the replicator and the
+         * backend.
+         *
+         * @param key The key to delete.
+         */
         @Override
         public void delete( List< String > key )
         {
@@ -170,6 +233,9 @@ public class ReplicatedVolatileDirectory implements VolatileDirectory
                         throw deletion.exception;
         }
 
+        /**
+         * Helper class to insert an entry concurrently.
+         */
         private class InsertThread extends Thread
         {
                 private final VolatileDirectory directory;
@@ -198,6 +264,9 @@ public class ReplicatedVolatileDirectory implements VolatileDirectory
                 }
         }
 
+        /**
+         * Helper class to refresh an entry concurrently.
+         */
         private class RefreshThread extends Thread
         {
                 private final VolatileDirectory directory;
@@ -224,6 +293,9 @@ public class ReplicatedVolatileDirectory implements VolatileDirectory
                 }
         }
 
+        /**
+         * Helper class to delete an entry concurrently.
+         */
         private class DeleteThread extends Thread
         {
                 private final VolatileDirectory directory;
@@ -250,6 +322,12 @@ public class ReplicatedVolatileDirectory implements VolatileDirectory
                 }
         }
 
+        /**
+         * Delegate a lookup request to the backend.
+         *
+         * @param key The key to query.
+         * @return The values for that key or null if the key has not been found.
+         */
 	@Override
 	public Set< String > lookup( List< String > key )
 	{
@@ -261,6 +339,12 @@ public class ReplicatedVolatileDirectory implements VolatileDirectory
                 return backend.lookup( key );
 	}
 
+        /**
+         * Delegate a prefixlookup to the backend.
+         *
+         * @param key The prefix of the keys to be found.
+         * @return The map containing all keys beginning with the prefix and all its associated values.
+         */
 	@Override
 	public Map< List< String >, Set< String > > prefixLookup( List< String > key )
 	{
@@ -272,6 +356,12 @@ public class ReplicatedVolatileDirectory implements VolatileDirectory
                 return backend.prefixLookup( key );
 	}
 
+        /**
+         * Delegate a slicelookup to the backend.
+         *
+         * @param slice The slice to get all keys from.
+         * @return The keys in that slice and its timestamps.
+         */
         @Override
         public Map< List< String >, DateTime > sliceLookup( long slice )
         {
