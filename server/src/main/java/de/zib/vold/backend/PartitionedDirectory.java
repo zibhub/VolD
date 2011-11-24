@@ -24,7 +24,7 @@ import java.util.Map;
  * @see LoggerDirectory
  * @see VolatileDirectory
  *
- * @author Jörg Bachmann
+ * @author Jörg Bachmann (bachmann@zib.de)
  */
 public interface PartitionedDirectory
 {

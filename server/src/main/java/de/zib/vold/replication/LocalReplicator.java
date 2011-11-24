@@ -9,26 +9,49 @@ import java.util.Set;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+/**
+ * Simple Replicator delegating all requests to a VolatileDirectory.
+ *
+ * This class helps in building replication trees.
+ *
+ * @see Replicator
+ */
 public class LocalReplicator implements Replicator
 {
         protected final Logger log = LoggerFactory.getLogger( this.getClass() );
         private VolatileDirectory replica;
 
+        /**
+         * Construct a LocalReplicator with its backend to use.
+         *
+         * @param replica       The VolatileDirectory to delegate the write request to.
+         */
         public LocalReplicator( VolatileDirectory replica )
         {
                 this.replica = replica;
         }
 
+        /**
+         * Construct an unitialized LocalReplicator.
+         */
         public LocalReplicator( )
         {
                 this.replica = null;
         }
 
+        /**
+         * Set the VolatileDirectory backend.
+         *
+         * @param replica       The VolatileDirectory to delegate the write request to.
+         */
         public void setReplica( VolatileDirectory replica )
         {
                 this.replica = replica;
         }
 
+        /**
+         * Internal method which acts as part of the guard of all public methods.
+         */
         public void checkState( )
         {
                 if( null == replica )
@@ -37,6 +60,12 @@ public class LocalReplicator implements Replicator
                 }
         }
 
+        /**
+         * Delegate an insert request.
+         *
+         * @param key   The key to replicate the request for.
+         * @param value The values associated to the key.
+         */
         @Override
         public void insert( List< String > key, Set< String > value )
         {
@@ -50,6 +79,11 @@ public class LocalReplicator implements Replicator
                 replica.insert( key, value );
         }
 
+        /**
+         * Delegate a refresh request.
+         *
+         * @param key   The key to replicate request for.
+         */
         @Override
         public void refresh( List< String > key )
         {
@@ -63,6 +97,11 @@ public class LocalReplicator implements Replicator
                 replica.refresh( key );
         }
 
+        /**
+         * Delegate a delete request.
+         *
+         * @param key   The key to replicate the request for.
+         */
         @Override
         public void delete( List< String > key )
         {
