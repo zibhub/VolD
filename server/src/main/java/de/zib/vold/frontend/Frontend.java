@@ -3,7 +3,7 @@ package de.zib.vold.frontend;
 
 import de.zib.vold.common.VoldException;
 import de.zib.vold.common.Key;
-import de.zib.vold.volatileLogic.VolatileDirectory;
+import de.zib.vold.volatilelogic.VolatileDirectory;
 
 import java.util.List;
 import java.util.Set;

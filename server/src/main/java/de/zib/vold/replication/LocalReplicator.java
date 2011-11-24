@@ -1,7 +1,7 @@
 
 package de.zib.vold.replication;
 
-import de.zib.vold.volatileLogic.VolatileDirectory;
+import de.zib.vold.volatilelogic.VolatileDirectory;
 
 import java.util.List;
 import java.util.Set;

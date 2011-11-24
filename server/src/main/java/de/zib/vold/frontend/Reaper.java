@@ -2,7 +2,7 @@
 package de.zib.vold.frontend;
 
 import de.zib.vold.common.VoldException;
-import de.zib.vold.volatileLogic.SlicedDirectory;
+import de.zib.vold.volatilelogic.SlicedDirectory;
 
 import java.util.List;
 import java.util.Map;

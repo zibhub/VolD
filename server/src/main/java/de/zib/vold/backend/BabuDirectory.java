@@ -420,7 +420,7 @@ public class BabuDirectory implements PartitionedDirectoryBackend
                         {
                                 throw new IllegalArgumentException( "BabuDirectory only has nonnegative partitions, thus " + partition + " is an illegal argument." );
                         }
-                        if( null == key )
+                        if( null == prefix )
                         {
                                 throw new IllegalArgumentException( "null is no valid key!" );
                         }
