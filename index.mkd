@@ -17,9 +17,25 @@ Compiling
 First you need to get the sources.
 The latest sources can be downloaded at github:
 
-`$ git clone git://github.com/zibhub/VolD`
+    $ git clone git://github.com/zibhub/VolD
+
+To compile the whole project, run the following command in the root of VolD:
+
+    $ buildr vold:package
 
 ## Dependencies
+
+The project depends on the following archives:
+
+- JodaTime
+- SLF4J
+- XStream
+- Javax Servlet
+- Spring3
+- JSON
+- BabuDB
+
+When compiling the project using buildr, these ressources should be downloaded automatically and stored in `~/.m2/repository`
 
 ## Compiling the server
 
