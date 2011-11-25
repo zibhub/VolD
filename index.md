@@ -1,3 +1,8 @@
+---
+title: VolD
+root: .
+layout: main
+---
 
 VolD - Volatile Directory Service
 =================================
