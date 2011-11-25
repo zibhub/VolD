@@ -1,0 +1,35 @@
+<h1>VolD - Volatile Directory Service</h1>
+<p>VolD is a data storage with a REST based interface written in Java.
+It is a map assigning each key a set of values.
+The keys can be configured to be volatile, i.e. a key will be deleted if its age has exceeded a certain time to live.
+The keys are stored in a hierarchical structure (wherefore the service is called Directory Service) called scopes.
+Furthermore, the keys are typed.
+Inserting the same key (in the same scope with the same type) from different sources results in the merging the sets of values.</p>
+<p>The project is shipped with a server and client.</p>
+<h2>Compiling</h2>
+<p>First you need to get the sources.
+The latest sources can be downloaded at github:</p>
+<pre><code>$ git clone git://github.com/zibhub/VolD
+</code></pre>
+<p>To compile the whole project, run the following command in the root of VolD:</p>
+<pre><code>$ buildr vold:package
+</code></pre>
+<h2>Dependencies</h2>
+<p>The project depends on the following archives:</p>
+<ul>
+<li>JodaTime</li>
+<li>SLF4J</li>
+<li>XStream</li>
+<li>Javax Servlet</li>
+<li>Spring3</li>
+<li>JSON</li>
+<li>BabuDB</li>
+</ul>
+<p>When compiling the project using buildr, these ressources should be downloaded automatically and stored in <code>~/.m2/repository</code></p>
+<h2>Compiling the server</h2>
+<h2>Compiling the client</h2>
+<h2>Structure</h2>
+<p>The project is subdivided into three packages: 'common', 'client' and 'server'.
+The server and client package depend on the common archive.
+Additionally, the server package depends on the client archive.
+Hence, it's possible to install the client without installing the server.</p>
