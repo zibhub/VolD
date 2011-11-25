@@ -1,0 +1,36 @@
+
+VolD - Volatile Directory Service
+=================================
+
+VolD is a data storage with a REST based interface written in Java.
+It is a map assigning each key a set of values.
+The keys can be configured to be volatile, i.e. a key will be deleted if its age has exceeded a certain time to live.
+The keys are stored in a hierarchical structure (wherefore the service is called Directory Service) called scopes.
+Furthermore, the keys are typed.
+Inserting the same key (in the same scope with the same type) from different sources results in the merging the sets of values.
+
+The project is shipped with a server and client.
+
+Compiling
+---------
+
+First you need to get the sources.
+The latest sources can be downloaded at github:
+
+`$ git clone git://github.com/zibhub/VolD`
+
+## Dependencies
+
+## Compiling the server
+
+## Compiling the client
+
+Structure
+---------
+
+The project is subdivided into three packages: 'common', 'client' and 'server'.
+The server and client package depend on the common archive.
+Additionally, the server package depends on the client archive.
+Hence, it's possible to install the client without installing the server.
+
+
