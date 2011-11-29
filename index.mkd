@@ -216,6 +216,35 @@ Configuration Examples
 
 ### Most Simple Example
 
+The following example sets up a VolD REST based service without a Reaper and without replication on top of the file system directory `/var/lib/vold`.
+Therefore, the directory `/var/lib/vold` has to exist and the user running the application container has to have write permissions to that directory.
+
+```xml
+<bean id="backend" class="de.zib.vold.backend.FileSystemDirectory">
+    <property name="rootPath" value="/var/lib/vold" />
+    <property name="enc" value="utf-8" />
+</bean>
+
+<bean id="timeslice" class="de.zib.vold.volatilelogic.TimeSlice">
+    <property name="numberOfSlices" value="60" />
+    <property name="timeSliceSize" value="1000" />
+    <!-- these values are choosen arbitrarily -->
+</bean>
+
+<bean id="voldi" class="de.zib.vold.volatilelogic.VolatileDirectoryImpl">
+    <property name="timeslice" ref="timeslice" />
+    <property name="backend" ref="backend" />
+</bean>
+
+<bean id="frontend" class="de.zib.vold.frontend.Frontend">
+    <property name="volatileDirectory" ref="voldi" />
+</bean>
+
+<bean id="controller" class="de.zib.vold.userInterface.RESTController">
+    <property name="frontend" ref="frontend" />
+</bean>
+```
+
 ### Full Featured Example
 
 ### Usual Case Example
