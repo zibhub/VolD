@@ -1,10 +1,10 @@
 
-PAGES_SRC = $(wildcard *.md)
-PAGES = $(addprefix built/,${PAGES_SRC:.md=.html})
+PAGES_SRC = $(wildcard *.mkd)
+PAGES = $(addprefix built/,${PAGES_SRC:.mkd=.html})
 
 all: ${PAGES}
 
-built/%.html: %.md
+built/%.html: %.mkd
 	markdown $< -f $@
 
 clean:
