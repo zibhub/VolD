@@ -219,7 +219,7 @@ Configuration Examples
 The following example sets up a VolD REST based service without a Reaper and without replication on top of the file system directory `/var/spool/vold`.
 Therefore, the directory `/var/spool/vold` has to exist and the user running the application container has to have write permissions to that directory.
 
-```xml
+{% highlight xml %}
 <bean id="backend" class="de.zib.vold.backend.FileSystemDirectory">
     <property name="rootPath" value="/var/spool/vold" />
     <property name="enc" value="utf-8" />
@@ -243,7 +243,7 @@ Therefore, the directory `/var/spool/vold` has to exist and the user running the
 <bean id="controller" class="de.zib.vold.userInterface.RESTController">
     <property name="frontend" ref="frontend" />
 </bean>
-```
+{% endhighlight %}
 
 ### Full Featured Example
 
@@ -251,7 +251,7 @@ The following example sets up a VolD REST based service storing the data three t
 A Reaper and two user interfaces (one for answering queries and one for acting as slave itselfes) will be configured additionally.
 There is a configuration which results in the same behaviour with a smaller replication tree, but this example tries to show all aspects.
 
-```xml
+{% highlight xml %}
 <!-- --------------- BACKEND ------------------ -->
 
 <bean id="backendfs" class="de.zib.vold.backend.FileSystemDirectory">
@@ -362,14 +362,14 @@ There is a configuration which results in the same behaviour with a smaller repl
         </props>
     </property>
 </bean>
-```
+{% endhighlight %}
 
 ### Usual Case Example
 
 The following configuration example sets up a replicated VolD (to the slave `http://vold.i/slave`) and acts as slave itselfes too.
 The data will be written into a file system directory on the local disk.
 
-```xml
+{% highlight xml %}
 <!-- --------------- BACKEND ------------------ -->
 
 <bean id="backend" class="de.zib.vold.backend.FileSystemDirectory">
@@ -429,5 +429,5 @@ The data will be written into a file system directory on the local disk.
         </props>
     </property>
 </bean>
-```
+{% endhighlight %}
 
