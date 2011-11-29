@@ -216,12 +216,12 @@ Configuration Examples
 
 ### Most Simple Example
 
-The following example sets up a VolD REST based service without a Reaper and without replication on top of the file system directory `/var/lib/vold`.
-Therefore, the directory `/var/lib/vold` has to exist and the user running the application container has to have write permissions to that directory.
+The following example sets up a VolD REST based service without a Reaper and without replication on top of the file system directory `/var/spool/vold`.
+Therefore, the directory `/var/spool/vold` has to exist and the user running the application container has to have write permissions to that directory.
 
 ```xml
 <bean id="backend" class="de.zib.vold.backend.FileSystemDirectory">
-    <property name="rootPath" value="/var/lib/vold" />
+    <property name="rootPath" value="/var/spool/vold" />
     <property name="enc" value="utf-8" />
 </bean>
 
@@ -247,16 +247,133 @@ Therefore, the directory `/var/lib/vold` has to exist and the user running the a
 
 ### Full Featured Example
 
+The following example sets up a VolD REST based service storing the data three times locally and replicating to another VolD service.
+A Reaper and two user interfaces (one for answering queries and one for acting as slave itselfes) will be configured additionally.
+There is a configuration which results in the same behaviour with a smaller replication tree, but this example tries to show all aspects.
+
+```xml
+<!-- --------------- BACKEND ------------------ -->
+
+<bean id="backendfs" class="de.zib.vold.backend.FileSystemDirectory">
+    <property name="rootPath" value="/var/spool/vold/fs/" />
+    <property name="enc" value="utf-8" />
+</bean>
+<bean id="voldifs" class="de.zib.vold.volatilelogic.VolatileDirectoryImpl">
+    <property name="timeslice" ref="timeslice" />
+    <property name="backend" ref="backendfs" />
+</bean>
+
+<bean id="backendbabu" class="de.zib.vold.backend.BabuDirectory">
+    <property databaseName" value="vold" />
+    <property name="dir" value="/var/spool/vold/babu/" />
+    <property name="logDir" value="/var/spool/vold/babu/logs/" />
+    <property name="sync" value="ASYNC" />
+    <property name="enc" value="utf-8" />
+</bean>
+<bean id="voldibabu" class="de.zib.vold.volatilelogic.VolatileDirectoryImpl">
+    <property name="timeslice" ref="timeslice" />
+    <property name="backend" ref="backendbabu" />
+</bean>
+
+<bean id="backendlogger" class="de.zib.vold.backend.WriteLogger">
+    <property name="rootPath" value="/var/spool/vold/write.logs" />
+    <property name="enc" value="utf-8" />
+</bean>
+<bean id="voldilogger" class="de.zib.vold.volatilelogic.VolatileDirectoryImpl">
+    <property name="timeslice" ref="timeslice" />
+    <property name="backend" ref="backendlogger" />
+</bean>
+
+<bean id="timeslice" class="de.zib.vold.volatilelogic.TimeSlice">
+    <property name="numberOfSlices" value="60" />
+    <property name="timeSliceSize" value="1000" />
+</bean>
+
+<!-- ---------- REPLICATION TREE -------------- -->
+
+<!-- SLAVE TREE -->
+
+<bean id="localreplogger" class="de.zib.vold.replication.LocalReplicator">
+    <property name="replica" ref="voldilogger" />
+</bean>
+
+<bean id="repslave2" class="de.zib.vold.volatilelogic.ReplicatedVolatileLogic">
+    <property name="directory" ref="voldibabu" />
+    <property name="replicator" ref="localreplogger" />
+</bean>
+
+<bean id="localrepslave" class="de.zib.vold.replication.LocalReplicator">
+    <property name="replica" ref="reslave2" />
+</bean>
+
+<bean id="voldislave" class="de.zib.vold.volatilelogic.ReplicatedVolatileDirectory">
+    <property name="directory" ref="voldifs" />
+    <property name="replicator" ref="localrepslave" />
+</bean>
+
+<!-- MASTER TREE ON TOP OF SLAVE TREE -->
+
+<bean id="remoterep2" class="de.zib.vold.replication.RESTVoldReplicator">
+    <property name="baseURL" value="http://vold.i/slave/" />
+</bean>
+
+<bean id="repmaster2" class="de.zib.vold.volatilelogic.ReplicatedVolatileDirectory">
+    <property name="directory" ref="voldislave" />
+    <property name="replicator" ref="remoterep2" />
+</bean>
+
+<bean id="remoterep1" class="de.zib.vold.replication.RESTVoldReplicator">
+    <property name="baseURL" value="http://vold.i2/slave/" />
+</bean>
+
+<bean id="voldimaster" class="de.zib.vold.volatilelogic.ReplicatedVolatileDirectory">
+    <property name="directory" ref="repmaster2" />
+    <property name="replicator" ref="remoterep1" />
+</bean>
+
+<!-- ----- FRONTEND AND USER INTERFACE -------- -->
+
+<bean id="reaper" class="de.zib.vold.frontend.Reaper">
+    <property name="TTL" value="3600000" /> <!-- one hour -->
+    <property name="volatileDirectory" ref="voldislave" />
+</bean>
+
+<bean id="masterfrontend" class="de.zib.vold.frontend.Frontend">
+    <property name="volatileDirectory" ref="voldimaster" />
+</bean>
+
+<bean id="mastercontroller" class="de.zib.vold.userInterface.RESTController">
+    <property name="frontend" ref="masterfrontend" />
+</bean>
+
+<bean id="slavefrontend" class="de.zib.vold.frontend.Frontend">
+    <property name="volatileDirectory" ref="voldislave" />
+</bean>
+
+<bean id="slavecontroller" class="de.zib.vold.userInterface.RESTController">
+    <property name="frontend" ref="slavefrontend" />
+</bean>
+
+<bean class="org.springframework.web.servlet.handler.SimpleUrlHandlerMapping">
+    <property name="mappings">
+        <props>
+            <prop key="/*">mastercontroller</prop>
+            <prop key="/slave/*">slavecontroller</prop>
+        </props>
+    </property>
+</bean>
+```
+
 ### Usual Case Example
 
 The following configuration example sets up a replicated VolD (to the slave `http://vold.i/slave`) and acts as slave itselfes too.
 The data will be written into a file system directory on the local disk.
 
+```xml
 <!-- --------------- BACKEND ------------------ -->
 
-```xml
 <bean id="backend" class="de.zib.vold.backend.FileSystemDirectory">
-    <property name="rootPath" value="/var/lib/vold" />
+    <property name="rootPath" value="/var/spool/vold" />
     <property name="enc" value="utf-8" />
 </bean>
 
