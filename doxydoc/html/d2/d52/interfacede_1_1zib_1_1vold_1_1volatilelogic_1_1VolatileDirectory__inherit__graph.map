@@ -1,0 +1,6 @@
+<map id="G" name="G">
+<area shape="rect" id="node7" href="$d0/d14/classde_1_1zib_1_1vold_1_1volatilelogic_1_1ReplicatedVolatileDirectory.html" title="Proxy for VolatileDirectory replicating all write requests." alt="" coords="5,371,347,693"/>
+<area shape="rect" id="node9" href="$d5/d0e/classde_1_1zib_1_1vold_1_1volatilelogic_1_1VolatileDirectoryImpl.html" title="Implementation of the volatile directory logic." alt="" coords="371,331,672,733"/>
+<area shape="rect" id="node2" href="$d3/d1f/interfacede_1_1zib_1_1vold_1_1volatilelogic_1_1SlicedDirectory.html" title="Interface for Backends with slice information." alt="" coords="68,6,335,151"/>
+<area shape="rect" id="node4" href="$d8/db0/interfacede_1_1zib_1_1vold_1_1volatilelogic_1_1SimpleDirectory.html" title="Interface for volatile directory usage." alt="" coords="359,6,633,151"/>
+</map>

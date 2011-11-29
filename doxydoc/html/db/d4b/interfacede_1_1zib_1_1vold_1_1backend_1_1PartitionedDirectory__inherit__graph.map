@@ -1,0 +1,6 @@
+<map id="G" name="G">
+<area shape="rect" id="node3" href="$d0/d6a/interfacede_1_1zib_1_1vold_1_1backend_1_1PartitionedDirectoryBackend.html" title="Interface for directory backends." alt="" coords="244,185,577,298"/>
+<area shape="rect" id="node5" href="$d5/d76/classde_1_1zib_1_1vold_1_1backend_1_1BabuDirectory.html" title="Implementation of PartitionedDirectoryBackend based on BabuDB." alt="" coords="5,347,248,861"/>
+<area shape="rect" id="node7" href="$dc/d78/classde_1_1zib_1_1vold_1_1backend_1_1FileSystemDirectory.html" title="Implementation of PartitionedDirectoryBackend based on a file system structure." alt="" coords="272,387,549,821"/>
+<area shape="rect" id="node9" href="$df/dc7/classde_1_1zib_1_1vold_1_1backend_1_1WriteLogger.html" title="Incomplete implementation of PartitionedDirectoryBackend which serves as logfile." alt="" coords="573,459,800,749"/>
+</map>

@@ -1,0 +1,9 @@
+<map id="G" name="G">
+<area shape="rect" id="node3" href="$dd/def/classde_1_1zib_1_1vold_1_1client_1_1RESTClient.html#a822ec972e8a97d90fe1237f2ec83b97c" title="Get the largest prefix shared by a set of words." alt="" coords="375,55,748,83"/>
+<area shape="rect" id="node5" href="$dd/def/classde_1_1zib_1_1vold_1_1client_1_1RESTClient.html#ad2acb6f7fd39943c94fc6da83debb020" title="Delete a set of keys." alt="" coords="800,5,1043,33"/>
+<area shape="rect" id="node7" href="$dd/def/classde_1_1zib_1_1vold_1_1client_1_1RESTClient.html#ac657f93341dbeef20514071597dfb55b" title="Insert a set of keys." alt="" coords="803,55,1040,83"/>
+<area shape="rect" id="node13" href="$dd/def/classde_1_1zib_1_1vold_1_1client_1_1RESTClient.html#a896f5b3c745b594a4320741d43be55d8" title="Refresh a set of keys." alt="" coords="797,106,1045,134"/>
+<area shape="rect" id="node9" href="$dc/dd5/classde_1_1zib_1_1vold_1_1replication_1_1RESTVoldReplicator.html#a759f3ee52ab39bd2ed649c38be74eb5e" title="Delegate an insert request." alt="" coords="1099,5,1421,33"/>
+<area shape="rect" id="node11" href="$dd/def/classde_1_1zib_1_1vold_1_1client_1_1RESTClient.html#aa25016944f58c5de337b0d8a0b0d3590" title="Insert a single key." alt="" coords="1141,55,1379,83"/>
+<area shape="rect" id="node15" href="$dc/dd5/classde_1_1zib_1_1vold_1_1replication_1_1RESTVoldReplicator.html#ab927d38564b0127742dec865e14121d7" title="Delegate a refresh request." alt="" coords="1093,106,1427,134"/>
+</map>

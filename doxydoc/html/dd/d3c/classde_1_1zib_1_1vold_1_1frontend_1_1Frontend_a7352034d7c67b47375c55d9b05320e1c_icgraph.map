@@ -1,0 +1,9 @@
+<map id="G" name="G">
+<area shape="rect" id="node3" href="$dd/d3c/classde_1_1zib_1_1vold_1_1frontend_1_1Frontend.html#a220310e925f7be2ec56ead5801a3d5f5" title="Delete a key." alt="" coords="343,5,593,33"/>
+<area shape="rect" id="node7" href="$dd/d3c/classde_1_1zib_1_1vold_1_1frontend_1_1Frontend.html#a26b3899691e197de75c01b155cccfc81" title="Insert a key." alt="" coords="344,106,592,134"/>
+<area shape="rect" id="node12" href="$dd/d3c/classde_1_1zib_1_1vold_1_1frontend_1_1Frontend.html#afe9763d5ccf9994ddb2d7b88f2dbae32" title="Lookup the specified key." alt="" coords="341,157,595,185"/>
+<area shape="rect" id="node17" href="$dd/d3c/classde_1_1zib_1_1vold_1_1frontend_1_1Frontend.html#a9d36c8d8f3421de765cef84495f8e12b" title="Refresh a key." alt="" coords="340,55,596,83"/>
+<area shape="rect" id="node5" href="$d9/da2/classde_1_1zib_1_1vold_1_1userInterface_1_1RESTController.html#a6f268ddbfeebff2bed39f8bb427bb534" title="Handles Post requests." alt="" coords="645,55,952,83"/>
+<area shape="rect" id="node9" href="$db/d38/classde_1_1zib_1_1vold_1_1userInterface_1_1ABI.html#a944224962350d5f9bc78203c508adf71" title="de.zib.vold.userInterface.ABI.main" alt="" coords="680,106,917,134"/>
+<area shape="rect" id="node14" href="$d9/da2/classde_1_1zib_1_1vold_1_1userInterface_1_1RESTController.html#a4ed6a70fd0bfae7e4e2ded5a8c614eae" title="Handles Get requests." alt="" coords="649,157,948,185"/>
+</map>

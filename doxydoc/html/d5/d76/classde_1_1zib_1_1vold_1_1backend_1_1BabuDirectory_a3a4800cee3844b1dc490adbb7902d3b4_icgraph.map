@@ -1,0 +1,7 @@
+<map id="G" name="G">
+<area shape="rect" id="node3" href="$d5/d76/classde_1_1zib_1_1vold_1_1backend_1_1BabuDirectory.html#a362e3723ce04b3fdc3947a6b2d972459" title="Convert a directory (interface language) to a byte array (backend language)." alt="" coords="360,55,664,83"/>
+<area shape="rect" id="node5" href="$d5/d76/classde_1_1zib_1_1vold_1_1backend_1_1BabuDirectory.html#a12fae30adff934711b3145ac4c078cf8" title="Delete the key and its values from a partition." alt="" coords="1083,5,1368,33"/>
+<area shape="rect" id="node7" href="$d5/d76/classde_1_1zib_1_1vold_1_1backend_1_1BabuDirectory.html#ae0162de7d689a6f155e977cc6a2c556c" title="Insert a key with its set of values into a partition." alt="" coords="733,30,1013,58"/>
+<area shape="rect" id="node10" href="$d5/d76/classde_1_1zib_1_1vold_1_1backend_1_1BabuDirectory.html#a2037aad9993b277ec2f0c6d814497575" title="Query the values for a key in a partition." alt="" coords="731,81,1016,109"/>
+<area shape="rect" id="node12" href="$d5/d76/classde_1_1zib_1_1vold_1_1backend_1_1BabuDirectory.html#ae036dc2beba1cf6e5eed9592cb0286bf" title="Query the entries with all keys beginning with a prefix." alt="" coords="712,131,1035,159"/>
+</map>

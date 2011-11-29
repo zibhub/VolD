@@ -1,0 +1,10 @@
+<map id="G" name="G">
+<area shape="rect" id="node3" href="$dd/d3c/classde_1_1zib_1_1vold_1_1frontend_1_1Frontend.html#a26b3899691e197de75c01b155cccfc81" title="Insert a key." alt="" coords="317,5,565,33"/>
+<area shape="rect" id="node9" href="$dd/d3c/classde_1_1zib_1_1vold_1_1frontend_1_1Frontend.html#afe9763d5ccf9994ddb2d7b88f2dbae32" title="Lookup the specified key." alt="" coords="664,131,917,159"/>
+<area shape="rect" id="node14" href="$dd/d3c/classde_1_1zib_1_1vold_1_1frontend_1_1Frontend.html#a9d36c8d8f3421de765cef84495f8e12b" title="Refresh a key." alt="" coords="313,55,569,83"/>
+<area shape="rect" id="node17" href="$dd/d3c/classde_1_1zib_1_1vold_1_1frontend_1_1Frontend.html#a9fdc162a31615bd7d731275d1da370fe" title="Lookup the specified key only in the given scope." alt="" coords="293,157,589,185"/>
+<area shape="rect" id="node20" href="$db/d13/classde_1_1zib_1_1vold_1_1common_1_1Key.html#a75c3368c47c393f65537a599159f6409" title="Convert the key to readable and printable version." alt="" coords="327,207,556,235"/>
+<area shape="rect" id="node5" href="$db/d38/classde_1_1zib_1_1vold_1_1userInterface_1_1ABI.html#a944224962350d5f9bc78203c508adf71" title="de.zib.vold.userInterface.ABI.main" alt="" coords="1023,30,1260,58"/>
+<area shape="rect" id="node7" href="$d9/da2/classde_1_1zib_1_1vold_1_1userInterface_1_1RESTController.html#a6f268ddbfeebff2bed39f8bb427bb534" title="Handles Post requests." alt="" coords="637,55,944,83"/>
+<area shape="rect" id="node11" href="$d9/da2/classde_1_1zib_1_1vold_1_1userInterface_1_1RESTController.html#a4ed6a70fd0bfae7e4e2ded5a8c614eae" title="Handles Get requests." alt="" coords="992,131,1291,159"/>
+</map>

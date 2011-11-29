@@ -1,0 +1,18 @@
+<map id="G" name="G">
+<area shape="rect" id="node3" href="$dd/def/classde_1_1zib_1_1vold_1_1client_1_1RESTClient.html#ad2acb6f7fd39943c94fc6da83debb020" title="Delete a set of keys." alt="" coords="645,257,888,285"/>
+<area shape="rect" id="node5" href="$db/d13/classde_1_1zib_1_1vold_1_1common_1_1Key.html#a96d424859ff297acc2cfe4513ecf3339" title="Compare this key with another key." alt="" coords="331,155,552,183"/>
+<area shape="rect" id="node15" href="$dd/d3c/classde_1_1zib_1_1vold_1_1frontend_1_1Frontend.html#a9fdc162a31615bd7d731275d1da370fe" title="Lookup the specified key only in the given scope." alt="" coords="1245,206,1541,234"/>
+<area shape="rect" id="node17" href="$dd/d3c/classde_1_1zib_1_1vold_1_1frontend_1_1Frontend.html#afe9763d5ccf9994ddb2d7b88f2dbae32" title="Lookup the specified key." alt="" coords="1609,130,1863,158"/>
+<area shape="rect" id="node19" href="$d9/da2/classde_1_1zib_1_1vold_1_1userInterface_1_1RESTController.html#a4ed6a70fd0bfae7e4e2ded5a8c614eae" title="Handles Get requests." alt="" coords="1912,67,2211,95"/>
+<area shape="rect" id="node21" href="$db/d38/classde_1_1zib_1_1vold_1_1userInterface_1_1ABI.html#a944224962350d5f9bc78203c508adf71" title="de.zib.vold.userInterface.ABI.main" alt="" coords="1943,257,2180,285"/>
+<area shape="rect" id="node24" href="$db/d13/classde_1_1zib_1_1vold_1_1common_1_1Key.html#a07fe177b828d89892aab60e1f59bfcb9" title="Compute the hash code of this key." alt="" coords="320,307,563,335"/>
+<area shape="rect" id="node28" href="$d9/da2/classde_1_1zib_1_1vold_1_1userInterface_1_1RESTController.html#a6f268ddbfeebff2bed39f8bb427bb534" title="Handles Post requests." alt="" coords="288,358,595,386"/>
+<area shape="rect" id="node30" href="$dd/def/classde_1_1zib_1_1vold_1_1client_1_1RESTClient.html#a896f5b3c745b594a4320741d43be55d8" title="Refresh a set of keys." alt="" coords="643,105,891,133"/>
+<area shape="rect" id="node34" href="$de/d80/classde_1_1zib_1_1vold_1_1common_1_1URIKey.html#aa6e9c51fb4f43cf6aac6c44880885ada" title="Get the normalized key." alt="" coords="305,206,577,234"/>
+<area shape="rect" id="node7" href="$db/d13/classde_1_1zib_1_1vold_1_1common_1_1Key.html#add0670ad55e9a1f16c71e2ae4759395b" title="Construct a Key with all necessary informations." alt="" coords="667,155,867,183"/>
+<area shape="rect" id="node9" href="$db/d13/classde_1_1zib_1_1vold_1_1common_1_1Key.html#a30f05e5935e973124603a0a3a85cc427" title="Construct a key from list of strings." alt="" coords="944,155,1173,183"/>
+<area shape="rect" id="node11" href="$dc/dd5/classde_1_1zib_1_1vold_1_1replication_1_1RESTVoldReplicator.html#a759f3ee52ab39bd2ed649c38be74eb5e" title="Delegate an insert request." alt="" coords="1232,155,1555,183"/>
+<area shape="rect" id="node13" href="$dc/dd5/classde_1_1zib_1_1vold_1_1replication_1_1RESTVoldReplicator.html#ab927d38564b0127742dec865e14121d7" title="Delegate a refresh request." alt="" coords="1227,105,1560,133"/>
+<area shape="rect" id="node37" href="$dd/def/classde_1_1zib_1_1vold_1_1client_1_1RESTClient.html#ac657f93341dbeef20514071597dfb55b" title="Insert a set of keys." alt="" coords="648,206,885,234"/>
+<area shape="rect" id="node40" href="$dd/def/classde_1_1zib_1_1vold_1_1client_1_1RESTClient.html#aa25016944f58c5de337b0d8a0b0d3590" title="Insert a single key." alt="" coords="940,257,1177,285"/>
+</map>

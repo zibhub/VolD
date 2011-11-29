@@ -1,0 +1,7 @@
+<map id="G" name="G">
+<area shape="rect" id="node3" href="$df/dc7/classde_1_1zib_1_1vold_1_1backend_1_1WriteLogger.html#a48666f7a362747e77a7f69b1491a6e1c" title="Close the database." alt="" coords="340,5,601,33"/>
+<area shape="rect" id="node5" href="$df/dc7/classde_1_1zib_1_1vold_1_1backend_1_1WriteLogger.html#a7d9381ab0063fb441f0aa6b4c0fdcba1" title="Log a request for a delete." alt="" coords="336,55,605,83"/>
+<area shape="rect" id="node7" href="$df/dc7/classde_1_1zib_1_1vold_1_1backend_1_1WriteLogger.html#acd6c0ccddbc6f6cedbd90f1638eb9e9d" title="Log the request for an insert." alt="" coords="337,106,604,134"/>
+<area shape="rect" id="node9" href="$df/dc7/classde_1_1zib_1_1vold_1_1backend_1_1WriteLogger.html#ae139e434c0f3e0d17c98c15feef2bec0" title="Open the database." alt="" coords="340,157,601,185"/>
+<area shape="rect" id="node11" href="$df/dc7/classde_1_1zib_1_1vold_1_1backend_1_1WriteLogger.html#a34942ffa6c24651e81b514d29a15c815" title="Set the path to the logfile." alt="" coords="325,207,616,235"/>
+</map>

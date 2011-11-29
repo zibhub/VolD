@@ -1,0 +1,6 @@
+<map id="G" name="G">
+<area shape="rect" id="node3" href="$dc/d78/classde_1_1zib_1_1vold_1_1backend_1_1FileSystemDirectory.html#a2a8f1a228bb627b27009950b0a8c7784" title="Add a key with its values to the map." alt="" coords="384,5,715,33"/>
+<area shape="rect" id="node10" href="$dc/d78/classde_1_1zib_1_1vold_1_1backend_1_1FileSystemDirectory.html#a0353e573f7222c6d5c1d6aa77c81e338" title="Query the values for a key in a partition (root subdirectory)." alt="" coords="388,55,711,83"/>
+<area shape="rect" id="node5" href="$dc/d78/classde_1_1zib_1_1vold_1_1backend_1_1FileSystemDirectory.html#ae54389dd958807476e851a545f5acb6e" title="Query the entries with all keys beginning with a prefix." alt="" coords="1183,5,1540,33"/>
+<area shape="rect" id="node7" href="$dc/d78/classde_1_1zib_1_1vold_1_1backend_1_1FileSystemDirectory.html#a467460f196c1e2f9b8537b0d365efbf6" title="Recursively add all keys with its values to the map." alt="" coords="763,30,1133,58"/>
+</map>

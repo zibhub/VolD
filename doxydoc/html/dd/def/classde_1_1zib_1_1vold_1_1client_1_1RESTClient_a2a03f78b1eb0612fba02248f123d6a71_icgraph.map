@@ -1,0 +1,11 @@
+<map id="G" name="G">
+<area shape="rect" id="node3" href="$dc/dd5/classde_1_1zib_1_1vold_1_1replication_1_1RESTVoldReplicator.html#aa7104c49f7e1bb757e6c5c1bb3df2e2d" title="Internal method which acts as part of the guard of all public methods." alt="" coords="328,106,688,134"/>
+<area shape="rect" id="node9" href="$dd/def/classde_1_1zib_1_1vold_1_1client_1_1RESTClient.html#ad2acb6f7fd39943c94fc6da83debb020" title="Delete a set of keys." alt="" coords="387,55,629,83"/>
+<area shape="rect" id="node11" href="$dd/def/classde_1_1zib_1_1vold_1_1client_1_1RESTClient.html#ac657f93341dbeef20514071597dfb55b" title="Insert a set of keys." alt="" coords="389,157,627,185"/>
+<area shape="rect" id="node16" href="$dd/def/classde_1_1zib_1_1vold_1_1client_1_1RESTClient.html#a7d2732f8452f224322f8a58ce6e40689" title="Query a set of keys." alt="" coords="385,207,631,235"/>
+<area shape="rect" id="node20" href="$dd/def/classde_1_1zib_1_1vold_1_1client_1_1RESTClient.html#a896f5b3c745b594a4320741d43be55d8" title="Refresh a set of keys." alt="" coords="384,5,632,33"/>
+<area shape="rect" id="node5" href="$dc/dd5/classde_1_1zib_1_1vold_1_1replication_1_1RESTVoldReplicator.html#a759f3ee52ab39bd2ed649c38be74eb5e" title="Delegate an insert request." alt="" coords="741,106,1064,134"/>
+<area shape="rect" id="node7" href="$dc/dd5/classde_1_1zib_1_1vold_1_1replication_1_1RESTVoldReplicator.html#ab927d38564b0127742dec865e14121d7" title="Delegate a refresh request." alt="" coords="736,30,1069,58"/>
+<area shape="rect" id="node14" href="$dd/def/classde_1_1zib_1_1vold_1_1client_1_1RESTClient.html#aa25016944f58c5de337b0d8a0b0d3590" title="Insert a single key." alt="" coords="784,157,1021,185"/>
+<area shape="rect" id="node18" href="$dd/def/classde_1_1zib_1_1vold_1_1client_1_1RESTClient.html#a22f359d8cbd1b1271accb5830406d469" title="Query a key." alt="" coords="780,207,1025,235"/>
+</map>

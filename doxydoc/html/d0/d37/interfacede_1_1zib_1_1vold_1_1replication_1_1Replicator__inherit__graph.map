@@ -1,0 +1,4 @@
+<map id="G" name="G">
+<area shape="rect" id="node3" href="$d5/d17/classde_1_1zib_1_1vold_1_1replication_1_1LocalReplicator.html" title="Simple Replicator delegating all requests to a VolatileDirectory." alt="" coords="5,169,264,362"/>
+<area shape="rect" id="node5" href="$dc/dd5/classde_1_1zib_1_1vold_1_1replication_1_1RESTVoldReplicator.html" title="Replicator delegating all requests to another vold REST based service." alt="" coords="288,177,573,354"/>
+</map>

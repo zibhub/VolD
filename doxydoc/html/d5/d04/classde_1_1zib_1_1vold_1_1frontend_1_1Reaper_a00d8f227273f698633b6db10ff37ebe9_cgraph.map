@@ -1,0 +1,6 @@
+<map id="G" name="G">
+<area shape="rect" id="node3" href="$d5/d04/classde_1_1zib_1_1vold_1_1frontend_1_1Reaper.html#a4389ae9d5718cd791035bd8f86191c02" title="Internal method which acts as part of the guard of all public methods." alt="" coords="607,5,876,33"/>
+<area shape="rect" id="node5" href="$d5/d04/classde_1_1zib_1_1vold_1_1frontend_1_1Reaper.html#a0fb24d8fda7a919912fe14cc5174aed1" title="Work until the run flag is set to false." alt="" coords="276,55,503,83"/>
+<area shape="rect" id="node8" href="$d3/d1f/interfacede_1_1zib_1_1vold_1_1volatilelogic_1_1SlicedDirectory.html#ae589d77510341ca9425b6d34ad1e420a" title="Returns the slice number for the actual time." alt="" coords="561,55,921,83"/>
+<area shape="rect" id="node10" href="$d3/d1f/interfacede_1_1zib_1_1vold_1_1volatilelogic_1_1SlicedDirectory.html#af3ce4fe04779f5de4161ad20075f14b3" title="Get the size of one slice in milliseconds." alt="" coords="552,106,931,134"/>
+</map>

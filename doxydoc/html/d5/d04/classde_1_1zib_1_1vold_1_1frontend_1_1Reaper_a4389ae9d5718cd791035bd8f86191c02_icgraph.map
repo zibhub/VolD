@@ -1,0 +1,6 @@
+<map id="G" name="G">
+<area shape="rect" id="node3" href="$d5/d04/classde_1_1zib_1_1vold_1_1frontend_1_1Reaper.html#a0fb24d8fda7a919912fe14cc5174aed1" title="Work until the run flag is set to false." alt="" coords="327,5,553,33"/>
+<area shape="rect" id="node5" href="$d5/d04/classde_1_1zib_1_1vold_1_1frontend_1_1Reaper.html#a00d8f227273f698633b6db10ff37ebe9" title="Start the reaper in foreground." alt="" coords="604,18,823,46"/>
+<area shape="rect" id="node10" href="$d5/d04/classde_1_1zib_1_1vold_1_1frontend_1_1Reaper.html#a493288705358506fad7a64456c0c70fc" title="Stop the thread running in the background." alt="" coords="873,94,1151,122"/>
+<area shape="rect" id="node8" href="$d5/d04/classde_1_1zib_1_1vold_1_1frontend_1_1Reaper.html#a47e66b8eec1555d15f8996f86113162a" title="Construct an initialized Reaper." alt="" coords="891,18,1133,46"/>
+</map>

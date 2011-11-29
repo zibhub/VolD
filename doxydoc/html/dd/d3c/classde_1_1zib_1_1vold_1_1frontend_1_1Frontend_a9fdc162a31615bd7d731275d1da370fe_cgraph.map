@@ -1,0 +1,12 @@
+<map id="G" name="G">
+<area shape="rect" id="node3" href="$db/d13/classde_1_1zib_1_1vold_1_1common_1_1Key.html#a006c82345a0824b92b065fddd8808c12" title="Convert the key to the language used in volatilelogic." alt="" coords="416,5,653,33"/>
+<area shape="rect" id="node5" href="$db/d13/classde_1_1zib_1_1vold_1_1common_1_1Key.html#a30f05e5935e973124603a0a3a85cc427" title="Construct a key from list of strings." alt="" coords="420,106,649,134"/>
+<area shape="rect" id="node11" href="$db/d13/classde_1_1zib_1_1vold_1_1common_1_1Key.html#a64c57d881f4082000bc23dd1e07bab58" title="Get the name of the key." alt="" coords="1288,69,1555,97"/>
+<area shape="rect" id="node13" href="$db/d13/classde_1_1zib_1_1vold_1_1common_1_1Key.html#a6fa92b08ebc853abc2f0996830891fa5" title="Get the scope of the key." alt="" coords="1299,145,1544,173"/>
+<area shape="rect" id="node15" href="$db/d13/classde_1_1zib_1_1vold_1_1common_1_1Key.html#af91ddb27ca934153231a42741ba07508" title="Get the type of the key." alt="" coords="1304,207,1539,235"/>
+<area shape="rect" id="node20" href="$dd/d3c/classde_1_1zib_1_1vold_1_1frontend_1_1Frontend.html#a52ee58966312564b9d450b7a0408e94f" title="Are prefix lookups allowed?" alt="" coords="351,258,719,286"/>
+<area shape="rect" id="node22" href="$d8/db0/interfacede_1_1zib_1_1vold_1_1volatilelogic_1_1SimpleDirectory.html#abf7c2c30d0285b8baabfe57fc908b6b8" title="Query all keys beginning with a certain prefix." alt="" coords="356,309,713,337"/>
+<area shape="rect" id="node24" href="$dd/d3c/classde_1_1zib_1_1vold_1_1frontend_1_1Frontend.html#a615f7b3499972167f549ed75910a7f86" title="Prepare key for (prefix&#45;) lookup." alt="" coords="368,359,701,387"/>
+<area shape="rect" id="node7" href="$db/d13/classde_1_1zib_1_1vold_1_1common_1_1Key.html#add0670ad55e9a1f16c71e2ae4759395b" title="Construct a Key with all necessary informations." alt="" coords="769,106,969,134"/>
+<area shape="rect" id="node9" href="$db/d13/classde_1_1zib_1_1vold_1_1common_1_1Key.html#a96d424859ff297acc2cfe4513ecf3339" title="Compare this key with another key." alt="" coords="1019,106,1240,134"/>
+</map>

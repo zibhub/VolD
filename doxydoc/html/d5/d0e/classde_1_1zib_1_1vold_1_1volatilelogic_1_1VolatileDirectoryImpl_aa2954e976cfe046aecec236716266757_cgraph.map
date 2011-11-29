@@ -1,0 +1,13 @@
+<map id="G" name="G">
+<area shape="rect" id="node3" href="$d5/d0e/classde_1_1zib_1_1vold_1_1volatilelogic_1_1VolatileDirectoryImpl.html#aec5d6256f762e91cf7e10330c17f8169" title="Internal method which acts as part of the guard of all public methods." alt="" coords="427,5,805,33"/>
+<area shape="rect" id="node5" href="$da/d6f/interfacede_1_1zib_1_1vold_1_1backend_1_1PartitionedDirectory.html#a8a406c987166e0785436e747d6d63268" title="Delete a key." alt="" coords="456,55,776,83"/>
+<area shape="rect" id="node7" href="$d5/d0e/classde_1_1zib_1_1vold_1_1volatilelogic_1_1VolatileDirectoryImpl.html#a5a47bc83b58272f3362bcd3ab026813d" title="Melt a timeslice and key to a complete key." alt="" coords="405,106,827,134"/>
+<area shape="rect" id="node9" href="$da/dc8/classde_1_1zib_1_1vold_1_1volatilelogic_1_1TimeSlice.html#a3e44896626b44a404737e9b7bbe47d83" title="Returns the slice number for the actual time." alt="" coords="452,157,780,185"/>
+<area shape="rect" id="node15" href="$da/d6f/interfacede_1_1zib_1_1vold_1_1backend_1_1PartitionedDirectory.html#a9a7d87dd7e4a7a2d28c4a5a9ad508a70" title="Insert a set of values for a given key." alt="" coords="459,207,773,235"/>
+<area shape="rect" id="node17" href="$da/d6f/interfacede_1_1zib_1_1vold_1_1backend_1_1PartitionedDirectory.html#aec0f2944893d1d7c725d13e3e5d08fc9" title="Query the contents of a key." alt="" coords="455,258,777,286"/>
+<area shape="rect" id="node19" href="$d5/d0e/classde_1_1zib_1_1vold_1_1volatilelogic_1_1VolatileDirectoryImpl.html#a959d2458ae76ccc5ed1afadda142293b" title="Convert a date value to a DateTime object." alt="" coords="439,309,793,337"/>
+<area shape="rect" id="node21" href="$d5/d0e/classde_1_1zib_1_1vold_1_1volatilelogic_1_1VolatileDirectoryImpl.html#afa54092b9c0031f5717978640479eac7" title="Convert a key holding a timeslice only to a timeslice." alt="" coords="424,359,808,387"/>
+<area shape="rect" id="node23" href="$d5/d0e/classde_1_1zib_1_1vold_1_1volatilelogic_1_1VolatileDirectoryImpl.html#a9d894e8362bccd6c7d5b757b5378f677" title="Convert a timeslice to a key." alt="" coords="436,410,796,438"/>
+<area shape="rect" id="node11" href="$da/dc8/classde_1_1zib_1_1vold_1_1volatilelogic_1_1TimeSlice.html#aeefdf3c55a52b3f2b7c642a79fc04d68" title="Get the number of slices." alt="" coords="876,131,1236,159"/>
+<area shape="rect" id="node13" href="$da/dc8/classde_1_1zib_1_1vold_1_1volatilelogic_1_1TimeSlice.html#a1eaee27ec471936d6a34050509771e9c" title="Get the size of one slice in milliseconds." alt="" coords="883,182,1229,210"/>
+</map>

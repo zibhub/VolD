@@ -1,0 +1,5 @@
+<map id="G" name="G">
+<area shape="rect" id="node3" href="$d5/d17/classde_1_1zib_1_1vold_1_1replication_1_1LocalReplicator.html#a055a4b9217026724a3c050369df7b2cd" title="Delegate a delete request." alt="" coords="392,5,693,33"/>
+<area shape="rect" id="node5" href="$d5/d17/classde_1_1zib_1_1vold_1_1replication_1_1LocalReplicator.html#ad6108dd435f443c1f93c6cd565865fca" title="Delegate an insert request." alt="" coords="393,55,692,83"/>
+<area shape="rect" id="node7" href="$d5/d17/classde_1_1zib_1_1vold_1_1replication_1_1LocalReplicator.html#aabbe8aa0742785d5927535505cc95863" title="Delegate a refresh request." alt="" coords="389,106,696,134"/>
+</map>

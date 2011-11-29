@@ -1,0 +1,10 @@
+<map id="G" name="G">
+<area shape="rect" id="node3" href="$dc/d78/classde_1_1zib_1_1vold_1_1backend_1_1FileSystemDirectory.html#a9b799454347106ade25c26454a3e2bcd" title="Close the database." alt="" coords="399,57,713,85"/>
+<area shape="rect" id="node5" href="$dc/d78/classde_1_1zib_1_1vold_1_1backend_1_1FileSystemDirectory.html#ab9ce9b7cce4014f5f8556ad861e53a22" title="Open the database." alt="" coords="807,20,1119,48"/>
+<area shape="rect" id="node7" href="$dc/d78/classde_1_1zib_1_1vold_1_1backend_1_1FileSystemDirectory.html#adc01c32866af69f87f571023cda77a11" title="Set the encoding." alt="" coords="801,96,1124,124"/>
+<area shape="rect" id="node9" href="$dc/d78/classde_1_1zib_1_1vold_1_1backend_1_1FileSystemDirectory.html#a4acf6099f3e7fc4429814dc8c4f32f7a" title="Set the root directory where to store the database." alt="" coords="784,147,1141,175"/>
+<area shape="rect" id="node11" href="$dc/d78/classde_1_1zib_1_1vold_1_1backend_1_1FileSystemDirectory.html#a93e828629a87142260ff97873c385fcc" title="Delete the key and its values from a partition." alt="" coords="396,209,716,237"/>
+<area shape="rect" id="node13" href="$dc/d78/classde_1_1zib_1_1vold_1_1backend_1_1FileSystemDirectory.html#a717b1d42aadcaff176c4ba502cbd27d8" title="Insert a key with its set of values into a partition." alt="" coords="397,260,715,288"/>
+<area shape="rect" id="node15" href="$dc/d78/classde_1_1zib_1_1vold_1_1backend_1_1FileSystemDirectory.html#a0353e573f7222c6d5c1d6aa77c81e338" title="Query the values for a key in a partition (root subdirectory)." alt="" coords="395,311,717,339"/>
+<area shape="rect" id="node18" href="$dc/d78/classde_1_1zib_1_1vold_1_1backend_1_1FileSystemDirectory.html#ae54389dd958807476e851a545f5acb6e" title="Query the entries with all keys beginning with a prefix." alt="" coords="377,361,735,389"/>
+</map>

@@ -1,0 +1,8 @@
+<map id="G" name="G">
+<area shape="rect" id="node3" href="$dd/def/classde_1_1zib_1_1vold_1_1client_1_1RESTClient.html#ad2acb6f7fd39943c94fc6da83debb020" title="Delete a set of keys." alt="" coords="328,5,571,33"/>
+<area shape="rect" id="node5" href="$dd/def/classde_1_1zib_1_1vold_1_1client_1_1RESTClient.html#ac657f93341dbeef20514071597dfb55b" title="Insert a set of keys." alt="" coords="331,55,568,83"/>
+<area shape="rect" id="node11" href="$dd/def/classde_1_1zib_1_1vold_1_1client_1_1RESTClient.html#a896f5b3c745b594a4320741d43be55d8" title="Refresh a set of keys." alt="" coords="325,106,573,134"/>
+<area shape="rect" id="node7" href="$dc/dd5/classde_1_1zib_1_1vold_1_1replication_1_1RESTVoldReplicator.html#a759f3ee52ab39bd2ed649c38be74eb5e" title="Delegate an insert request." alt="" coords="627,5,949,33"/>
+<area shape="rect" id="node9" href="$dd/def/classde_1_1zib_1_1vold_1_1client_1_1RESTClient.html#aa25016944f58c5de337b0d8a0b0d3590" title="Insert a single key." alt="" coords="669,55,907,83"/>
+<area shape="rect" id="node13" href="$dc/dd5/classde_1_1zib_1_1vold_1_1replication_1_1RESTVoldReplicator.html#ab927d38564b0127742dec865e14121d7" title="Delegate a refresh request." alt="" coords="621,106,955,134"/>
+</map>

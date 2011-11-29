@@ -1,0 +1,7 @@
+<map id="G" name="G">
+<area shape="rect" id="node3" href="$d5/d17/classde_1_1zib_1_1vold_1_1replication_1_1LocalReplicator.html#ad6108dd435f443c1f93c6cd565865fca" title="Delegate an insert request." alt="" coords="440,5,739,33"/>
+<area shape="rect" id="node5" href="$dd/d3c/classde_1_1zib_1_1vold_1_1frontend_1_1Frontend.html#a26b3899691e197de75c01b155cccfc81" title="Insert a key." alt="" coords="465,55,713,83"/>
+<area shape="rect" id="node11" href="$df/d9b/classde_1_1zib_1_1vold_1_1volatilelogic_1_1ReplicatedVolatileDirectory_1_1InsertThread.html#a39f158d881bc10ce7efb70423422ccc3" title="de.zib.vold.volatilelogic.ReplicatedVolatileDirectory.InsertThread.run" alt="" coords="365,106,813,134"/>
+<area shape="rect" id="node7" href="$db/d38/classde_1_1zib_1_1vold_1_1userInterface_1_1ABI.html#a944224962350d5f9bc78203c508adf71" title="de.zib.vold.userInterface.ABI.main" alt="" coords="896,30,1133,58"/>
+<area shape="rect" id="node9" href="$d9/da2/classde_1_1zib_1_1vold_1_1userInterface_1_1RESTController.html#a6f268ddbfeebff2bed39f8bb427bb534" title="Handles Post requests." alt="" coords="861,81,1168,109"/>
+</map>

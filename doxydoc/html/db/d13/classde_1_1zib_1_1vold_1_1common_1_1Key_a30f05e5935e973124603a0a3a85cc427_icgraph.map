@@ -1,0 +1,8 @@
+<map id="G" name="G">
+<area shape="rect" id="node3" href="$dc/dd5/classde_1_1zib_1_1vold_1_1replication_1_1RESTVoldReplicator.html#a759f3ee52ab39bd2ed649c38be74eb5e" title="Delegate an insert request." alt="" coords="291,5,613,33"/>
+<area shape="rect" id="node5" href="$dc/dd5/classde_1_1zib_1_1vold_1_1replication_1_1RESTVoldReplicator.html#ab927d38564b0127742dec865e14121d7" title="Delegate a refresh request." alt="" coords="285,55,619,83"/>
+<area shape="rect" id="node7" href="$dd/d3c/classde_1_1zib_1_1vold_1_1frontend_1_1Frontend.html#a9fdc162a31615bd7d731275d1da370fe" title="Lookup the specified key only in the given scope." alt="" coords="304,106,600,134"/>
+<area shape="rect" id="node9" href="$dd/d3c/classde_1_1zib_1_1vold_1_1frontend_1_1Frontend.html#afe9763d5ccf9994ddb2d7b88f2dbae32" title="Lookup the specified key." alt="" coords="668,106,921,134"/>
+<area shape="rect" id="node11" href="$d9/da2/classde_1_1zib_1_1vold_1_1userInterface_1_1RESTController.html#a4ed6a70fd0bfae7e4e2ded5a8c614eae" title="Handles Get requests." alt="" coords="971,81,1269,109"/>
+<area shape="rect" id="node13" href="$db/d38/classde_1_1zib_1_1vold_1_1userInterface_1_1ABI.html#a944224962350d5f9bc78203c508adf71" title="de.zib.vold.userInterface.ABI.main" alt="" coords="1001,131,1239,159"/>
+</map>

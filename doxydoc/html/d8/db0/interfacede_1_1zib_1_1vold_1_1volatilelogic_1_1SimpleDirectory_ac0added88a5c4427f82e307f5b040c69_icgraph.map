@@ -1,0 +1,6 @@
+<map id="G" name="G">
+<area shape="rect" id="node3" href="$d5/d17/classde_1_1zib_1_1vold_1_1replication_1_1LocalReplicator.html#aabbe8aa0742785d5927535505cc95863" title="Delegate a refresh request." alt="" coords="452,5,759,33"/>
+<area shape="rect" id="node5" href="$dd/d3c/classde_1_1zib_1_1vold_1_1frontend_1_1Frontend.html#a9d36c8d8f3421de765cef84495f8e12b" title="Refresh a key." alt="" coords="477,55,733,83"/>
+<area shape="rect" id="node9" href="$d4/d3c/classde_1_1zib_1_1vold_1_1volatilelogic_1_1ReplicatedVolatileDirectory_1_1RefreshThread.html#a24d097970e2aa02c55e288e3dca84140" title="de.zib.vold.volatilelogic.ReplicatedVolatileDirectory.RefreshThread.run" alt="" coords="376,106,835,134"/>
+<area shape="rect" id="node7" href="$d9/da2/classde_1_1zib_1_1vold_1_1userInterface_1_1RESTController.html#a6f268ddbfeebff2bed39f8bb427bb534" title="Handles Post requests." alt="" coords="883,55,1189,83"/>
+</map>

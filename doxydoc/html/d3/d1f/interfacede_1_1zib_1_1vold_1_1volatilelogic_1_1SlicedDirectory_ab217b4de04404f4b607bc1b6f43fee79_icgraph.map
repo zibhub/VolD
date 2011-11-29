@@ -1,0 +1,8 @@
+<map id="G" name="G">
+<area shape="rect" id="node3" href="$d5/d17/classde_1_1zib_1_1vold_1_1replication_1_1LocalReplicator.html#a055a4b9217026724a3c050369df7b2cd" title="Delegate a delete request." alt="" coords="443,5,744,33"/>
+<area shape="rect" id="node5" href="$dd/d3c/classde_1_1zib_1_1vold_1_1frontend_1_1Frontend.html#a220310e925f7be2ec56ead5801a3d5f5" title="Delete a key." alt="" coords="468,55,719,83"/>
+<area shape="rect" id="node9" href="$d7/d35/classde_1_1zib_1_1vold_1_1frontend_1_1Reaper_1_1ReaperWorker.html#a3cab7a498c1d535a4a02f211a6376757" title="de.zib.vold.frontend.Reaper.ReaperWorker.reap_timeslice" alt="" coords="403,106,784,134"/>
+<area shape="rect" id="node13" href="$d0/d3f/classde_1_1zib_1_1vold_1_1volatilelogic_1_1ReplicatedVolatileDirectory_1_1DeleteThread.html#a3419c18abdb69b3729ac37081c2d0fc9" title="de.zib.vold.volatilelogic.ReplicatedVolatileDirectory.DeleteThread.run" alt="" coords="367,157,820,185"/>
+<area shape="rect" id="node7" href="$d9/da2/classde_1_1zib_1_1vold_1_1userInterface_1_1RESTController.html#a6f268ddbfeebff2bed39f8bb427bb534" title="Handles Post requests." alt="" coords="872,55,1179,83"/>
+<area shape="rect" id="node11" href="$d7/d35/classde_1_1zib_1_1vold_1_1frontend_1_1Reaper_1_1ReaperWorker.html#abd595cc2a1df4a14d92c248540231e01" title="de.zib.vold.frontend.Reaper.ReaperWorker.run" alt="" coords="871,106,1180,134"/>
+</map>

@@ -1,0 +1,7 @@
+<map id="G" name="G">
+<area shape="rect" id="node3" href="$d5/d0e/classde_1_1zib_1_1vold_1_1volatilelogic_1_1VolatileDirectoryImpl.html#aec5d6256f762e91cf7e10330c17f8169" title="Internal method which acts as part of the guard of all public methods." alt="" coords="421,5,800,33"/>
+<area shape="rect" id="node5" href="$da/d6f/interfacede_1_1zib_1_1vold_1_1backend_1_1PartitionedDirectory.html#a8a406c987166e0785436e747d6d63268" title="Delete a key." alt="" coords="451,55,771,83"/>
+<area shape="rect" id="node7" href="$d5/d0e/classde_1_1zib_1_1vold_1_1volatilelogic_1_1VolatileDirectoryImpl.html#a5a47bc83b58272f3362bcd3ab026813d" title="Melt a timeslice and key to a complete key." alt="" coords="400,106,821,134"/>
+<area shape="rect" id="node9" href="$da/d6f/interfacede_1_1zib_1_1vold_1_1backend_1_1PartitionedDirectory.html#aec0f2944893d1d7c725d13e3e5d08fc9" title="Query the contents of a key." alt="" coords="449,157,772,185"/>
+<area shape="rect" id="node11" href="$d5/d0e/classde_1_1zib_1_1vold_1_1volatilelogic_1_1VolatileDirectoryImpl.html#afa54092b9c0031f5717978640479eac7" title="Convert a key holding a timeslice only to a timeslice." alt="" coords="419,207,803,235"/>
+</map>

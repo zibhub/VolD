@@ -1,0 +1,6 @@
+<map id="G" name="G">
+<area shape="rect" id="node3" href="$d5/d76/classde_1_1zib_1_1vold_1_1backend_1_1BabuDirectory.html#a12fae30adff934711b3145ac4c078cf8" title="Delete the key and its values from a partition." alt="" coords="728,5,1013,33"/>
+<area shape="rect" id="node5" href="$d5/d76/classde_1_1zib_1_1vold_1_1backend_1_1BabuDirectory.html#ae0162de7d689a6f155e977cc6a2c556c" title="Insert a key with its set of values into a partition." alt="" coords="379,30,659,58"/>
+<area shape="rect" id="node8" href="$d5/d76/classde_1_1zib_1_1vold_1_1backend_1_1BabuDirectory.html#a2037aad9993b277ec2f0c6d814497575" title="Query the values for a key in a partition." alt="" coords="376,81,661,109"/>
+<area shape="rect" id="node10" href="$d5/d76/classde_1_1zib_1_1vold_1_1backend_1_1BabuDirectory.html#ae036dc2beba1cf6e5eed9592cb0286bf" title="Query the entries with all keys beginning with a prefix." alt="" coords="357,131,680,159"/>
+</map>

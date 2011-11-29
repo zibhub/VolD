@@ -1,0 +1,7 @@
+<map id="G" name="G">
+<area shape="rect" id="node3" href="$da/dc8/classde_1_1zib_1_1vold_1_1volatilelogic_1_1TimeSlice.html#a3e44896626b44a404737e9b7bbe47d83" title="Returns the slice number for the actual time." alt="" coords="444,55,772,83"/>
+<area shape="rect" id="node11" href="$d5/d0e/classde_1_1zib_1_1vold_1_1volatilelogic_1_1VolatileDirectoryImpl.html#a017bc9e54754d5f0ffae628bae1d70d3" title="A delegator for TimeSlice.getTimeSliceSize()." alt="" coords="400,106,816,134"/>
+<area shape="rect" id="node5" href="$d5/d0e/classde_1_1zib_1_1vold_1_1volatilelogic_1_1VolatileDirectoryImpl.html#ac47adfe06c0b4a9e6431e9ed1f4d9cf9" title="A delegator for TimeSlice.getActualSlice()." alt="" coords="865,5,1263,33"/>
+<area shape="rect" id="node7" href="$d5/d0e/classde_1_1zib_1_1vold_1_1volatilelogic_1_1VolatileDirectoryImpl.html#adf6843e51716a7a30dee63dc1b88d9e6" title="Insert a key with its set of values." alt="" coords="893,55,1235,83"/>
+<area shape="rect" id="node9" href="$d5/d0e/classde_1_1zib_1_1vold_1_1volatilelogic_1_1VolatileDirectoryImpl.html#aa2954e976cfe046aecec236716266757" title="Refresh a key." alt="" coords="888,106,1240,134"/>
+</map>

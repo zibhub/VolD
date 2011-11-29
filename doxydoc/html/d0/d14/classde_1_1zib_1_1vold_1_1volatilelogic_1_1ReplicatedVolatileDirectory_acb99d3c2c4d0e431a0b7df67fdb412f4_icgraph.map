@@ -1,0 +1,11 @@
+<map id="G" name="G">
+<area shape="rect" id="node3" href="$d0/d14/classde_1_1zib_1_1vold_1_1volatilelogic_1_1ReplicatedVolatileDirectory.html#a9819f192d91a67dae12454292597bf23" title="Delete a key." alt="" coords="512,5,893,33"/>
+<area shape="rect" id="node5" href="$d0/d14/classde_1_1zib_1_1vold_1_1volatilelogic_1_1ReplicatedVolatileDirectory.html#a603b4d656915eba245fc5c88d2574aa4" title="A delegator for TimeSlice.getActualSlice()." alt="" coords="485,55,920,83"/>
+<area shape="rect" id="node7" href="$d0/d14/classde_1_1zib_1_1vold_1_1volatilelogic_1_1ReplicatedVolatileDirectory.html#ac23a0208dea5c38578aae9984fdeabdf" title="A delegator for TimeSlice.getNumberOfSlices()." alt="" coords="469,106,936,134"/>
+<area shape="rect" id="node9" href="$d0/d14/classde_1_1zib_1_1vold_1_1volatilelogic_1_1ReplicatedVolatileDirectory.html#a74d09ccc6dd82235ce9001b0a422b815" title="A delegator for TimeSlice.getTimeSliceSize()." alt="" coords="477,157,928,185"/>
+<area shape="rect" id="node11" href="$d0/d14/classde_1_1zib_1_1vold_1_1volatilelogic_1_1ReplicatedVolatileDirectory.html#aa98e0160dd0dd0023426aa7dd2fb3964" title="Insert a key with its set of values." alt="" coords="513,207,892,235"/>
+<area shape="rect" id="node13" href="$d0/d14/classde_1_1zib_1_1vold_1_1volatilelogic_1_1ReplicatedVolatileDirectory.html#ad6c15ba592415a016cfadaac2f4d163b" title="Delegate a lookup request to the backend." alt="" coords="511,258,895,286"/>
+<area shape="rect" id="node15" href="$d0/d14/classde_1_1zib_1_1vold_1_1volatilelogic_1_1ReplicatedVolatileDirectory.html#a7bf33cf13b64ccf056f058cbfa9becc5" title="Delegate a prefixlookup to the backend." alt="" coords="491,309,915,337"/>
+<area shape="rect" id="node17" href="$d0/d14/classde_1_1zib_1_1vold_1_1volatilelogic_1_1ReplicatedVolatileDirectory.html#a437d355f98f4c22c14798d725becd6a6" title="Refresh a key." alt="" coords="509,359,896,387"/>
+<area shape="rect" id="node19" href="$d0/d14/classde_1_1zib_1_1vold_1_1volatilelogic_1_1ReplicatedVolatileDirectory.html#a17ae362798ce991b4035f4c8aabe9ed6" title="Delegate a slicelookup to the backend." alt="" coords="495,410,911,438"/>
+</map>

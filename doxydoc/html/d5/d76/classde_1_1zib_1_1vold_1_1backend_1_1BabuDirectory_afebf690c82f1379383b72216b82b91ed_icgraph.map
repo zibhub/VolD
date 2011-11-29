@@ -1,0 +1,5 @@
+<map id="G" name="G">
+<area shape="rect" id="node3" href="$d5/d76/classde_1_1zib_1_1vold_1_1backend_1_1BabuDirectory.html#ae0a594216594c56de586c887ee359a13" title="Set the base directory BabuDB should use." alt="" coords="385,5,668,33"/>
+<area shape="rect" id="node5" href="$d5/d76/classde_1_1zib_1_1vold_1_1backend_1_1BabuDirectory.html#a34a7f3df43948662d87ee6263d143231" title="Set the log directory BabuDB should use." alt="" coords="373,55,680,83"/>
+<area shape="rect" id="node7" href="$d5/d76/classde_1_1zib_1_1vold_1_1backend_1_1BabuDirectory.html#a74f7b06855341e000582589cc25dc3a4" title="Set the sync method BabuDB should use." alt="" coords="379,106,675,134"/>
+</map>

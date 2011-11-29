@@ -1,0 +1,17 @@
+<map id="G" name="G">
+<area shape="rect" id="node3" href="$db/d13/classde_1_1zib_1_1vold_1_1common_1_1Key.html#a006c82345a0824b92b065fddd8808c12" title="Convert the key to the language used in volatilelogic." alt="" coords="811,74,1048,102"/>
+<area shape="rect" id="node5" href="$dd/d3c/classde_1_1zib_1_1vold_1_1frontend_1_1Frontend.html#a7352034d7c67b47375c55d9b05320e1c" title="Internal method which acts as part of the guard of all public methods." alt="" coords="361,74,644,102"/>
+<area shape="rect" id="node7" href="$db/d13/classde_1_1zib_1_1vold_1_1common_1_1Key.html#a64c57d881f4082000bc23dd1e07bab58" title="Get the name of the key." alt="" coords="1683,125,1949,153"/>
+<area shape="rect" id="node9" href="$db/d13/classde_1_1zib_1_1vold_1_1common_1_1Key.html#a6fa92b08ebc853abc2f0996830891fa5" title="Get the scope of the key." alt="" coords="1693,327,1939,355"/>
+<area shape="rect" id="node11" href="$db/d13/classde_1_1zib_1_1vold_1_1common_1_1Key.html#af91ddb27ca934153231a42741ba07508" title="Get the type of the key." alt="" coords="1699,429,1933,457"/>
+<area shape="rect" id="node13" href="$dd/d3c/classde_1_1zib_1_1vold_1_1frontend_1_1Frontend.html#ac426dfa02f36a4ee1dedbc323fae599a" title="Are recursive scope lookups enabled?" alt="" coords="309,277,696,305"/>
+<area shape="rect" id="node15" href="$dd/d3c/classde_1_1zib_1_1vold_1_1frontend_1_1Frontend.html#aff2ca0b6a10f989992229f728a9e1ef0" title="Get the parent of a scope." alt="" coords="359,327,647,355"/>
+<area shape="rect" id="node17" href="$dd/d3c/classde_1_1zib_1_1vold_1_1frontend_1_1Frontend.html#a9fdc162a31615bd7d731275d1da370fe" title="Lookup the specified key only in the given scope." alt="" coords="355,226,651,254"/>
+<area shape="rect" id="node38" href="$db/d13/classde_1_1zib_1_1vold_1_1common_1_1Key.html#a75c3368c47c393f65537a599159f6409" title="Convert the key to readable and printable version." alt="" coords="388,175,617,203"/>
+<area shape="rect" id="node20" href="$db/d13/classde_1_1zib_1_1vold_1_1common_1_1Key.html#a30f05e5935e973124603a0a3a85cc427" title="Construct a key from list of strings." alt="" coords="815,277,1044,305"/>
+<area shape="rect" id="node32" href="$dd/d3c/classde_1_1zib_1_1vold_1_1frontend_1_1Frontend.html#a52ee58966312564b9d450b7a0408e94f" title="Are prefix lookups allowed?" alt="" coords="745,378,1113,406"/>
+<area shape="rect" id="node34" href="$d8/db0/interfacede_1_1zib_1_1vold_1_1volatilelogic_1_1SimpleDirectory.html#abf7c2c30d0285b8baabfe57fc908b6b8" title="Query all keys beginning with a certain prefix." alt="" coords="751,175,1108,203"/>
+<area shape="rect" id="node36" href="$dd/d3c/classde_1_1zib_1_1vold_1_1frontend_1_1Frontend.html#a615f7b3499972167f549ed75910a7f86" title="Prepare key for (prefix&#45;) lookup." alt="" coords="763,226,1096,254"/>
+<area shape="rect" id="node22" href="$db/d13/classde_1_1zib_1_1vold_1_1common_1_1Key.html#add0670ad55e9a1f16c71e2ae4759395b" title="Construct a Key with all necessary informations." alt="" coords="1164,277,1364,305"/>
+<area shape="rect" id="node24" href="$db/d13/classde_1_1zib_1_1vold_1_1common_1_1Key.html#a96d424859ff297acc2cfe4513ecf3339" title="Compare this key with another key." alt="" coords="1413,277,1635,305"/>
+</map>
