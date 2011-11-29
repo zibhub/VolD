@@ -143,11 +143,28 @@ This part can be skipped if replication is not needed.
 In principle, the replication tree is a binary tree where the leafs are VolatileDirectoryImpl objects and each other node is a ReplicatedVolatileDirectory object.
 A ReplicatedVolatileDirectory is assigned a VolatileDirectory as backend which will serve all read and write requests and a Replicator object which replicates all write requests.
 Before explaining the replicators, the definition of a ReplicatedVolatileDirectory object will be given.
-The following entry would create a ReplicatedVolatileDirectory with the uniqeus proxying all requests to the
+The following entry would create a ReplicatedVolatileDirectory with the unique id `VOLDREPID` proxying all requests to the volatile directory `VOLDID` and replicating all write requests to the Replicator `REPID`.
 
-There are two different types of Replicators, namely LocalReplicator and RESTReplicator.
+    <bean id="VOLDREPID" class="de.zib.vold.volatilelogic.ReplicatedVolatileDirectory">
+        <property name="directory" ref="VOLDID" />
+        <property name="replicator" ref="REPID" />
+    </bean>
+
+There are two different types of Replicators, namely LocalReplicator and RESTVoldReplicator.
 The former replicates to a VolatileDirectory object which itselfes can be a ReplicatedVolatileDirectory object again or a VolatileDirectoryImpl object.
-A RESTReplicator object replicates all write requests to another VolD REST based service.
+A RESTVoldReplicator object replicates all write requests to another VolD REST based service.
+
+The following entry would create a LocalReplicator with the unique id `REPID` proxying all write requests to the volatile directory `VOLDID`.
+
+    <bean id="REPID" class="de.zib.vold.replication.LocalReplicator">
+        <property name="replica" ref="VOLDID" />
+    </bean>
+
+The following entry would create a RESTVoldReplicator with the unique id `REPID` proxying all write requests to the VolD service reachable at the URL `http://vold.i/slave/`
+
+    <bean id="REPID" class="de.zib.vold.replication.RESTVoldReplicator">
+        <property name="baseURL" value="http://vold.i/slave/" />
+    </bean>
 
 ### Frontends
 
