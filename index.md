@@ -283,6 +283,11 @@ The data will be written into a file system directory on the local disk.
 
 <!-- ----- FRONTEND AND USER INTERFACE -------- -->
 
+<bean id="reaper" class="de.zib.vold.frontend.Reaper">
+    <property name="TTL" value="3600000" /> // one hour
+    <property name="volatileDirectory" ref="voldi" />
+</bean>
+
 <bean id="masterfrontend" class="de.zib.vold.frontend.Frontend">
     <property name="volatileDirectory" ref="voldimaster" />
 </bean>
