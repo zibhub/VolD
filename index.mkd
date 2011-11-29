@@ -60,13 +60,16 @@ Configuration
 -------------
 
 There is no need to change the configuration of the client as long as the default marshaller will be used (which is recommended).
-The configuration file for the server is `server/src/main/java/META-INF/applicationContext.xml`
+The configuration file for the server is `server/src/main/java/META-INF/applicationContext.xml`.
 It will be explained in four parts.
 
 The first part describes setting up the backends, where the physical data will be stored.
 The second part describes the volatile logic interface on top of the backends.
 The third part uses these interface to build up a replication tree.
 The fourth and last part describes setting up the frontend and user interface.
+
+After that, the configuration of the user interface (i.e. the configuration of the RESTController) will be explained seperately.
+Alternatively, it can be configured in the file `server/web/WEB-INF/dispatcher-servlet.xml`, but the above mentioned `applicationContext.xml` is also a good choice.
 
 ### Backends
 
@@ -183,6 +186,30 @@ A Frontend with the id `UNIQUEFRONTENDID` working on the volatile directory `VOL
     <bean id="UNIQUEFRONTENDID" class="de.zib.vold.frontend.Frontend">
         <property name="volatileDirectory" ref="VOLDID" />
     </bean>
+
+### User Interfaces
+
+Last but not least, a user interface may be configured.
+The following entry would create a RESTController with the id `MASTERCONTROLLERID` proxying all requests to the Frontend `MASTERFRONTENDID`.
+
+    <bean id="MASTERCONTROLLERID" class="de.zib.vold.userInterface.RESTController">
+        <property name="frontend" ref="MASTERFRONTENDID" />
+    </bean>
+
+The default for such a controller is to handle all requests.
+To change that behaviour, a SimpleUrlHandlerMapping may be configured with the following entry dispatching all requests from `/master/*` to the RestController with the id `MASTERFRONTENDID`.
+
+    <bean class="org.springframework.web.servlet.handler.SimpleUrlHandlerMapping>
+        <property name="mappings">
+            <props>
+                <prop key="/master/*">MASTERCONTROLLERID</prop>
+            </props>
+        </property>
+    </bean>
+
+Of course, more than one `<prop>` entries can be configured.
+A typical setup would be to dispatch all replication queries from `/slave/*` to a slave controller, which itselfes does not replicate remote again.
+All other requests could be dispatched to a master controller.
 
 Configuration Examples
 ----------------------
