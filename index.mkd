@@ -96,7 +96,7 @@ The data would be written asynchronously and all incoming data would be interpre
  
 {% highlight xml %}
     <bean id="UNIQUEID" class="de.zib.vold.backend.BabuDirectory">
-        <property databaseName" value="DBNAME" />
+        <property name="databaseName" value="DBNAME" />
         <property name="dir" value="/path/to/db" />
         <property name="logDir" value="/path/to/db/logs" />
         <property name="sync" value="ASYNC" />
@@ -226,7 +226,7 @@ The default for such a controller is to handle all requests.
 To change that behaviour, a SimpleUrlHandlerMapping may be configured with the following entry dispatching all requests from `/master/*` to the RestController with the id `MASTERFRONTENDID`.
 
 {% highlight xml %}
-    <bean class="org.springframework.web.servlet.handler.SimpleUrlHandlerMapping>
+    <bean class="org.springframework.web.servlet.handler.SimpleUrlHandlerMapping">
         <property name="mappings">
             <props>
                 <prop key="/master/*">MASTERCONTROLLERID</prop>
@@ -292,7 +292,7 @@ There is a configuration which results in the same behaviour with a smaller repl
 </bean>
 
 <bean id="backendbabu" class="de.zib.vold.backend.BabuDirectory">
-    <property databaseName" value="vold" />
+    <property name="databaseName" value="vold" />
     <property name="dir" value="/var/spool/vold/babu/" />
     <property name="logDir" value="/var/spool/vold/babu/logs/" />
     <property name="sync" value="ASYNC" />
