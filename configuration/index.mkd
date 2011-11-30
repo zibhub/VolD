@@ -5,6 +5,8 @@ layout: default
 ---
 
 
+Configuration
+=============
 
 There is no need to change the configuration of the client as long as the default marshaller will be used (which is recommended).
 The configuration file for the server is `server/src/main/java/META-INF/applicationContext.xml`.
@@ -22,9 +24,9 @@ Alternatively, it can be configured in the file `server/web/WEB-INF/dispatcher-s
 {:toc}
 
 Reference
-=========
+---------
 
-## Backends
+### Backends
 
 An arbitrary number of backends can be configured.
 A new backend will be created by inserting a bean tag with a new unique id and the parameter class telling which type of backend to crate.
@@ -37,7 +39,7 @@ Since version 0.1.0, there are three different types of backends, namely
 
 The WriteLogger backend is a write-only backend and cannot be used for read requests.
 
-## BabuDirectory
+### BabuDirectory
 
 The following entry would create a BabuDirectory backend with the id `UNIQUEID`.
 The database named `DBNAME` would be stored in the directory `/path/to/db` whereas its log files would be stored in `/path/to/db/logs`.
@@ -53,7 +55,7 @@ The data would be written asynchronously and all incoming data would be interpre
     </bean>
 {% endhighlight %}
 
-### FileSystemDirectory
+#### FileSystemDirectory
 
 The following entry would create a FileSystemDirectory backend with the id `UNIQUEID`.
 The physical data would be stored in the directory `/path/to/fsd` and the incoming data would be interpreted `utf-8` encoded.
@@ -65,7 +67,7 @@ The physical data would be stored in the directory `/path/to/fsd` and the incomi
     </bean>
 {% endhighlight %}
 
-### WriteLogger
+#### WriteLogger
 
 The following entry would create a WriteLogger backend with the id `UNIQUEID`.
 All write requests would be logged in the file `/path/to/log/file`.
@@ -76,7 +78,7 @@ All write requests would be logged in the file `/path/to/log/file`.
     </bean>
 {% endhighlight %}
 
-## Volatile Logic
+### Volatile Logic
 
 The backends are only able to store some data.
 They do not know anything about timestamps, time to live or the whole volatile logic at all.
@@ -103,7 +105,7 @@ Having a backend with the id `BACKENDID`, the following entry would create a Vol
 
 Of course, an appropriate TimeSlice object and backend has to be configured somewhere else in the configuration file.
 
-## Replication Tree
+### Replication Tree
 
 This part can be skipped if replication is not needed.
 In principle, the replication tree is a binary tree where the leafs are VolatileDirectoryImpl objects and each other node is a ReplicatedVolatileDirectory object.
@@ -138,7 +140,7 @@ The following entry would create a RESTVoldReplicator with the unique id `REPID`
     </bean>
 {% endhighlight %}
 
-## Frontends
+### Frontends
 
 There are two different types of frontends which can be configured independently, namely the Reaper and Frontend classes.
 The Reaper cares about keys exceeding their time to live and deletes them.
@@ -160,7 +162,7 @@ A Frontend with the id `UNIQUEFRONTENDID` working on the volatile directory `VOL
     </bean>
 {% endhighlight %}
 
-## User Interfaces
+### User Interfaces
 
 Last but not least, a user interface may be configured.
 The following entry would create a RESTController with the id `MASTERCONTROLLERID` proxying all requests to the Frontend `MASTERFRONTENDID`.
@@ -189,9 +191,9 @@ A typical setup would be to dispatch all replication queries from `/slave/*` to 
 All other requests could be dispatched to a master controller.
 
 Configuration Examples
-======================
+----------------------
 
-## Most Simple Example
+### Most Simple Example
 
 The following example sets up a VolD REST based service without a Reaper and without replication on top of the file system directory `/var/spool/vold`.
 Therefore, the directory `/var/spool/vold` has to exist and the user running the application container has to have write permissions to that directory.
@@ -222,7 +224,7 @@ Therefore, the directory `/var/spool/vold` has to exist and the user running the
 </bean>
 {% endhighlight %}
 
-## Full Featured Example
+### Full Featured Example
 
 The following example sets up a VolD REST based service storing the data three times locally and replicating to another VolD service.
 A Reaper and two user interfaces (one for answering queries and one for acting as slave itselfes) will be configured additionally.
@@ -341,7 +343,7 @@ There is a configuration which results in the same behaviour with a smaller repl
 </bean>
 {% endhighlight %}
 
-## Usual Case Example
+### Usual Case Example
 
 The following configuration example sets up a replicated VolD (to the slave `http://vold.i/slave`) and acts as slave itselfes too.
 The data will be written into a file system directory on the local disk.
