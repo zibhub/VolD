@@ -9,7 +9,7 @@ layout: default
 Configuration
 =============
 
-{:toc}
+[TOC]
 
 ## Introduction
 
