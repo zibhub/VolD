@@ -8,6 +8,9 @@ layout: default
 Configuration
 =============
 
+* Table of content:
+{:toc}
+
 There is no need to change the configuration of the client as long as the default marshaller will be used (which is recommended).
 The configuration file for the server is `server/src/main/java/META-INF/applicationContext.xml`.
 It will be explained in four parts.
@@ -19,9 +22,6 @@ The fourth and last part describes setting up the frontend and user interface.
 
 After that, the configuration of the user interface (i.e. the configuration of the RESTController) will be explained seperately.
 Alternatively, it can be configured in the file `server/web/WEB-INF/dispatcher-servlet.xml`, but the above mentioned `applicationContext.xml` is also a good choice.
-
-* Table of content:
-{:toc}
 
 Reference
 ---------
