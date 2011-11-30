@@ -1,6 +1,6 @@
 ---
 title: VolD - Configuration
-root: .
+root: ..
 layout: default
 ---
 
