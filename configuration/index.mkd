@@ -6,9 +6,6 @@ layout: default
 
 
 
-Configuration
-=============
-
 There is no need to change the configuration of the client as long as the default marshaller will be used (which is recommended).
 The configuration file for the server is `server/src/main/java/META-INF/applicationContext.xml`.
 It will be explained in four parts.
@@ -23,6 +20,9 @@ Alternatively, it can be configured in the file `server/web/WEB-INF/dispatcher-s
 
 * Table of content:
 {:toc}
+
+Reference
+=========
 
 ## Backends
 
