@@ -4,8 +4,14 @@ root: .
 layout: default
 ---
 
+
+
 Configuration
 =============
+
+{:toc}
+
+## Introduction
 
 There is no need to change the configuration of the client as long as the default marshaller will be used (which is recommended).
 The configuration file for the server is `server/src/main/java/META-INF/applicationContext.xml`.
