@@ -1,4 +1,19 @@
 
+/*
+ * Copyright 2008-2011 Zuse Institute Berlin (ZIB)
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *      http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
 package de.zib.vold.replication;
 
 import de.zib.vold.client.RESTClient;
@@ -34,15 +49,15 @@ public class RESTVoldReplicator implements Replicator
          */
         public RESTVoldReplicator( )
         {
-                this.rest = null;
+                this.rest = new RESTClient();
         }
 
         /**
-         * Set the REST Client to delegate all write requests to.
+         * Set the REST base URL to delegate all write requests to.
          */
-        public void setRestClient( RESTClient rest )
+        public void setBaseURL( String baseURL )
         {
-                this.rest = rest;
+                rest.setBaseURL( baseURL );
         }
 
         /**
@@ -50,9 +65,13 @@ public class RESTVoldReplicator implements Replicator
          */
         public void checkState( )
         {
-                if( null == this.rest )
+                try
                 {
-                        throw new IllegalStateException( "Tried to operate on RESTReplicator while it had not been initialized yet. Set restClient before!" );
+                        rest.checkState();
+                }
+                catch( IllegalStateException e )
+                {
+                        throw new IllegalStateException( "Tried to operate on RESTReplicator while it had not been initialized yet. Set restClient before!", e );
                 }
         }
 
