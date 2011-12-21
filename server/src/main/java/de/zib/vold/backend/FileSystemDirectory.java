@@ -655,7 +655,7 @@ public class FileSystemDirectory implements PartitionedDirectoryBackend
 
                 public boolean accept( File pathname )
                 {
-                        return prefix.length() <= pathname.length() && pathname.getName().substring( 0, prefix.length() ).equals( prefix );
+                        return prefix.length() <= pathname.getName().length() && pathname.getName().substring( 0, prefix.length() ).equals( prefix );
                 }
         }
 
