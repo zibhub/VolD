@@ -149,7 +149,7 @@ The following entry would create a Reaper with the id `UNIQUEREAPERID` deleting 
 {% highlight xml %}
     <bean id="UNIQUEREAPERID" class="de.zib.vold.frontend.Reaper">
         <property name="TTL" value="20000" />
-        <property name="volatileDirectory" ref="VOLDID" />
+        <property name="sicedDirectory" ref="VOLDID" />
     </bean>
 {% endhighlight %}
 
@@ -158,7 +158,7 @@ A Frontend with the id `UNIQUEFRONTENDID` working on the volatile directory `VOL
 
 {% highlight xml %}
     <bean id="UNIQUEFRONTENDID" class="de.zib.vold.frontend.Frontend">
-        <property name="volatileDirectory" ref="VOLDID" />
+        <property name="slicedDirectory" ref="VOLDID" />
     </bean>
 {% endhighlight %}
 
@@ -255,8 +255,7 @@ There is a configuration which results in the same behaviour with a smaller repl
 </bean>
 
 <bean id="backendlogger" class="de.zib.vold.backend.WriteLogger">
-    <property name="rootPath" value="/var/spool/vold/write.logs" />
-    <property name="enc" value="utf-8" />
+    <property name="logfile" value="/var/spool/vold/write.logs" />
 </bean>
 <bean id="voldilogger" class="de.zib.vold.volatilelogic.VolatileDirectoryImpl">
     <property name="timeslice" ref="timeslice" />
@@ -276,13 +275,13 @@ There is a configuration which results in the same behaviour with a smaller repl
     <property name="replica" ref="voldilogger" />
 </bean>
 
-<bean id="repslave2" class="de.zib.vold.volatilelogic.ReplicatedVolatileLogic">
+<bean id="repslave2" class="de.zib.vold.volatilelogic.ReplicatedVolatileDirectory">
     <property name="directory" ref="voldibabu" />
     <property name="replicator" ref="localreplogger" />
 </bean>
 
 <bean id="localrepslave" class="de.zib.vold.replication.LocalReplicator">
-    <property name="replica" ref="reslave2" />
+    <property name="replica" ref="repslave2" />
 </bean>
 
 <bean id="voldislave" class="de.zib.vold.volatilelogic.ReplicatedVolatileDirectory">
@@ -314,7 +313,7 @@ There is a configuration which results in the same behaviour with a smaller repl
 
 <bean id="reaper" class="de.zib.vold.frontend.Reaper">
     <property name="TTL" value="3600000" /> <!-- one hour -->
-    <property name="volatileDirectory" ref="voldislave" />
+    <property name="slicedDirectory" ref="voldislave" />
 </bean>
 
 <bean id="masterfrontend" class="de.zib.vold.frontend.Frontend">
@@ -381,7 +380,7 @@ The data will be written into a file system directory on the local disk.
 
 <bean id="reaper" class="de.zib.vold.frontend.Reaper">
     <property name="TTL" value="3600000" /> <!-- one hour -->
-    <property name="volatileDirectory" ref="voldi" />
+    <property name="slicedDirectory" ref="voldi" />
 </bean>
 
 <bean id="masterfrontend" class="de.zib.vold.frontend.Frontend">
