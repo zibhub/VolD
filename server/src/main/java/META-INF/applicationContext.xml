@@ -42,13 +42,13 @@
         <!-- ** SETUP VOLATILE LOGIC INTERFACES                              -->
 
         <!-- setup TimeSlice configuration -->
-        <bean id="timeslice" class="de.zib.vold.volatileLogic.TimeSlice">
+        <bean id="timeslice" class="de.zib.vold.volatilelogic.TimeSlice">
                 <property name="timeSliceSize" value="1000" />
-                <property name="numberOfSlices" value="2" />
+                <property name="numberOfSlices" value="60" />
         </bean>
 
         <!-- setup VolatileDirectory for backend2 -->
-        <bean id="voldi2" class="de.zib.vold.volatileLogic.VolatileDirectoryImpl">
+        <bean id="voldi2" class="de.zib.vold.volatilelogic.VolatileDirectoryImpl">
                 <property name="backend" ref="backend2" />
                 <property name="timeslice" ref="timeslice" />
         </bean>
@@ -60,12 +60,10 @@
         <!-- ** SETUP FRONTEND                                               -->
 
         <!-- setup reaper -->
-        <!--
         <bean id="reaper" class="de.zib.vold.frontend.Reaper">
                 <property name="TTL" value="20000" />
-                <property name="slicedDirectory" ref="replication2" />
+                <property name="slicedDirectory" ref="voldi2" />
         </bean>
-        -->
 
         <!-- setup the frontends for master and slave (replication) -->
         <bean id="masterfrontend" class="de.zib.vold.frontend.Frontend">
