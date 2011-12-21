@@ -16,35 +16,22 @@
 
 package de.zib.vold.userInterface;
 
-import de.zib.vold.common.VoldException;
 import de.zib.vold.common.Key;
 import de.zib.vold.common.URIKey;
+import de.zib.vold.common.VoldException;
 import de.zib.vold.frontend.Frontend;
-
-import java.util.List;
-import java.util.Set;
-import java.util.HashSet;
-import java.util.Map;
-import java.util.HashMap;
-
-import org.springframework.util.MultiValueMap;
-
-import javax.servlet.http.HttpServletRequest;
-
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.ModelAttribute;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.util.MultiValueMap;
+import org.springframework.web.bind.annotation.*;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
+import javax.servlet.http.HttpServletRequest;
 import java.io.File;
+import java.util.*;
 
 /**
  * REST Controller for Spring framework.
@@ -53,7 +40,7 @@ import java.io.File;
  * Controller in the Spring framework.
  */
 @Controller
-@RequestMapping( "*" )
+//@RequestMapping( "*" )
 public class RESTController
 {
         protected final Logger log = LoggerFactory.getLogger( this.getClass() );
