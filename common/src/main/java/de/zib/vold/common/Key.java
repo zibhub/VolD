@@ -30,168 +30,168 @@ import java.util.List;
  */
 public class Key
 {
-        /**
-         * Construct a Key with all necessary informations.
-         *
-         * @param scope The scope of the key.
-         * @param type The type of the key.
-         * @param keyname The name of the key.
-         */
-        public Key( String scope, String type, String keyname )
-                throws IllegalArgumentException
+    /**
+     * Construct a Key with all necessary informations.
+     *
+     * @param scope The scope of the key.
+     * @param type The type of the key.
+     * @param keyname The name of the key.
+     */
+    public Key( String scope, String type, String keyname )
+            throws IllegalArgumentException
+    {
+        // normalize path
         {
-                // normalize path
+            URI uri;
+            try
+            {
+                uri = new URI( scope );
+            }
+            catch( URISyntaxException e )
+            {
+                throw new IllegalArgumentException( "Scope (\"" + scope + "\") for a key must be a valid UNIX-Style path. " + e.getMessage() );
+            }
+
+            scope = new String( uri.normalize().getPath() );
+        }
+
+        // check for "/" at beginning and end (and add it if not present)
+        {
+            if( 0 == scope.length() )
+            {
+                scope = "/";
+            }
+            else
+            {
+                if( ! scope.substring( 0, 1 ).equals( "/" ) )
                 {
-                        URI uri;
-                        try
-                        {
-                                uri = new URI( scope );
-                        }
-                        catch( URISyntaxException e )
-                        {
-                                throw new IllegalArgumentException( "Scope (\"" + scope + "\") for a key must be a valid UNIX-Style path. " + e.getMessage() );
-                        }
-
-                        scope = new String( uri.normalize().getPath() );
+                    scope = "/" + scope;
                 }
-
-                // check for "/" at beginning and end (and add it if not present)
+                if( ! scope.substring( scope.length()-1, scope.length() ).equals( "/" ) )
                 {
-                        if( 0 == scope.length() )
-                        {
-                                scope = "/";
-                        }
-                        else
-                        {
-                                if( ! scope.substring( 0, 1 ).equals( "/" ) )
-                                {
-                                        scope = "/" + scope;
-                                }
-                                if( ! scope.substring( scope.length()-1, scope.length() ).equals( "/" ) )
-                                {
-                                        scope = scope + "/";
-                                }
-                        }
+                    scope = scope + "/";
                 }
-
-                this.scope = scope;
-                this.type = type;
-                this.keyname = keyname;
+            }
         }
 
-        /**
-         * Get the scope of the key.
-         *
-         * @return The scope of the key.
-         */
-        public String get_scope( )
+        this.scope = scope;
+        this.type = type;
+        this.keyname = keyname;
+    }
+
+    /**
+     * Get the scope of the key.
+     *
+     * @return The scope of the key.
+     */
+    public String get_scope( )
+    {
+        return scope;
+    }
+
+    /**
+     * Get the type of the key.
+     *
+     * @return The type of the key.
+     */
+    public String get_type( )
+    {
+        return type;
+    }
+
+    /**
+     * Get the name of the key.
+     *
+     * @return The name of the key.
+     */
+    public String get_keyname( )
+    {
+        return keyname;
+    }
+
+    /**
+     * Convert the key to readable and printable version.
+     *
+     * @return A readable and printable version of the key.
+     */
+    public String toString( )
+    {
+        return this._buildkey().toString();
+    }
+
+    /**
+     * Construct a key from list of strings.
+     *
+     * @param key The key in a format used in the volatilelogic package.
+     * @return The appropriate Key object.
+     */
+    public static Key buildkey( List< String > key )
+            throws IllegalArgumentException
+    {
+        if( key.size() < 3 )
         {
-                return scope;
+            throw new IllegalArgumentException( "Tried to build a key out of " + key.size() + " arguments. At leest three (scope, type, keyname) of them are necessary." );
         }
 
-        /**
-         * Get the type of the key.
-         *
-         * @return The type of the key.
-         */
-        public String get_type( )
+        return new Key( key.get( 0 ), key.get( 2 ), key.get( 1 ) );
+    }
+
+    /**
+     * Convert the key to the language used in volatilelogic.
+     *
+     * @return The converted key.
+     */
+    public List< String > _buildkey( )
+    {
+        List< String > key = new LinkedList< String >();
+
+        key.add( scope );
+        key.add( keyname );
+        key.add( type );
+
+        return key;
+    }
+
+    /**
+     * Compare this key with another key.
+     *
+     * @return true, iff this key represents the same key as obj.
+     */
+    public boolean equals( Object obj )
+    {
+        // same instance
+        if( this == obj )
         {
-                return type;
+            return true;
         }
-
-        /**
-         * Get the name of the key.
-         *
-         * @return The name of the key.
-         */
-        public String get_keyname( )
+        else if( obj instanceof Key )
         {
-                return keyname;
+            Key key = this.getClass().cast( obj );
+            return (
+                    key.get_scope().equals( this.get_scope() ) &&
+                            key.get_type().equals( this.get_type() ) &&
+                            key.get_keyname().equals( this.get_keyname() )
+            );
         }
-
-        /**
-         * Convert the key to readable and printable version.
-         *
-         * @return A readable and printable version of the key.
-         */
-        public String toString( )
+        else
         {
-                return this._buildkey().toString();
+            return false;
         }
+    }
 
-        /**
-         * Construct a key from list of strings.
-         *
-         * @param key The key in a format used in the volatilelogic package.
-         * @return The appropriate Key object.
-         */
-        public static Key buildkey( List< String > key )
-                throws IllegalArgumentException
-        {
-                if( key.size() < 3 )
-                {
-                        throw new IllegalArgumentException( "Tried to build a key out of " + key.size() + " arguments. At leest three (scope, type, keyname) of them are necessary." );
-                }
+    /**
+     * Compute the hash code of this key.
+     *
+     * @return The hash code of this key.
+     */
+    public int hashCode( )
+    {
+        return  get_scope().hashCode() +
+                463*get_type().hashCode() +
+                971*get_keyname().hashCode();
+    }
 
-                return new Key( key.get( 0 ), key.get( 1 ), key.get( 2 ) );
-        }
-
-        /**
-         * Convert the key to the language used in volatilelogic.
-         *
-         * @return The converted key.
-         */
-        public List< String > _buildkey( )
-        {
-                List< String > key = new LinkedList< String >();
-
-                key.add( scope );
-                key.add( type );
-                key.add( keyname );
-
-                return key;
-        }
-
-        /**
-         * Compare this key with another key.
-         *
-         * @return true, iff this key represents the same key as obj.
-         */
-        public boolean equals( Object obj )
-        {
-                // same instance
-                if( this == obj )
-                {
-                        return true;
-                }
-                else if( obj instanceof Key )
-                {
-                        Key key = this.getClass().cast( obj );
-                        return (
-                                key.get_scope().equals( this.get_scope() ) &&
-                                key.get_type().equals( this.get_type() ) &&
-                                key.get_keyname().equals( this.get_keyname() )
-                                );
-                }
-                else
-                {
-                        return false;
-                }
-        }
-
-        /**
-         * Compute the hash code of this key.
-         *
-         * @return The hash code of this key.
-         */
-        public int hashCode( )
-        {
-                return  get_scope().hashCode() +
-                        463*get_type().hashCode() +
-                        971*get_keyname().hashCode();
-        }
-
-        private final String scope;
-        private final String type;
-        private final String keyname;
+    private final String scope;
+    private final String keyname;
+    private final String type;
 }
