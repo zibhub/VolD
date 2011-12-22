@@ -42,8 +42,8 @@
         <bean class="org.springframework.web.servlet.handler.SimpleUrlHandlerMapping">
                 <property name="mappings">
                         <props>
-                                <prop key="/voldslave/*">restslavecontroller</prop>
-                                <prop key="/vold/*">restmastercontroller</prop>
+                                <prop key="/slave/**">restslavecontroller</prop>
+                                <prop key="/**">restmastercontroller</prop>
                         </props>
                 </property>
         </bean>
