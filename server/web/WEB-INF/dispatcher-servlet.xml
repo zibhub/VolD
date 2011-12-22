@@ -25,11 +25,24 @@
 
         <import resource="classpath:META-INF/server-context.xml"/>
 
+        <!-- Setup Property config -->
+        <bean class="org.springframework.beans.factory.config.PropertyPlaceholderConfigurer">
+                <property name="ignoreResourceNotFound" value="true"/>
+                <property name="ignoreUnresolvablePlaceholders" value="true"/>
+                <property name="locations">
+                        <list>
+                                <value>classpath:/META-INF/urlmapping.properties</value>
+                                <value>classpath:urlmapping.properties</value>
+                        </list>
+                </property>
+        </bean>
+
         <!-- setup RESTController -->
         <bean id="restmastercontroller" class="de.zib.vold.userInterface.RESTController">
                 <property name="frontend">
                         <ref bean="masterfrontend" />
                 </property>
+                <property name="removePrefix" value="${vold.master}" />
         </bean>
 
         <!-- setup RESTController -->
@@ -37,13 +50,14 @@
                 <property name="frontend">
                         <ref bean="slavefrontend" />
                 </property>
+                <property name="removePrefix" value="${vold.slave}" />
         </bean>
 
         <bean class="org.springframework.web.servlet.handler.SimpleUrlHandlerMapping">
                 <property name="mappings">
                         <props>
-                                <prop key="/slave/**">restslavecontroller</prop>
-                                <prop key="/**">restmastercontroller</prop>
+                                <prop key="${vold.slave}/**">restslavecontroller</prop>
+                                <prop key="${vold.master}/**">restmastercontroller</prop>
                         </props>
                 </property>
         </bean>

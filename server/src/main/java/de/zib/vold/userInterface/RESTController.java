@@ -47,6 +47,7 @@ public class RESTController
 
     private Frontend frontend;
     private String enc = "utf-8";
+    private String removePrefix = "";
 
     private void checkState()
     {
@@ -91,7 +92,7 @@ public class RESTController
         String scope;
         {
             scope = request.getRequestURI();
-            String removepath = request.getContextPath() + request.getServletPath();
+            String removepath = removePrefix + request.getContextPath() + request.getServletPath();
 
             scope = scope.substring( removepath.length(), scope.length() );
         }
@@ -200,7 +201,7 @@ public class RESTController
         String scope;
         {
             scope = request.getRequestURI();
-            String removepath = request.getContextPath() + request.getServletPath();
+            String removepath = removePrefix + request.getContextPath() + request.getServletPath();
 
             scope = scope.substring( removepath.length(), scope.length() );
         }
@@ -275,5 +276,9 @@ public class RESTController
     public void setEnc( String enc )
     {
         this.enc = enc;
+    }
+
+    public void setRemovePrefix( final String removePrefix ) {
+        this.removePrefix = removePrefix;
     }
 }
