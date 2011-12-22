@@ -40,7 +40,7 @@ import java.util.*;
  * Controller in the Spring framework.
  */
 @Controller
-//@RequestMapping( "*" )
+@RequestMapping( "*" )
 public class RESTController
 {
     protected final Logger log = LoggerFactory.getLogger( this.getClass() );
