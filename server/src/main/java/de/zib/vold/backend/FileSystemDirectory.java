@@ -17,25 +17,21 @@
 package de.zib.vold.backend;
 
 import de.zib.vold.common.VoldException;
-
-import java.io.File;
-import java.io.FileFilter;
-import java.io.UnsupportedEncodingException;
-import java.io.IOException;
-
-import java.util.List;
-import java.util.LinkedList;
-import java.util.Map;
-import java.util.HashMap;
-
-import java.net.URLEncoder;
-import java.net.URLDecoder;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import javax.annotation.PostConstruct;
 import javax.annotation.PreDestroy;
-
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import java.io.File;
+import java.io.FileFilter;
+import java.io.IOException;
+import java.io.UnsupportedEncodingException;
+import java.net.URLDecoder;
+import java.net.URLEncoder;
+import java.util.HashMap;
+import java.util.LinkedList;
+import java.util.List;
+import java.util.Map;
 
 /**
  * Implementation of PartitionedDirectoryBackend based on a file system structure.
@@ -64,8 +60,8 @@ public class FileSystemDirectory implements PartitionedDirectoryBackend
          * @note                This constructor will not open the interface. This still has to be done
          *                      using the open method.
          *
-         * @param root          The root directory where to store the database.
-         * @param encoding      The encoding which will be used.
+         * @param path          The root directory where to store the database.
+         * @param enc      The encoding which will be used.
          */
         public FileSystemDirectory( String path, String enc )
         {
@@ -218,7 +214,7 @@ public class FileSystemDirectory implements PartitionedDirectoryBackend
          *
          * @param partition     The partition to store the key in.
          * @param key           The key to store.
-         * @param param         The values to store.
+         * @param value         The values to store.
          *
          * @throws VoldException
 	 */
@@ -410,7 +406,7 @@ public class FileSystemDirectory implements PartitionedDirectoryBackend
 	 * Query the entries with all keys beginning with a prefix.
 	 * 
          * @param partition             The partition to search in.
-         * @param prefix                The prefix of the keys to search for.
+         * @param key                The prefix of the keys to search for.
          * @return                      A map storing all results (mapping from a key to the set of values).
          *
          * @throws VoldException
