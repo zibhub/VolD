@@ -133,7 +133,7 @@ public class Key
             throw new IllegalArgumentException( "Tried to build a key out of " + key.size() + " arguments. At leest three (scope, type, keyname) of them are necessary." );
         }
 
-        return new Key( key.get( 0 ), key.get( 2 ), key.get( 1 ) );
+        return new Key( key.get( 0 ), key.get( 1 ), key.get( 2 ) );
     }
 
     /**
