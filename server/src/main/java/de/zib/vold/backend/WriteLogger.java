@@ -33,266 +33,267 @@ import org.slf4j.LoggerFactory;
 
 /**
  * Incomplete implementation of PartitionedDirectoryBackend which serves as logfile.
- * 
+ *
  * This backend simply log all write requests on the database to a single logfile.
  *
  * @see PartitionedDirectoryBackend
- * 
+ *
  * @author Jörg Bachmann (bachmann@zib.de)
  */
 public class WriteLogger implements PartitionedDirectoryBackend
 {
-        protected final Logger log = LoggerFactory.getLogger( this.getClass() );
+    protected final Logger log = LoggerFactory.getLogger( this.getClass() );
 
-        private String logfilename;
-        private FileWriter logfile;
-        private BufferedWriter out;
+    private String logfilename;
+    private FileWriter logfile;
+    private BufferedWriter out;
 
-        /**
-         * Construct a WriteLogger with all necessary informations.
-         *
-         * @note                This constructor will not open the interface. This still has to be done
-         *                      using the open method.
-         *
-         * @param logfilename   The path to the logfile.
-         */
-        public WriteLogger( String logfilename )
+    /**
+     * Construct a WriteLogger with all necessary informations.
+     *
+     * @note                This constructor will not open the interface. This still has to be done
+     *                      using the open method.
+     *
+     * @param logfilename   The path to the logfile.
+     */
+    public WriteLogger( String logfilename )
+    {
+        this.logfilename = logfilename;
+
+        this.logfile = null;
+        this.out = null;
+    }
+
+    /**
+     * Construct a BabuDirectory without initialization.
+     */
+    public WriteLogger( )
+    {
+        this.logfilename = null;
+
+        this.logfile = null;
+        this.out = null;
+    }
+
+    /**
+     * Set the path to the logfile.
+     *
+     * @note                If the writelogger is already opened, the
+     *                      properties will only take effect on restart
+     *                      (close and immediate open).
+     *
+     * @param logfilename   The path to the logfile.
+     */
+    public void setLogfile( String logfilename )
+    {
+        // guard
         {
-                this.logfilename = logfilename;
-
-                this.logfile = null;
-                this.out = null;
+            if( this.isopen() )
+            {
+                log.warn( "Changing logfilename while logfile has already been opened." );
+            }
         }
 
-        /**
-         * Construct a BabuDirectory without initialization.
-         */
-        public WriteLogger( )
-        {
-                this.logfilename = null;
+        this.logfilename = logfilename;
+    }
 
-                this.logfile = null;
-                this.out = null;
+    /**
+     * Internal method which acts as part of the guard of all public methods.
+     */
+    public void checkState( )
+    {
+        if( null == this.logfilename )
+        {
+            throw new IllegalStateException( "Tried to operate on WriteLogger while it had not been initialized yet. You first need to set the logfilename!!" );
+        }
+    }
+
+    /**
+     * Open the database.
+     *
+     * @note                The annotation PostConstruct is used by the
+     *                      spring framework to call this method right
+     *                      after all properties have been set.
+     */
+    @Override
+    @PostConstruct
+    public void open( )
+    {
+        // guard
+        {
+            checkState();
+
+            if( this.isopen() )
+            {
+                log.warn( "Tried to open WriteLogger while it had already been opened!" );
+                return;
+            }
         }
 
-        /**
-         * Set the path to the logfile.
-         *
-         * @note                If the writelogger is already opened, the
-         *                      properties will only take effect on restart
-         *                      (close and immediate open).
-         *
-         * @param logfilename   The path to the logfile.
-         */
-        public void setLogfile( String logfilename )
+        try
         {
-                // guard
-                {
-                        if( this.isopen() )
-                        {
-                                log.warn( "Changing logfilename while logfile has already been opened." );
-                        }
-                }
-
-                this.logfilename = logfilename;
+            this.logfile = new FileWriter( this.logfilename, true );
+            this.out = new BufferedWriter( this.logfile );
+        }
+        catch( IOException e )
+        {
+            this.logfile = null;
+            this.out = null;
+            throw new VoldException( e );
         }
 
-        /**
-         * Internal method which acts as part of the guard of all public methods.
-         */
-        public void checkState( )
+        log.info( "Backend opened." );
+    }
+
+    /**
+     * Close the database.
+     *
+     * @note                The annotation PreDestroy is used by the
+     *                      spring framework to call this method right
+     *                      before it will be destroyed.
+     */
+    @Override
+    @PreDestroy
+    public void close( )
+    {
+        // guard
         {
-                if( null == this.logfilename )
-                {
-                        throw new IllegalStateException( "Tried to operate on WriteLogger while it had not been initialized yet. You first need to set the logfilename!!" );
-                }
+            checkState();
+
+            if( ! this.isopen() )
+            {
+                log.warn( "Tried to close WriteLogger while it wasn't open!" );
+                return;
+            }
         }
 
-        /**
-         * Open the database.
-         *
-         * @note                The annotation PostConstruct is used by the
-         *                      spring framework to call this method right
-         *                      after all properties have been set.
-         */
-        @Override
-        @PostConstruct
-        public void open( )
+        try
         {
-                // guard
-                {
-                        checkState();
+            if( isopen() )
+            {
+                logfile.flush();
+                out.flush();
 
-                        if( this.isopen() )
-                        {
-                                log.warn( "Tried to open WriteLogger while it had already been opened!" );
-                                return;
-                        }
-                }
-
-                try
-                {
-                        this.logfile = new FileWriter( this.logfilename, true );
-                        this.out = new BufferedWriter( this.logfile );
-                }
-                catch( IOException e )
-                {
-                        this.logfile = null;
-                        this.out = null;
-                        throw new VoldException( e );
-                }
-
-                log.info( "Backend opened." );
+                logfile.close();
+                out.close();
+            }
+        }
+        catch( IOException e )
+        {
+            throw new VoldException( e );
         }
 
-        /**
-         * Close the database.
-         *
-         * @note                The annotation PreDestroy is used by the
-         *                      spring framework to call this method right
-         *                      before it will be destroyed.
-         */
-        @Override
-        @PreDestroy
-        public void close( )
+        out = null;
+        logfile = null;
+
+        log.info( "Backend closed." );
+    }
+
+    /**
+     * Query the state of the database.
+     *
+     * @return true iff the logfile is set and open.
+     */
+    @Override
+    public boolean isopen( )
+    {
+        return logfile != null && out != null;
+    }
+
+    /**
+     * Log the request for an insert.
+     *
+     * @param partition     The partition to store the key in.
+     * @param key           The key to store.
+     * @param param         The values to store.
+     *
+     * @throws VoldException
+     */
+    @Override
+    public void insert( int partition, List< String > key, List< String > value )
+    {
+        // guard
         {
-                // guard
-                {
-                        checkState();
+            log.trace( "Insert: " + partition + ":'" + key.toString() + "' -> '" + value.toString() + "'" );
 
-                        if( ! this.isopen() )
-                        {
-                                log.warn( "Tried to close WriteLogger while it wasn't open!" );
-                                return;
-                        }
-                }
+            checkState();
 
-                try
-                {
-                        if( isopen() )
-                        {
-                                out.flush();
-                                out.close();
-                                logfile.flush();
-                                logfile.close();
-                        }
-                }
-                catch( IOException e )
-                {
-                        throw new VoldException( e );
-                }
-
-                out = null;
-                logfile = null;
-
-                log.info( "Backend closed." );
+            if( ! this.isopen() )
+            {
+                throw new VoldException( "Tried to operate on WriteLogger while it had not been initialized yet. Open it first!" );
+            }
         }
 
-        /**
-         * Query the state of the database.
-         *
-         * @return true iff the logfile is set and open.
-         */
-        @Override
-        public boolean isopen( )
+        try
         {
-                return logfile != null && out != null;
+            out.write( "INSERT: " + key.toString() + " |--> " + value.toString() );
+            out.newLine();
+        }
+        catch( IOException e )
+        {
+            throw new VoldException( e );
+        }
+    }
+
+    /**
+     * Log a request for a delete.
+     *
+     * @param partition             The partition to delete the key from.
+     * @param key                   The key to delete.
+     *
+     * @throws VoldException
+     */
+    @Override
+    public void delete( int partition, List< String > key )
+    {
+        // guard
+        {
+            log.trace( "Delete: " + key.toString() + "'" );
+
+            checkState();
+
+            if( ! this.isopen() )
+            {
+                throw new VoldException( "Tried to operate on WriteLogger while it had not been initialized yet. Open it first!" );
+            }
         }
 
-	/**
-         * Log the request for an insert.
-	 * 
-         * @param partition     The partition to store the key in.
-         * @param key           The key to store.
-         * @param param         The values to store.
-         *
-         * @throws VoldException
-	 */
-        @Override
-        public void insert( int partition, List< String > key, List< String > value )
+        try
         {
-                // guard
-                {
-                        log.trace( "Insert: " + partition + ":'" + key.toString() + "' -> '" + value.toString() + "'" );
+            out.write( "DELETE: " + key.toString() );
+            out.newLine();
+        }
+        catch( IOException e )
+        {
+            throw new VoldException( e );
+        }
+    }
 
-                        checkState();
-
-                        if( ! this.isopen() )
-                        {
-                                throw new VoldException( "Tried to operate on WriteLogger while it had not been initialized yet. Open it first!" );
-                        }
-                }
-
-                try
-                {
-                        out.write( "INSERT: " + key.toString() + " |--> " + value.toString() );
-                        out.newLine();
-                }
-                catch( IOException e )
-                {
-                        throw new VoldException( e );
-                }
+    /**
+     * Not implemented.
+     */
+    @Override
+    public List< String > lookup( int partition, List< String > key )
+    {
+        // guard
+        {
+            log.trace( "Lookup: " + partition + ":'" + key.toString() + "'" );
         }
 
-	/**
-	 * Log a request for a delete.
-         *
-         * @param partition             The partition to delete the key from.
-         * @param key                   The key to delete.
-	 * 
-         * @throws VoldException
-	 */
-        @Override
-        public void delete( int partition, List< String > key )
+        throw new NotSupportedException( "WriteLogger does not have the ability to lookup. It's a write-only backend!" );
+    }
+
+    /**
+     * Not implemented.
+     */
+    @Override
+    public Map< List< String >, List< String > > prefixlookup( int partition, List< String > key )
+    {
+        // guard
         {
-                // guard
-                {
-                        log.trace( "Delete: " + key.toString() + "'" );
-
-                        checkState();
-
-                        if( ! this.isopen() )
-                        {
-                                throw new VoldException( "Tried to operate on WriteLogger while it had not been initialized yet. Open it first!" );
-                        }
-                }
-
-                try
-                {
-                        out.write( "DELETE: " + key.toString() );
-                        out.newLine();
-                }
-                catch( IOException e )
-                {
-                        throw new VoldException( e );
-                }
+            log.trace( "PrefixLookup: " + partition + ":'" + key.toString() + "'" );
         }
 
-        /**
-         * Not implemented.
-         */
-        @Override
-        public List< String > lookup( int partition, List< String > key )
-        {
-                // guard
-                {
-                        log.trace( "Lookup: " + partition + ":'" + key.toString() + "'" );
-                }
-
-                throw new NotSupportedException( "WriteLogger does not have the ability to lookup. It's a write-only backend!" );
-        }
-
-        /**
-         * Not implemented.
-         */
-        @Override
-        public Map< List< String >, List< String > > prefixlookup( int partition, List< String > key )
-        {
-                // guard
-                {
-                        log.trace( "PrefixLookup: " + partition + ":'" + key.toString() + "'" );
-                }
-
-                throw new NotSupportedException( "WriteLogger does not have the ability to lookup. It's a write-only backend!" );
-        }
+        throw new NotSupportedException( "WriteLogger does not have the ability to lookup. It's a write-only backend!" );
+    }
 }
