@@ -47,18 +47,18 @@ All of these methods are used to alter the storage.
 Multiple keys can be altered at the same time, even if they are in a different scope.
 Since `%2F` is the URL encoded character `/`, a request to alter the keys `/c/s1/k1`
 and `/c/s2/k1` with the common scope `/c/` would look like
-{% highlight shell %}
-    http://localhost:8080/c?%2Fs1%2Fk1&%2Fs2%2Fk2
-{% endhighlight %}
+```sh
+http://localhost:8080/c?%2Fs1%2Fk1&%2Fs2%2Fk2
+```
 Sending the two requests
-{% highlight shell %}
-    http://localhost:8080/c/s1?k1
-    http://localhost:8080/c/s2?k2
-{% endhighlight %}
+```sh
+http://localhost:8080/c/s1?k1
+http://localhost:8080/c/s2?k2
+```
 would have the same effect.
 
 The three methods POST, DELETE and GET can be tested using curl with the simple call
-{% highlight shell %}
-    curl -X [METHOD] [URL]
-{% endhighlight %}
+```sh
+curl -X [METHOD] [URL]
+```
 
