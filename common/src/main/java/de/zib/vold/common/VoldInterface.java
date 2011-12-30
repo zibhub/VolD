@@ -15,10 +15,8 @@
 
 package de.zib.vold.common;
 
-import de.zib.vold.common.Key;
-
-import java.util.Set;
 import java.util.Map;
+import java.util.Set;
 
 /**
  * The interface each VolD interface should provide.
@@ -30,9 +28,8 @@ public interface VoldInterface
          *
          * @param source The source inserting the keys.
          * @param map The map of all keys and its values to insert.
-         * @return A map telling the lifetime of each inserted key and zero for all not inserted keys.
          */
-        public Map< String, String > insert( String source, Map< Key, Set< String > > map );
+        public void insert( String source, Map< Key, Set< String > > map );
 
         /**
          * Refresh a set of keys.

@@ -123,7 +123,7 @@ public class RESTClient implements VoldInterface
      * Insert a set of keys.
      */
     @Override
-    public Map< String, String > insert( String source, Map< Key, Set< String > > map )
+    public void insert( String source, Map< Key, Set< String > > map )
     {
         // guard
         {
@@ -177,22 +177,7 @@ public class RESTClient implements VoldInterface
             }
         }
 
-        // get response from Server
-        ResponseEntity< Map< String, String > > response;
-        {
-            Object obj = rest.postForEntity( baseURL + commonscope, request, HashMap.class );
-
-            if( obj instanceof ResponseEntity< ? > )
-            {
-                response = ( ResponseEntity< Map< String, String > > )obj;
-            }
-            else
-            {
-                throw new RuntimeException( "THIS SHOULD NEVER HAPPEN!" );
-            }
-        }
-
-        return response.getBody();
+        rest.put( baseURL + commonscope, request );
     }
 
     /**
@@ -229,34 +214,31 @@ public class RESTClient implements VoldInterface
             commonscope = getGreatestCommonPrefix( scopes );
         }
 
-        // build variable map
-        String uri;
-        {
-            uri = buildURI( null );
-            log.debug( "URI: " + uri );
-        }
-
         // build request body
-        MultiValueMap< String, String > request = new LinkedMultiValueMap< String, String >();
+        Set< Key > keys = new HashSet< Key >();
         {
             for( Key entry: set )
             {
                 // remove common prefix from scope
-                String scope = entry.get_scope().substring( commonscope.length() );
-                String type = entry.get_type();
-                String keyname = entry.get_keyname();
+                final String scope = entry.get_scope().substring( commonscope.length() );
+                final String type = entry.get_type();
+                final String keyname = entry.get_keyname();
 
-                URIKey key = new URIKey( source, scope, type, keyname, true, false, enc );
-                String urikey = key.toURIString();
-
-                request.add( urikey, "" );
+                keys.add( new Key( scope, type, keyname ) );
             }
+        }
+
+        // build variable map
+        String uri;
+        {
+            uri = buildURI( keys );
+            log.debug( "URI: " + uri );
         }
 
         // get response from Server
         ResponseEntity< Map< String, String > > response;
         {
-            Object obj = rest.postForEntity( baseURL + commonscope, request, HashMap.class );
+            Object obj = rest.postForEntity( baseURL + commonscope, null, HashMap.class );
 
             if( obj instanceof ResponseEntity< ? > )
             {
@@ -424,11 +406,11 @@ public class RESTClient implements VoldInterface
      * @param key The key to store.
      * @param values The values associated with the key.
      */
-    public Map< String, String > insert( String source, Key key, Set< String > values )
+    public void insert( String source, Key key, Set< String > values )
     {
         Map< Key, Set< String > > map = new HashMap< Key, Set< String > >();
         map.put( key, values );
-        return insert( source, map );
+        insert( source, map );
     }
 
     /**
