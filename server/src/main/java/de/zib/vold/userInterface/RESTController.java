@@ -316,18 +316,7 @@ public class RESTController
                 {
                     try
                     {
-                        if( urikey.isDelete() )
-                        {
-                            frontend.delete( source, k );
-                        }
-                        else if( urikey.isRefresh() )
-                        {
-                            frontend.refresh( source, k );
-                        }
-                        else
-                        {
-                            frontend.insert( source, k, new HashSet< String >( entry.getValue() ) );
-                        }
+                        frontend.refresh( source, k );
                     }
                     catch( VoldException e )
                     {
