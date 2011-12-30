@@ -79,9 +79,9 @@ public class RESTController
         // guard
         {
             if( argsbody != null )
-                log.debug( "POST: " + args.toString() + " AND " + argsbody.toString() );
+                log.debug( "PUT: " + args.toString() + " AND " + argsbody.toString() );
             else
-                log.debug( "POST: " + args.toString() );
+                log.debug( "PUT: " + args.toString() );
 
             checkState();
         }
@@ -182,7 +182,7 @@ public class RESTController
 
         // guard
         {
-            log.debug( "POST: " + args.toString() );
+            log.debug( "DELETE: " + args.toString() );
 
             checkState();
         }
@@ -254,7 +254,6 @@ public class RESTController
      *
      * @param clientIpAddress The ip of the sending client, it's extracted from the request itself.
      * @param args The URL arguments of the request.
-     * @param argsbody The POST body arguments of the request.
      * @param request Request informations
      * @return A map of keys with its lifetime, whereas the livetime is zero if an error for that key occured.
      */
@@ -262,16 +261,12 @@ public class RESTController
     public ResponseEntity< Map< String, String > > post(
             @ModelAttribute("clientIpAddress") String clientIpAddress,
             @RequestParam MultiValueMap< String, String > args,
-            @RequestBody MultiValueMap< String, String > argsbody,
             HttpServletRequest request)
     {
 
         // guard
         {
-            if( argsbody != null )
-                log.debug( "POST: " + args.toString() + " AND " + argsbody.toString() );
-            else
-                log.debug( "POST: " + args.toString() );
+            log.debug( "POST: " + args.toString() );
 
             checkState();
         }
@@ -287,27 +282,9 @@ public class RESTController
             scope = scope.substring( removepath.length(), scope.length() );
         }
 
-        // merge args to argsbody
-        {
-            if( null == argsbody )
-            {
-                if( null == args )
-                {
-                    log.warn( "Got a totally empty request from " + clientIpAddress + "." );
-                    return new ResponseEntity< Map < String, String > >( invalidKeys, HttpStatus.OK );
-                }
-
-                argsbody = args;
-            }
-            else if( null != args )
-            {
-                argsbody.putAll( args );
-            }
-        }
-
         // process each key
         {
-            for( Map.Entry< String, List< String > > entry: argsbody.entrySet() )
+            for( Map.Entry< String, List< String > > entry: args.entrySet() )
             {
                 URIKey urikey;
                 String source;
