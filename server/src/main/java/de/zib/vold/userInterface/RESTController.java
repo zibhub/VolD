@@ -58,6 +58,196 @@ public class RESTController
     }
 
     /**
+     * Handles Put requests.
+     *
+     * This method is used by clients to submit new keys.
+     *
+     * @param clientIpAddress The ip of the sending client, it's extracted from the request itself.
+     * @param args The URL arguments of the request.
+     * @param argsbody The PUT body arguments of the request.
+     * @param request Request informations
+     * @return A map of keys with its lifetime, whereas the livetime is zero if an error for that key occured.
+     */
+    @RequestMapping( method = RequestMethod.PUT )
+    public ResponseEntity< Map< String, String > > put(
+            @ModelAttribute("clientIpAddress") String clientIpAddress,
+            @RequestParam MultiValueMap< String, String > args,
+            @RequestBody MultiValueMap< String, String > argsbody,
+            HttpServletRequest request)
+    {
+
+        // guard
+        {
+            if( argsbody != null )
+                log.debug( "POST: " + args.toString() + " AND " + argsbody.toString() );
+            else
+                log.debug( "POST: " + args.toString() );
+
+            checkState();
+        }
+
+        Map< String, String > invalidKeys = new HashMap< String, String >();
+
+        // get actual scope
+        String scope;
+        {
+            scope = request.getRequestURI();
+            String removepath = removePrefix + request.getContextPath() + request.getServletPath();
+
+            scope = scope.substring( removepath.length(), scope.length() );
+        }
+
+        // merge args to argsbody
+        {
+            if( null == argsbody )
+            {
+                if( null == args )
+                {
+                    log.warn( "Got a totally empty request from " + clientIpAddress + "." );
+                    return new ResponseEntity< Map < String, String > >( invalidKeys, HttpStatus.OK );
+                }
+
+                argsbody = args;
+            }
+            else if( null != args )
+            {
+                argsbody.putAll( args );
+            }
+        }
+
+        // process each key
+        {
+            for( Map.Entry< String, List< String > > entry: argsbody.entrySet() )
+            {
+                URIKey urikey;
+                String source;
+                Key k;
+
+                // build key
+                {
+                    urikey = URIKey.fromURIString( entry.getKey(), enc );
+
+                    File path_correction = new File( scope + "/" + urikey.getKey().get_scope() );
+
+                    k = new Key(
+                            path_correction.getPath(),
+                            urikey.getKey().get_type(),
+                            urikey.getKey().get_keyname()
+                    );
+
+                    if( null == urikey.getSource() )
+                    {
+                        source = clientIpAddress;
+                    }
+                    else
+                    {
+                        source = urikey.getSource();
+                    }
+                }
+
+                // handle write request for that key
+                {
+                    try
+                    {
+                        frontend.insert( source, k, new HashSet< String >( entry.getValue() ) );
+                    }
+                    catch( VoldException e )
+                    {
+                        log.error( "Could not handle write request for key " + entry.getKey() + ". ", e );
+                        invalidKeys.put( entry.getKey(), "ERROR: " + e.getMessage() );
+                    }
+                }
+            }
+        }
+
+        return new ResponseEntity< Map < String, String > >( invalidKeys, HttpStatus.OK );
+    }
+
+    /**
+     * Handles Delete requests.
+     *
+     * This method is used by clients to delete keys.
+     *
+     * @param clientIpAddress The ip of the sending client, it's extracted from the request itself.
+     * @param args The URL arguments of the request.
+     * @param request Request informations
+     * @return A map of keys with its lifetime, whereas the livetime is zero if an error for that key occured.
+     */
+    @RequestMapping( method = RequestMethod.DELETE )
+    public ResponseEntity< Map< String, String > > delete(
+            @ModelAttribute("clientIpAddress") String clientIpAddress,
+            @RequestParam MultiValueMap< String, String > args,
+            HttpServletRequest request)
+    {
+
+        // guard
+        {
+            log.debug( "POST: " + args.toString() );
+
+            checkState();
+        }
+
+        Map< String, String > invalidKeys = new HashMap< String, String >();
+
+        // get actual scope
+        String scope;
+        {
+            scope = request.getRequestURI();
+            String removepath = removePrefix + request.getContextPath() + request.getServletPath();
+
+            scope = scope.substring( removepath.length(), scope.length() );
+        }
+
+        // process each key
+        {
+            for( Map.Entry< String, List< String > > entry: args.entrySet() )
+            {
+                URIKey urikey;
+                String source;
+                Key k;
+
+                // build key
+                {
+                    urikey = URIKey.fromURIString( entry.getKey(), enc );
+
+                    File path_correction = new File( scope + "/" + urikey.getKey().get_scope() );
+
+                    k = new Key(
+                            path_correction.getPath(),
+                            urikey.getKey().get_type(),
+                            urikey.getKey().get_keyname()
+                    );
+
+                    if( null == urikey.getSource() )
+                    {
+                        source = clientIpAddress;
+                    }
+                    else
+                    {
+                        source = urikey.getSource();
+                    }
+                }
+
+                // handle write request for that key
+                {
+                    try
+                    {
+                        frontend.delete( source, k );
+                    }
+                    catch( VoldException e )
+                    {
+                        log.error( "Could not handle write request for key " + entry.getKey() + ". ", e );
+                        invalidKeys.put( entry.getKey(), "ERROR: " + e.getMessage() );
+                    }
+                }
+            }
+        }
+
+        return new ResponseEntity< Map < String, String > >( invalidKeys, HttpStatus.OK );
+    }
+
+
+    /**
      * Handles Post requests.
      *
      * This method is used by clients to submit new keys, refresh their registration or delete them.
