@@ -1,0 +1,58 @@
+---
+title: VolD - Interface
+root: ..
+layout: default
+---
+
+
+Interface
+=========
+
+* Table of content:
+{:toc}
+
+In this part of the documentation we assume `http://localhost:8080/` to be the base URL of the VolD service.
+
+VolD stores a structured set of typed keys each having a list of values.
+
+Structure
+---------
+
+The structure, VolD stores the keys in, is a directory, i.e. a hierarchical tree.
+Each directory, i.e. the full path to each node is called scope.
+An example for a node would be
+    /path/to/node/
+
+Keys
+----
+
+A key consists of three components:
+1. a scope,
+2. a type and
+3. a name.
+The scope has already been explained.
+The type can be an arbitrary string including the empty word, but it must be URL encoded.
+For names holds the same as for types.
+
+Access
+------
+
+HTTP offers the four methods PUT, POST, DELETE and GET.
+All of these methods are used to alter the storage.
+* PUT stores some keys and its lists of values.
+* POST refreshes some keys.
+* DELETE deletes some keys.
+* GET retrieves the values of keys.
+
+Multiple keys can be altered at the same time, even if they are in a different scope.
+Since `%2F` is the URL encoded character `/`, a request to alter the keys `/c/s1/k1`
+and `/c/s2/k1` with the common scope `/c/` would look like
+    http://localhost:8080/c?%2Fs1%2Fk1&%2Fs2%2Fk2
+Sending the two requests
+    http://localhost:8080/c/s1?k1
+    http://localhost:8080/c/s2?k2
+would have the same effect.
+
+The three methods POST, DELETE and GET can be tested using curl with the simple call
+    curl -X [METHOD] [URL]
+
