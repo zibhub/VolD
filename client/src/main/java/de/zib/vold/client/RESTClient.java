@@ -151,10 +151,10 @@ public class RESTClient implements VoldInterface
         }
 
         // build variable map
-        String uri;
+        String url;
         {
-            uri = buildURI( null );
-            log.debug( "URI: " + uri );
+            url = buildURL( commonscope, null );
+            log.debug( "INSERT URL: " + url );
         }
 
         // build request body
@@ -177,7 +177,7 @@ public class RESTClient implements VoldInterface
             }
         }
 
-        rest.put( baseURL + commonscope, request );
+        rest.put( url, request );
     }
 
     /**
@@ -229,16 +229,16 @@ public class RESTClient implements VoldInterface
         }
 
         // build variable map
-        String uri;
+        String url;
         {
-            uri = buildURI( keys );
-            log.debug( "URI: " + uri );
+            url = buildURL( commonscope, keys );
+            log.debug( "REFRESH URL: " + url );
         }
 
         // get response from Server
         ResponseEntity< Map< String, String > > response;
         {
-            Object obj = rest.postForEntity( baseURL + commonscope, null, HashMap.class );
+            Object obj = rest.postForEntity( url, null, HashMap.class );
 
             if( obj instanceof ResponseEntity< ? > )
             {
@@ -287,15 +287,8 @@ public class RESTClient implements VoldInterface
             commonscope = getGreatestCommonPrefix( scopes );
         }
 
-        // build variable map
-        String uri;
-        {
-            uri = buildURI( null );
-            log.debug( "URI: " + uri );
-        }
-
         // build request body
-        MultiValueMap< String, String > request = new LinkedMultiValueMap< String, String >();
+        Set< Key > keys = new HashSet<Key>();
         {
             for( Key entry: set )
             {
@@ -303,30 +296,19 @@ public class RESTClient implements VoldInterface
                 String scope = entry.get_scope().substring( commonscope.length() );
                 String type = entry.get_type();
                 String keyname = entry.get_keyname();
-
-                URIKey key = new URIKey( source, scope, type, keyname, false, true, enc );
-                String urikey = key.toURIString();
-
-                request.add( urikey, "" );
+                
+                keys.add( new Key( scope, type, keyname ) );
             }
         }
 
-        // get response from Server
-        ResponseEntity< Map< String, String > > response;
+        // build variable map
+        String url;
         {
-            Object obj = rest.postForEntity( baseURL + commonscope, request, HashMap.class );
-
-            if( obj instanceof ResponseEntity< ? > )
-            {
-                response = ( ResponseEntity< Map< String, String > > )obj;
-            }
-            else
-            {
-                throw new RuntimeException( "THIS SHOULD NEVER HAPPEN!" );
-            }
+            url = buildURL( commonscope, keys );
+            log.debug( "DELETE URL: " + url );
         }
 
-        return response.getBody();
+        rest.delete( url, HashMap.class );
     }
 
     /**
@@ -355,7 +337,7 @@ public class RESTClient implements VoldInterface
         // build variable map
         String uri;
         {
-            uri = buildURI( keys );
+            uri = buildURL( keys );
             log.debug( "URI: " + uri );
         }
 
@@ -478,16 +460,17 @@ public class RESTClient implements VoldInterface
      * Build a URI requesting a set of keys from the remote VolD.
      *
      * @param keys The set of keys to request.
+     * @param scope The common scope for these keys.
      * @return The URL defining the request.
      */
-    private String buildURI( Collection< Key > keys )
+    private String buildURL( String scope, Collection<Key> keys )
     {
         if( null == keys )
         {
-            return baseURL;
+            return baseURL + scope;
         }
 
-        StringBuilder sb = new StringBuilder( baseURL + "?" );
+        StringBuilder sb = new StringBuilder( baseURL + scope + "?" );
 
         boolean isFirst = true;
 
