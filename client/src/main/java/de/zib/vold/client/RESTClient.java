@@ -260,7 +260,7 @@ public class RESTClient implements VoldInterface
      * @param set The set of keys to delete.
      */
     @Override
-    public Map< String, String > delete( String source, Set< Key > set )
+    public void delete( String source, Set< Key > set )
     {
         // guard
         {
@@ -337,7 +337,7 @@ public class RESTClient implements VoldInterface
         // build variable map
         String uri;
         {
-            uri = buildURL( keys );
+            uri = buildURL( "", keys );
             log.debug( "URI: " + uri );
         }
 

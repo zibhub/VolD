@@ -46,7 +46,7 @@ public interface VoldInterface
          * @param source The source of the keys to delete.
          * @param set The set of keys to delete.
          */
-        public Map< String, String > delete( String source, Set< Key > set );
+        public void delete( String source, Set< Key > set );
         
         /**
          * Lookup some keys.
