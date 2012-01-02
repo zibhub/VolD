@@ -48,12 +48,12 @@ Hence, `/scope/keyname` and `/scope/:keyname` describe the same key.
 Access
 ------
 
-HTTP offers the four methods PUT, POST, DELETE and GET.
+HTTP offers the four methods `PUT`, `POST`, `DELETE` and `GET`.
 All of these methods are used to alter the storage.
-* PUT stores some keys and its lists of values.
-* POST refreshes some keys.
-* DELETE deletes some keys.
-* GET retrieves the values of keys.
+* `PUT` stores some keys and its lists of values.
+* `POST` refreshes some keys.
+* `DELETE` deletes some keys.
+* `GET` retrieves the values of keys.
 
 Multiple keys can be altered at the same time, even if they are in a different scope.
 A request to alter the keys `/c/s1/k1` and `/c/s2/k1` with the common scope `/c/` would look like
@@ -76,7 +76,7 @@ and
 
 would access the same key.
 
-The three methods POST, DELETE and GET can be tested using curl with the simple call
+The three methods `POST`, `DELETE` and `GET` can be tested using curl with the simple call
 
     curl -X [METHOD] [URL]
 
@@ -85,3 +85,19 @@ The call
     curl -X POST "http://localhost:8080/c/s1?k1"
 
 would refresh the key `k1` in the scope `/c/s1`.
+
+The `PUT` request is a bit more complicated.
+The first difference is, that a request body has to be supplied.
+VolD expects the Content-Type to be `application/xml`.
+Now, keys can be put in the URL as well as in the body.
+While the URL is good for testing and debugging, using the body is better to store huge amount of data.
+Hence, the most simple call with curl to store the two keys `/c/s1/k1` and `/c/s2/k2/` would look as follows:
+
+    curl -X PUT "http://localhost:8080/c?/s1/k1=x&/s2/k2=y" -H "Content-Type: application/xml" -d '<org.springframework.util.LinkedMultiValueMap><targetMap class="linked-hash-map"/></org.springframework.util.LinkedMultiValueMap>'
+
+This request sends an "empty" body, i.e. a multivaluemap without any entries.
+The following call uses the request body to store these two keys:
+
+    curl -X PUT "http://localhost:8080/c" -H "Content-Type: application/xml" -d '<org.springframework.util.LinkedMultiValueMap><targetMap class="linked-hash-map"><entry><string>/s1/k1</string><linked-list><string>x</string></linked-list></entry><entry><string>/s2/k2</string><linked-list><string>y</string></linked-list></entry></targetMap></org.springframework.util.LinkedMultiValueMap>'
+
+
