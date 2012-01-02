@@ -149,6 +149,7 @@ public class RESTController
                 {
                     try
                     {
+                        log.debug( "Inserting " + entry.getValue().size() + " values for key " + urikey.toURIString() );
                         frontend.insert( source, k, new HashSet< String >( entry.getValue() ) );
                     }
                     catch( VoldException e )
