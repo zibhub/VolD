@@ -57,19 +57,31 @@ All of these methods are used to alter the storage.
 
 Multiple keys can be altered at the same time, even if they are in a different scope.
 A request to alter the keys `/c/s1/k1` and `/c/s2/k1` with the common scope `/c/` would look like
+
     http://localhost:8080/c?/s1/k1&/s2/k2
+
 Sending the two requests
+
     http://localhost:8080/c/s1?k1
     http://localhost:8080/c/s2?k2
+
 would have the same effect.
 Especially, the two requests
+
     http://localhost:8080/c/s1?k1
+
 and
+
     http://localhost:8080?/c/s1/k1
+
 would access the same key.
 
 The three methods POST, DELETE and GET can be tested using curl with the simple call
+
     curl -X [METHOD] [URL]
+
 The call
+
     curl -X POST "http://localhost:8080/c/s1?k1"
+
 would refresh the key `k1` in the scope `/c/s1`.
