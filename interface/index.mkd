@@ -20,7 +20,7 @@ Structure
 
 The structure, VolD stores the keys in, is a directory, i.e. a hierarchical tree.
 Each directory, i.e. the full path to each node is called scope.
-An example for a node would be
+An example for a scope would be
     /path/to/node/
 
 Keys
@@ -33,6 +33,17 @@ A key consists of three components:
 The scope has already been explained.
 The type can be an arbitrary string including the empty word, but it must be URL encoded.
 For names holds the same as for types.
+
+The syntax for a key is
+    [[SOURCE]/SCOPE/][TYPE:]NAME
+where
+* SOURCE is the source, the key comes from. This is mainly used for replication of the backend storages.
+* SCOPE is the path to the tree in the hierarchy.
+* TYPE is the type of the key.
+* NAME is the name of the key.
+
+Avoiding the type results in the empty type.
+Hence, `/scope/keyname` and `/scope/:keyname` describe the same key.
 
 Access
 ------
@@ -49,14 +60,14 @@ Since `%2F` is the URL encoded character `/`, a request to alter the keys `/c/s1
 and `/c/s2/k1` with the common scope `/c/` would look like
 
 ```sh
-http://localhost:8080/c?%2Fs1%2Fk1&%2Fs2%2Fk2
+    http://localhost:8080/c?%2Fs1%2Fk1&%2Fs2%2Fk2
 ```
 
 Sending the two requests
 
 ```sh
-http://localhost:8080/c/s1?k1
-http://localhost:8080/c/s2?k2
+    http://localhost:8080/c/s1?k1
+    http://localhost:8080/c/s2?k2
 ```
 
 would have the same effect.
@@ -64,6 +75,6 @@ would have the same effect.
 The three methods POST, DELETE and GET can be tested using curl with the simple call
 
 ```sh
-curl -X [METHOD] [URL]
+    curl -X [METHOD] [URL]
 ```
 
