@@ -104,4 +104,12 @@ The following call uses the request body to store these two keys:
 
     curl -X PUT "http://localhost:8080/c" -H "Content-Type: application/xml" -d '<org.springframework.util.LinkedMultiValueMap><targetMap class="linked-hash-map"><entry><string>/s1/k1</string><linked-list><string>x</string></linked-list></entry><entry><string>/s2/k2</string><linked-list><string>y</string></linked-list></entry></targetMap></org.springframework.util.LinkedMultiValueMap>'
 
+### Prefix lookups
 
+On `GET` requests it is possible to lookup a range of keys having the same prefix in the keyname.
+To do that, request for a key having the prefix appended by three dots as keyname.
+The request
+
+    http://localhost:8080/scope?/s1/k...
+
+would find all keys with the prefix `k` in the scope `/scope/s1/`.
