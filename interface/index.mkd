@@ -97,12 +97,18 @@ Now, keys can be put in the URL as well as in the body.
 While the URL is good for testing and debugging, using the body is better to store huge amount of data.
 Hence, the most simple call with curl to store the two keys `/c/s1/k1` and `/c/s2/k2/` would look as follows:
 
-    curl -X PUT "http://localhost:8080/c?/s1/k1=x&/s2/k2=y" -H "Content-Type: application/xml" -d '<org.springframework.util.LinkedMultiValueMap><targetMap class="linked-hash-map"/></org.springframework.util.LinkedMultiValueMap>'
+    curl -X PUT "http://localhost:8080/c?/s1/k1=x&/s2/k2=y" -H "Content-Type: application/xml" \
+            -d '<org.springframework.util.LinkedMultiValueMap><targetMap class="linked-hash-map"/>\
+            </org.springframework.util.LinkedMultiValueMap>'
 
 This request sends an "empty" body, i.e. a multivaluemap without any entries.
 The following call uses the request body to store these two keys:
 
-    curl -X PUT "http://localhost:8080/c" -H "Content-Type: application/xml" -d '<org.springframework.util.LinkedMultiValueMap><targetMap class="linked-hash-map"><entry><string>/s1/k1</string><linked-list><string>x</string></linked-list></entry><entry><string>/s2/k2</string><linked-list><string>y</string></linked-list></entry></targetMap></org.springframework.util.LinkedMultiValueMap>'
+    curl -X PUT "http://localhost:8080/c" -H "Content-Type: application/xml" \
+            -d '<org.springframework.util.LinkedMultiValueMap><targetMap class="linked-hash-map">\
+            <entry><string>/s1/k1</string><linked-list><string>x</string></linked-list></entry>\
+            <entry><string>/s2/k2</string><linked-list><string>y</string></linked-list></entry>\
+            </targetMap></org.springframework.util.LinkedMultiValueMap>'
 
 ### Prefix lookups
 
