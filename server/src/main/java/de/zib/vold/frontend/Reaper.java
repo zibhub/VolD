@@ -18,16 +18,14 @@ package de.zib.vold.frontend;
 
 import de.zib.vold.common.VoldException;
 import de.zib.vold.volatilelogic.SlicedDirectory;
-
-import java.util.List;
-import java.util.Map;
 import org.joda.time.DateTime;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import javax.annotation.PostConstruct;
 import javax.annotation.PreDestroy;
-
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import java.util.List;
+import java.util.Map;
 
 /**
  * GarbageCollector for VolD.
@@ -38,268 +36,268 @@ import org.slf4j.LoggerFactory;
  */
 public class Reaper extends Thread
 {
-        private boolean run;
-        //
-        // time to live in milliseconds
-        private long ttl;
-        private SlicedDirectory directory;
+    private boolean run;
+    //
+    // time to live in milliseconds
+    private long ttl;
+    private SlicedDirectory directory;
 
-        protected final Logger log = LoggerFactory.getLogger( this.getClass() );
+    protected final Logger log = LoggerFactory.getLogger( this.getClass() );
 
-        /**
-         * Construct an initialized Reaper.
-         *
-         * @param directory The directory to collect the garbage in.
-         * @param TTL The age a key is allowed to reach.
-         */
-        public Reaper( SlicedDirectory directory, long TTL )
+    /**
+     * Construct an initialized Reaper.
+     *
+     * @param directory The directory to collect the garbage in.
+     * @param TTL The age a key is allowed to reach.
+     */
+    public Reaper( SlicedDirectory directory, long TTL )
+    {
+        if( null == directory )
         {
-                if( null == directory )
-                {
-                        throw new IllegalArgumentException( "Reaper needs a SlicedDirectory, but null has been given!" );
-                }
-                if( TTL < 0 )
-                {
-                        throw new IllegalArgumentException( "ReaperWorker needs nonnegative TTL to count with, but TTL=" + TTL + " has been given!" );
-                }
-
-                this.ttl = TTL;
-                this.directory = directory;
-                this.run = false;
+            throw new IllegalArgumentException( "Reaper needs a SlicedDirectory, but null has been given!" );
+        }
+        if( TTL < 0 )
+        {
+            throw new IllegalArgumentException( "ReaperWorker needs nonnegative TTL to count with, but TTL=" + TTL + " has been given!" );
         }
 
-        /**
-         * Construct an uninitialized Reaper.
-         */
-        public Reaper( )
+        this.ttl = TTL;
+        this.directory = directory;
+        this.run = false;
+    }
+
+    /**
+     * Construct an uninitialized Reaper.
+     */
+    public Reaper( )
+    {
+        this.ttl = -1;
+        this.directory = null;
+        this.run = false;
+    }
+
+    /**
+     * Internal method which acts as part of the guard of all public methods.
+     */
+    protected void checkState( )
+    {
+        if( this.ttl < 0 || null == this.directory )
         {
-                this.ttl = -1;
-                this.directory = null;
-                this.run = false;
+            throw new IllegalStateException( "Reaper cannot work while it had not been initialized properly yet. You first need to set a Directory to reap and the appropriate time to live (TTL)!" );
+        }
+    }
+
+    /**
+     * Set the time a key may live.
+     *
+     * @param ttl The age a key may reach.
+     */
+    public void setTTL( long ttl )
+    {
+        if( ttl <= 0 )
+        {
+            throw new IllegalArgumentException( "ReaperWorker needs positive TTL to count with, but TTL=" + ttl + " has been given!" );
         }
 
-        /**
-         * Internal method which acts as part of the guard of all public methods.
-         */
-        protected void checkState( )
+        this.ttl = ttl;
+    }
+
+    /**
+     * Set the directory the Reaper should work on.
+     */
+    public void setSlicedDirectory( SlicedDirectory slicedDirectory )
+    {
+        if( null != this.directory )
         {
-                if( this.ttl < 0 || null == this.directory )
-                {
-                        throw new IllegalStateException( "Reaper cannot work while it had not been initialized properly yet. You first need to set a Directory to reap and the appropriate time to live (TTL)!" );
-                }
+            log.warn( "Directory to reap changed!" );
         }
 
-        /**
-         * Set the time a key may live.
-         *
-         * @param ttl The age a key may reach.
-         */
-        public void setTTL( long ttl )
-        {
-                if( ttl <= 0 )
-                {
-                        throw new IllegalArgumentException( "ReaperWorker needs positive TTL to count with, but TTL=" + ttl + " has been given!" );
-                }
+        this.directory = slicedDirectory;
+    }
 
-                this.ttl = ttl;
+    /**
+     * Stop the thread running in the background.
+     */
+    @PreDestroy
+    public void stop_service( )
+    {
+        // guard
+        {
+            checkState();
         }
 
-        /**
-         * Set the directory the Reaper should work on.
-         */
-        public void setSlicedDirectory( SlicedDirectory slicedDirectory )
-        {
-                if( null != this.directory )
-                {
-                        log.warn( "Directory to reap changed!" );
-                }
+        this.run = false;
 
-                this.directory = slicedDirectory;
+        try
+        {
+            log.info( "Stopping Reaper..." );
+            this.join();
+            log.info( "Reaper stoped." );
+        }
+        catch( InterruptedException e )
+        {
+            log.warn( "Could not wait for Reaper to stop: " + e.getMessage() );
+        }
+    }
+
+    /**
+     * Start the Reaper in background.
+     */
+    @PostConstruct
+    public void start()
+    {
+        super.start();
+    }
+
+    /**
+     * Start the reaper in foreground.
+     */
+    public void run()
+    {
+        // guard
+        {
+            checkState();
         }
 
-        /**
-         * Stop the thread running in the background.
-         */
-        @PreDestroy
-        public void stop_service( )
+        this.run = true;
+        reap();
+    }
+
+    /**
+     * Work until the run flag is set to false.
+     */
+    public void reap( )
+    {
+        log.info( "Reaper started." );
+
+        // guard
         {
-                // guard
-                {
-                        checkState();
-                }
+            checkState();
+        }
 
-                this.run = false;
 
+        while( run )
+        {
+            long actslice = directory.getActualSlice();
+            ReaperWorker worker = new ReaperWorker( directory, actslice, ttl );
+
+            log.trace( "Reaping timeslice " + actslice + "..." );
+
+            // start thread on reap_timeslice
+            {
+                worker.start();
+            }
+
+            try
+            {
+                sleep( directory.getTimeSliceSize() );
+            }
+            catch( InterruptedException e )
+            {
+                // Log message, but keep working
+                log.error( "Interrupted during sleep for one timeslice: " + e.getMessage() );
+            }
+
+            // wait for reap to finish
+            {
                 try
                 {
-                        log.info( "Stopping Reaper..." );
-                        this.join();
-                        log.info( "Reaper stoped." );
+                    worker.join();
                 }
                 catch( InterruptedException e )
                 {
-                        log.warn( "Could not wait for Reaper to stop: " + e.getMessage() );
+                    log.error( "Interrupted while waiting for ReaperWorker on timeslice " + actslice + ": " + e.getMessage() );
                 }
+            }
         }
 
-        /**
-         * Start the Reaper in background.
-         */
-        @PostConstruct
-        public void start()
+        log.info( "Reaper finished working." );
+    }
+
+    /**
+     * The Worker class for the reaper.
+     *
+     * This class reaps too old keys for a certain timeslice.
+     */
+    private class ReaperWorker extends Thread
+    {
+        private SlicedDirectory directory;
+        private long timeslice;
+        private long ttl;
+
+        public ReaperWorker( SlicedDirectory directory, long timeslice, long TTL )
         {
-                super.start();
+            if( null == directory )
+            {
+                throw new IllegalArgumentException( "ReaperWorker needs a SlicedDirectory, but null was given!" );
+            }
+            if( timeslice < 0 || TTL < 0 )
+            {
+                throw new IllegalArgumentException( "ReaperWorker needs nonnegative timeslice to reap for elements with nonnegative TTL, but timeslice=" + timeslice + " and TTL=" + TTL + " was given!" );
+            }
+
+            this.directory = directory;
+            this.timeslice = timeslice;
+            this.ttl = TTL;
         }
 
-        /**
-         * Start the reaper in foreground.
-         */
-        public void run()
+        public void run( )
         {
-                // guard
-                {
-                        checkState();
-                }
+            log.trace( "ReaperWorker starting on timeslice " + String.valueOf( timeslice ) + "..." );
 
-                this.run = true;
-                reap();
+            try
+            {
+                reap_timeslice( timeslice );
+            }
+            catch( VoldException e )
+            {
+                log.error( e.getMessage() );
+                return;
+            }
         }
 
-        /**
-         * Work until the run flag is set to false.
-         */
-        public void reap( )
+        private void reap_timeslice( long timeslice )
         {
-                log.info( "Reaper started." );
+            log.trace( "ReapTimeslice: " + timeslice );
 
-                // guard
+            // guard
+            {
+                if( timeslice < 0 )
                 {
-                        checkState();
+                    throw new IllegalArgumentException( "Cannot clean negative timeslices (" + timeslice + ")!" );
                 }
+            }
 
+            Map< List< String >, DateTime > map = directory.sliceLookup( timeslice );
 
-                while( run )
+            DateTime now = DateTime.now();
+
+            int deleted = 0;
+            for( Map.Entry< List< String >, DateTime > entry: map.entrySet() )
+            {
+                // reap the element if it is too old
+                if( entry.getValue().plus( ttl ).isBefore( now ) )
                 {
-                        long actslice = directory.getActualSlice();
-                        ReaperWorker worker = new ReaperWorker( directory, actslice, ttl );
+                    log.debug( "Reaping key " + entry.getKey().toString() + " with date of birth: " + entry.getValue() + "." );
 
-                        log.trace( "Reaping timeslice " + actslice + "..." );
-
-                        // start thread on reap_timeslice
-                        {
-                                worker.start();
-                        }
-
-                        try
-                        {
-                                sleep( directory.getTimeSliceSize() );
-                        }
-                        catch( InterruptedException e )
-                        {
-                                // Log message, but keep working
-                                log.error( "Interrupted during sleep for one timeslice: " + e.getMessage() );
-                        }
-
-                        // wait for reap to finish
-                        {
-                                try
-                                {
-                                        worker.join();
-                                }
-                                catch( InterruptedException e )
-                                {
-                                        log.error( "Interrupted while waiting for ReaperWorker on timeslice " + actslice + ": " + e.getMessage() );
-                                }
-                        }
+                    try
+                    {
+                        directory.delete( entry.getKey() );
+                        ++deleted;
+                    }
+                    catch( VoldException e )
+                    {
+                        log.error( "Could not reap key " + entry.getKey().toString() + ". Reason: " + e.getMessage() );
+                        continue;
+                    }
                 }
+            }
 
-                log.info( "Reaper finished working." );
+            if( deleted > 0 )
+            {
+                log.debug( "Reaper deleted " + String.valueOf( deleted ) + " key(s) in timeslice " + timeslice + "." );
+            }
         }
 
-        /**
-         * The Worker class for the reaper.
-         *
-         * This class reaps too old keys for a certain timeslice.
-         */
-        private class ReaperWorker extends Thread
-        {
-                private SlicedDirectory directory;
-                private long timeslice;
-                private long ttl;
-
-                public ReaperWorker( SlicedDirectory directory, long timeslice, long TTL )
-                {
-                        if( null == directory )
-                        {
-                                throw new IllegalArgumentException( "ReaperWorker needs a SlicedDirectory, but null was given!" );
-                        }
-                        if( timeslice < 0 || TTL < 0 )
-                        {
-                                throw new IllegalArgumentException( "ReaperWorker needs nonnegative timeslice to reap for elements with nonnegative TTL, but timeslice=" + timeslice + " and TTL=" + TTL + " was given!" );
-                        }
-
-                        this.directory = directory;
-                        this.timeslice = timeslice;
-                        this.ttl = TTL;
-                }
-
-                public void run( )
-                {
-                        log.trace( "ReaperWorker starting on timeslice " + String.valueOf( timeslice ) + "..." );
-
-                        try
-                        {
-                                reap_timeslice( timeslice );
-                        }
-                        catch( VoldException e )
-                        {
-                                log.error( e.getMessage() );
-                                return;
-                        }
-                }
-
-                private void reap_timeslice( long timeslice )
-                {
-                        log.trace( "ReapTimeslice: " + timeslice );
-
-                        // guard
-                        {
-                                if( timeslice < 0 )
-                                {
-                                        throw new IllegalArgumentException( "Cannot clean negative timeslices (" + timeslice + ")!" );
-                                }
-                        }
-
-                        Map< List< String >, DateTime > map = directory.sliceLookup( timeslice );
-
-                        DateTime now = DateTime.now();
-
-                        int deleted = 0;
-                        for( Map.Entry< List< String >, DateTime > entry: map.entrySet() )
-                        {
-                                // reap the element if it is too old
-                                if( entry.getValue().plus( ttl ).isBefore( now ) )
-                                {
-                                        log.debug( "Reaping key " + entry.getKey().toString() + " with date of birth: " + entry.getValue() + "." );
-
-                                        try
-                                        {
-                                                directory.delete( entry.getKey() );
-                                                ++deleted;
-                                        }
-                                        catch( VoldException e )
-                                        {
-                                                log.error( "Could not reap key " + entry.getKey().toString() + ". Reason: " + e.getMessage() );
-                                                continue;
-                                        }
-                                }
-                        }
-
-                        if( deleted > 0 )
-                        {
-                                log.debug( "Reaper deleted " + String.valueOf( deleted ) + " key(s) in timeslice " + timeslice + "." );
-                        }
-                }
-
-        }
+    }
 }
