@@ -21,6 +21,7 @@ Structure
 The structure, VolD stores the keys in, is a directory, i.e. a hierarchical tree.
 Each directory, i.e. the full path to each node is called scope.
 An example for a scope would be
+
     /path/to/node/
 
 Keys
@@ -35,7 +36,7 @@ The type can be an arbitrary string including the empty word, but it must be URL
 For names holds the same as for types.
 
 The syntax for a key is
-    [[SOURCE]/SCOPE/][TYPE:]NAME
+    \[\[SOURCE\]/SCOPE/\]\[TYPE\:\]NAME
 where
 * SOURCE is the source, the key comes from. This is mainly used for replication of the backend storages.
 * SCOPE is the path to the tree in the hierarchy.
