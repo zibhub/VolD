@@ -41,6 +41,7 @@ public class Reaper extends Thread
     // time to live in milliseconds
     private long ttl;
     private SlicedDirectory directory;
+    private long idle = 100;
 
     protected final Logger log = LoggerFactory.getLogger( this.getClass() );
 
@@ -193,7 +194,12 @@ public class Reaper extends Thread
 
             try
             {
-                sleep( directory.getTimeSliceSize() );
+                long slept = 0;
+                while( slept < directory.getTimeSliceSize() && run )
+                {
+                    sleep( idle );
+                    slept += idle;
+                }
             }
             catch( InterruptedException e )
             {
