@@ -38,7 +38,7 @@ For names holds the same as for types.
 
 The syntax for a key is
 
-    \[\[SOURCE\]/SCOPE/\]\[TYPE\:\]NAME
+    [[SOURCE]/SCOPE/][TYPE:]NAME
 
     where
 * SOURCE is the source, the key comes from. This is mainly used for replication of the backend storages.
