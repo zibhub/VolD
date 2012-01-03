@@ -36,7 +36,7 @@ import java.util.Map;
  */
 public class Reaper extends Thread
 {
-    private boolean run;
+    private static boolean run = false;
     //
     // time to live in milliseconds
     private long ttl;
@@ -63,7 +63,6 @@ public class Reaper extends Thread
 
         this.ttl = TTL;
         this.directory = directory;
-        this.run = false;
     }
 
     /**
@@ -73,7 +72,6 @@ public class Reaper extends Thread
     {
         this.ttl = -1;
         this.directory = null;
-        this.run = false;
     }
 
     /**
@@ -144,9 +142,15 @@ public class Reaper extends Thread
      * Start the Reaper in background.
      */
     @PostConstruct
-    public void start()
+    public synchronized void start()
     {
-        super.start();
+        if( !this.run )
+        {
+            log.info( "Reaper starting..." );
+
+            super.start();
+            this.run = true;
+        }
     }
 
     /**
@@ -159,7 +163,6 @@ public class Reaper extends Thread
             checkState();
         }
 
-        this.run = true;
         reap();
     }
 
