@@ -1,0 +1,85 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+  ~ Copyright 2008-2011 Zuse Institute Berlin (ZIB)
+  ~ Licensed under the Apache License, Version 2.0 (the "License");
+  ~ you may not use this file except in compliance with the License.
+  ~ You may obtain a copy of the License at
+  ~
+  ~      http://www.apache.org/licenses/LICENSE-2.0
+  ~
+  ~ Unless required by applicable law or agreed to in writing, software
+  ~ distributed under the License is distributed on an "AS IS" BASIS,
+  ~ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+  ~ See the License for the specific language governing permissions and
+  ~ limitations under the License.
+  -->
+
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xmlns:aop="http://www.springframework.org/schema/aop"
+       xmlns:context="http://www.springframework.org/schema/context"
+       xsi:schemaLocation="
+        http://www.springframework.org/schema/aop http://www.springframework.org/schema/aop/spring-aop-2.5.xsd
+        http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-2.5.xsd
+        http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context-2.5.xsd">
+
+        <!--scan for annotations-->
+        <context:annotation-config/>
+
+        <!-- *************************************************************** -->
+        <!-- ** SETUP BACKENDS                                               -->
+
+        <!-- setup BabuDirectory backend -->
+        <bean id="backend2" class="de.zib.vold.backend.BabuDirectory">
+                <property name="dir" value="/tmp/babu/" />
+                <property name="logDir" value="/tmp/babu/log" />
+                <property name="sync" value="ASYNC" />
+                <property name="databaseName" value="testvold" />
+                <property name="enc" value="utf-8" />
+        </bean>
+
+        <!-- *************************************************************** -->
+        <!-- ** SETUP VOLATILE LOGIC INTERFACES                              -->
+
+        <!-- setup TimeSlice configuration -->
+        <bean id="timeslice" class="de.zib.vold.volatilelogic.TimeSlice">
+<<<<<<< Updated upstream
+                <property name="timeSliceSize" value="1000" />
+                <property name="numberOfSlices" value="60" />
+=======
+                <property name="timeSliceSize" value="10000" />
+                <property name="numberOfSlices" value="6" />
+>>>>>>> Stashed changes
+        </bean>
+
+        <!-- setup VolatileDirectory for backend2 -->
+        <bean id="voldi2" class="de.zib.vold.volatilelogic.VolatileDirectoryImpl">
+                <property name="backend" ref="backend2" />
+                <property name="timeslice" ref="timeslice" />
+        </bean>
+
+        <!-- *************************************************************** -->
+        <!-- ** SETUP REPLICATION TREE                                       -->
+
+        <!-- *************************************************************** -->
+        <!-- ** SETUP FRONTEND                                               -->
+
+        <!-- setup reaper -->
+        <bean id="reaper" class="de.zib.vold.frontend.Reaper">
+<<<<<<< Updated upstream
+                <property name="TTL" value="20000" />
+=======
+                <property name="TTL" value="30000" />
+>>>>>>> Stashed changes
+                <property name="slicedDirectory" ref="voldi2" />
+        </bean>
+
+        <!-- setup the frontends for master and slave (replication) -->
+        <bean id="masterfrontend" class="de.zib.vold.frontend.Frontend">
+                <property name="volatileDirectory" ref="voldi2" />
+        </bean>
+
+        <bean id="slavefrontend" class="de.zib.vold.frontend.Frontend">
+                <property name="volatileDirectory" ref="voldi2" />
+        </bean>
+</beans>

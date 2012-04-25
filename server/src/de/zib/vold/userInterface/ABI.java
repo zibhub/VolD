@@ -21,12 +21,9 @@ import de.zib.vold.common.Key;
 import de.zib.vold.frontend.Frontend;
 
 
-import de.zib.vold.client.RESTClient;
-
 import java.util.Set;
 import java.util.HashSet;
 import java.util.Map;
-import java.util.HashMap;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

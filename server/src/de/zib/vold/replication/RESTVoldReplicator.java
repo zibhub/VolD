@@ -27,9 +27,9 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
- * Replicator delegating all requests to another vold REST based service.
+ * Replicator delegating all requests to another de.zib.vold REST based service.
  *
- * @note        Since the vold frontend has another interface language (using
+ * @note        Since the de.zib.vold frontend has another interface language (using
  *              the class Key for keys instead of lists of strings), the keys
  *              have to be build up. Hence, when using this replicator, the
  *              keys given here need the format specified for Key.buildkey.
