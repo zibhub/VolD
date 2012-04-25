@@ -49,13 +49,6 @@ public class RESTController
     private String enc = "utf-8";
     private String removePrefix = "";
 
-    private void checkState()
-    {
-        if( null == frontend )
-        {
-            throw new IllegalStateException( "Tried to operate on REST controller while it had not been initialized yet. Set a frontend first!" );
-        }
-    }
 
     /**
      * Handles Put requests.
@@ -163,6 +156,7 @@ public class RESTController
 
         return new ResponseEntity< Map < String, String > >( invalidKeys, HttpStatus.OK );
     }
+
 
     /**
      * Handles Delete requests.
@@ -331,6 +325,7 @@ public class RESTController
         return new ResponseEntity< Map < String, String > >( invalidKeys, HttpStatus.OK );
     }
 
+
     /**
      * Handles Get requests.
      *
@@ -418,11 +413,13 @@ public class RESTController
         return new ResponseEntity< Map<Key, Set< String > > >( merged_result, HttpStatus.OK );
     }
 
+
     @ModelAttribute("clientIpAddress")
     public String populateClientIpAddress( HttpServletRequest request )
     {
         return request.getRemoteAddr();
     }
+
 
     @Autowired
     public void setFrontend( Frontend frontend )
@@ -430,12 +427,23 @@ public class RESTController
         this.frontend = frontend;
     }
 
+
     public void setEnc( String enc )
     {
         this.enc = enc;
     }
 
+
     public void setRemovePrefix( final String removePrefix ) {
         this.removePrefix = removePrefix;
+    }
+
+
+    private void checkState()
+    {
+        if( null == frontend )
+        {
+            throw new IllegalStateException( "Tried to operate on REST controller while it had not been initialized yet. Set a frontend first!" );
+        }
     }
 }
