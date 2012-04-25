@@ -43,8 +43,8 @@
 
         <!-- setup TimeSlice configuration -->
         <bean id="timeslice" class="de.zib.vold.volatilelogic.TimeSlice">
-                <property name="timeSliceSize" value="1000" />
-                <property name="numberOfSlices" value="60" />
+                <property name="timeSliceSize" value="10000" />
+                <property name="numberOfSlices" value="6" />
         </bean>
 
         <!-- setup VolatileDirectory for backend2 -->
@@ -61,7 +61,7 @@
 
         <!-- setup reaper -->
         <bean id="reaper" class="de.zib.vold.frontend.Reaper">
-                <property name="TTL" value="20000" />
+                <property name="TTL" value="30000" />
                 <property name="slicedDirectory" ref="voldi2" />
         </bean>
 
