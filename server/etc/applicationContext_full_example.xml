@@ -46,7 +46,7 @@
 
         <!-- setup WriteLogger backend -->
         <bean id="backend3" class="de.zib.vold.backend.WriteLogger">
-                <property name="logfile" value="/tmp/vold-write.log" />
+                <property name="logfile" value="/tmp/de.zib.vold-write.log" />
         </bean>
 
         <!-- *************************************************************** -->

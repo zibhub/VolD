@@ -43,7 +43,7 @@ import java.util.*;
 @RequestMapping( "*" )
 public class RESTController
 {
-    protected final Logger log = LoggerFactory.getLogger( this.getClass() );
+    protected final Logger logger = LoggerFactory.getLogger( this.getClass() );
 
     private Frontend frontend;
     private String enc = "utf-8";
@@ -72,9 +72,9 @@ public class RESTController
         // guard
         {
             if( argsbody != null )
-                log.debug( "PUT: " + args.toString() + " AND " + argsbody.toString() );
+                logger.debug( "PUT: " + args.toString() + " AND " + argsbody.toString() );
             else
-                log.debug( "PUT: " + args.toString() );
+                logger.debug( "PUT: " + args.toString() );
 
             checkState();
         }
@@ -96,7 +96,7 @@ public class RESTController
             {
                 if( null == args )
                 {
-                    log.warn( "Got a totally empty request from " + clientIpAddress + "." );
+                    logger.warn("Got a totally empty request from " + clientIpAddress + ".");
                     return new ResponseEntity< Map < String, String > >( invalidKeys, HttpStatus.OK );
                 }
 
@@ -142,12 +142,12 @@ public class RESTController
                 {
                     try
                     {
-                        log.debug( "Inserting " + entry.getValue().size() + " values for key " + urikey.toURIString() );
+                        logger.debug("Inserting " + entry.getValue().size() + " values for key " + urikey.toURIString());
                         frontend.insert( source, k, new HashSet< String >( entry.getValue() ) );
                     }
                     catch( VoldException e )
                     {
-                        log.error( "Could not handle write request for key " + entry.getKey() + ". ", e );
+                        logger.error("Could not handle write request for key " + entry.getKey() + ". ", e);
                         invalidKeys.put( entry.getKey(), "ERROR: " + e.getMessage() );
                     }
                 }
@@ -177,7 +177,7 @@ public class RESTController
 
         // guard
         {
-            log.debug( "DELETE: " + args.toString() );
+            logger.debug("DELETE: " + args.toString());
 
             checkState();
         }
@@ -231,7 +231,7 @@ public class RESTController
                     }
                     catch( VoldException e )
                     {
-                        log.error( "Could not handle write request for key " + entry.getKey() + ". ", e );
+                        logger.error("Could not handle write request for key " + entry.getKey() + ". ", e);
                         invalidKeys.put( entry.getKey(), "ERROR: " + e.getMessage() );
                     }
                 }
@@ -261,7 +261,7 @@ public class RESTController
 
         // guard
         {
-            log.debug( "POST: " + args.toString() );
+            logger.debug("POST: " + args.toString());
 
             checkState();
         }
@@ -313,9 +313,8 @@ public class RESTController
                     {
                         frontend.refresh( source, k );
                     }
-                    catch( VoldException e )
-                    {
-                        log.error( "Could not handle write request for key " + entry.getKey() + ". ", e );
+                    catch( VoldException e ) {
+                        logger.error("Could not handle write request for key " + entry.getKey() + ". ", e);
                         invalidKeys.put( entry.getKey(), "ERROR: " + e.getMessage() );
                     }
                 }
@@ -342,7 +341,7 @@ public class RESTController
     {
         // guard
         {
-            log.debug( "GET: " + keys.toString() );
+            logger.debug("GET: " + keys.toString());
 
             checkState();
         }
@@ -385,9 +384,8 @@ public class RESTController
                 {
                     _result = frontend.lookup( k );
                 }
-                catch( VoldException e )
-                {
-                    log.error( "Error on lookup for key " + k + " (" + entry.getKey() + "): ", e );
+                catch( VoldException e ) {
+                    logger.error("Error on lookup for key " + k + " (" + entry.getKey() + "): ", e);
                     continue;
 /*
                                         Set< String > s = new HashSet< String >();

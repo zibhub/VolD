@@ -145,11 +145,11 @@ public class BabuDirectory implements PartitionedDirectoryBackend
         }
 
         /**
-         * Set the log directory BabuDB should use.
+         * Set the logger directory BabuDB should use.
          *
          * @note                This is an essential property.
          *
-         * @param dir           The log directroy for BabuDB.
+         * @param dir           The logger directroy for BabuDB.
          */
         public void setLogDir( String logDir )
         {
@@ -161,11 +161,11 @@ public class BabuDirectory implements PartitionedDirectoryBackend
          *
          * Possible values are ASYNC, FDATASYNC, FSYNC, SYNC_WRITE and SYNC_WRITE_METADATA.
          *
-         * - ASYNC: asynchronously write log entries (data is lost when system crashes).
+         * - ASYNC: asynchronously write logger entries (data is lost when system crashes).
          * - FDATASYNC: TODO: not documented in BabuDB
          * - FSYNC: executes an fsync on the logfile before acknowledging the operation.
-         * - SYNC_WRITE: synchronously writes the log entry to disk before ack.
-         * - SYNC_WRITE_METADATA: synchronously writes the log entry to disk and updates the metadata before ack.
+         * - SYNC_WRITE: synchronously writes the logger entry to disk before ack.
+         * - SYNC_WRITE_METADATA: synchronously writes the logger entry to disk and updates the metadata before ack.
          *
          * @note                This is an essential property.
          *
@@ -181,7 +181,7 @@ public class BabuDirectory implements PartitionedDirectoryBackend
          *
          * Since BabuDB is capable of storing different databases, a database
          * name need to be given. When sharing the BabuDB instance (base
-         * directory and log directory) with other processes, database names
+         * directory and logger directory) with other processes, database names
          * should be unique.
          *
          * @note                This is an essential property.

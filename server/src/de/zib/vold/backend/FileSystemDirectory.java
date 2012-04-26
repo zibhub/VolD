@@ -241,7 +241,7 @@ public class FileSystemDirectory implements PartitionedDirectoryBackend
                         if( ! f.exists() )
                         {
                                 f.mkdirs();
-                                //log.debug( "Could not create directory '" + path + "'" );
+                                //logger.debug( "Could not create directory '" + path + "'" );
                         }
 
                         for( File file: f.listFiles() )

@@ -34,7 +34,7 @@ import org.slf4j.LoggerFactory;
 /**
  * Incomplete implementation of PartitionedDirectoryBackend which serves as logfile.
  *
- * This backend simply log all write requests on the database to a single logfile.
+ * This backend simply logger all write requests on the database to a single logfile.
  *
  * @see PartitionedDirectoryBackend
  *

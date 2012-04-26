@@ -18,15 +18,13 @@ package de.zib.vold.volatilelogic;
 
 import de.zib.vold.common.VoldException;
 import de.zib.vold.replication.Replicator;
+import org.joda.time.DateTime;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.util.List;
-import java.util.Set;
 import java.util.Map;
-
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
-
-import org.joda.time.DateTime;
+import java.util.Set;
 
 /**
  * Proxy for VolatileDirectory replicating all write requests.
@@ -35,7 +33,7 @@ import org.joda.time.DateTime;
  */
 public class ReplicatedVolatileDirectory implements VolatileDirectory
 {
-        protected final Log log = LogFactory.getLog( this.getClass() );
+        protected final Logger logger = LoggerFactory.getLogger( this.getClass() );
 
         private VolatileDirectory backend;
         private Replicator replicator;
@@ -153,7 +151,7 @@ public class ReplicatedVolatileDirectory implements VolatileDirectory
                         checkState();
                 }
 
-                log.debug( "Replicating insert: " + key.toString() + " |--> " + value.toString() );
+                logger.debug("Replicating insert: " + key.toString() + " |--> " + value.toString());
 
                 InsertThread insertion = new InsertThread( backend, key, value );
                 
@@ -190,7 +188,7 @@ public class ReplicatedVolatileDirectory implements VolatileDirectory
                         checkState();
                 }
 
-                log.debug( "Replicating refresh: " + key.toString() );
+            logger.debug("Replicating refresh: " + key.toString());
 
                 RefreshThread freshen = new RefreshThread( backend, key );
                 
@@ -227,7 +225,7 @@ public class ReplicatedVolatileDirectory implements VolatileDirectory
                         checkState();
                 }
 
-                log.debug( "Replicating delete: " + key.toString() );
+            logger.debug("Replicating delete: " + key.toString());
 
                 DeleteThread deletion = new DeleteThread( backend, key );
                 
