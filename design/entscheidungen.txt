@@ -1,0 +1,25 @@
+Replikation
+~~~~~~~~~~~
+
+Problemszenario:
+Ein Host speichert Key (K,U) auf VolD A und Key (K,V) auf VolD B. A und B sind
+gegenseitig miteinander gekoppelt.
+- A speichert U, B speichert V
+- A repliziert U, B repliziert V
+- A speichert repliziertes V, B speichert repliziertes U
+
+Ergebnis:
+Inkosistenz der Daten: A und B tragen unterschiedliche Werte des Keys K.
+
+Lösung:
+Der Auftrag bekommt einen Zeitstempel mitgeliefert.
+Jeder Host besitzt genau eine Uhr. Zwei Aufträge an unterschiedliche VolD
+Instanzen besitzen also unterschiedliche Zeitstempel. Beim speichern werden
+die Zeitstempel ebenfalls gespeichert. Ein Key wird nur dann überschrieben,
+wenn der überschreibende Key einen neueren Zeitstempel besitzt.
+
+Bemerkung:
+Uhren verschiedener Clients brauchen durch dieses Verfahren nicht
+synchronisiert werden, da das speichern des gleichen Keys von zwei
+verschiedenen Clients aus den Key nicht überschreibt, sondern ihn um die
+entsprechenden Werte erweitert.
