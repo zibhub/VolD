@@ -133,7 +133,7 @@
 
     <!-- at least all headers must include the dn -->
     <bean id="dnFilter" class=
-            "org.springframework.security.web.authentication.preauth.RequestHeaderAuthenticationFilter">
+            "de.zib.vold.security.OptionalRequestHeaderAuthenticationFilter">
         <property name="principalRequestHeader" value="DN"/>
         <property name="authenticationManager" ref="authenticationManager" />
     </bean>
