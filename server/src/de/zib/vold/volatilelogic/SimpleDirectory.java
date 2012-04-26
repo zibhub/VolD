@@ -40,10 +40,11 @@ public interface SimpleDirectory
         /**
          * Insert a key with its values.
          *
-         * @param key   The key to insert.
-         * @param value The set of values associated with the keys.
+         * @param key       The key to insert.
+         * @param value     The set of values associated with the keys.
+         * @param timeStamp The timeStamp to order insertions
          */
-        void insert( List< String > key, Set< String > value );
+        void insert( List< String > key, Set< String > value, long timeStamp );
 
         /**
          * Refresh a key.
@@ -51,8 +52,9 @@ public interface SimpleDirectory
          * Refreshing a key means to update the timestamp of the key.
          *
          * @param key   The key to refresh.
+         * @param timeStamp The timeStamp to order insertions
          */
-        void refresh( List< String > key );
+        void refresh( List< String > key, long timeStamp );
 
         /**
          * Delete a key.

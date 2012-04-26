@@ -20,6 +20,7 @@ import de.zib.vold.common.Key;
 import de.zib.vold.common.URIKey;
 import de.zib.vold.common.VoldException;
 import de.zib.vold.frontend.Frontend;
+import org.joda.time.DateTime;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -66,8 +67,14 @@ public class RESTController
             @ModelAttribute("clientIpAddress") String clientIpAddress,
             @RequestParam MultiValueMap< String, String > args,
             @RequestBody MultiValueMap< String, String > argsbody,
+            @RequestHeader( value = "TIMESTAMP", defaultValue = "unset" ) String timeStampHeader,
             HttpServletRequest request)
     {
+        final long timeStamp;
+        if( timeStampHeader.equals( "unset" ) )
+            timeStamp = DateTime.now().getMillis();
+        else
+            timeStamp = Long.parseLong( timeStampHeader );
 
         // guard
         {
@@ -143,7 +150,7 @@ public class RESTController
                     try
                     {
                         logger.debug("Inserting " + entry.getValue().size() + " values for key " + urikey.toURIString());
-                        frontend.insert( source, k, new HashSet< String >( entry.getValue() ) );
+                        frontend.insert( source, k, new HashSet< String >( entry.getValue() ), timeStamp );
                     }
                     catch( VoldException e )
                     {
@@ -256,8 +263,14 @@ public class RESTController
     public ResponseEntity< Map< String, String > > post(
             @ModelAttribute("clientIpAddress") String clientIpAddress,
             @RequestParam MultiValueMap< String, String > args,
+            @RequestHeader( value = "TIMESTAMP", defaultValue = "unset" ) String timeStampHeader,
             HttpServletRequest request)
     {
+        final long timeStamp;
+        if( timeStampHeader.equals( "unset" ) )
+            timeStamp = DateTime.now().getMillis();
+        else
+            timeStamp = Long.parseLong( timeStampHeader );
 
         // guard
         {
@@ -311,7 +324,7 @@ public class RESTController
                 {
                     try
                     {
-                        frontend.refresh( source, k );
+                        frontend.refresh( source, k, timeStamp );
                     }
                     catch( VoldException e ) {
                         logger.error("Could not handle write request for key " + entry.getKey() + ". ", e);

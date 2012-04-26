@@ -33,356 +33,365 @@ import java.util.Set;
  */
 public class ReplicatedVolatileDirectory implements VolatileDirectory
 {
-        protected final Logger logger = LoggerFactory.getLogger( this.getClass() );
+    protected final Logger logger = LoggerFactory.getLogger( this.getClass() );
 
-        private VolatileDirectory backend;
-        private Replicator replicator;
+    private VolatileDirectory backend;
+    private Replicator replicator;
 
-        /**
-         * Construct an initialized ReplicatedVolatileDirectory.
-         *
-         * @param backend The backend which this class is the proxy for.
-         * @param replicator The replicator to replicate all write requests to.
-         */
-        public ReplicatedVolatileDirectory( VolatileDirectory backend, Replicator replicator )
+    /**
+     * Construct an initialized ReplicatedVolatileDirectory.
+     *
+     * @param backend The backend which this class is the proxy for.
+     * @param replicator The replicator to replicate all write requests to.
+     */
+    public ReplicatedVolatileDirectory( VolatileDirectory backend, Replicator replicator )
+    {
+        this.backend = backend;
+        this.replicator = replicator;
+    }
+
+    /**
+     * Construct an uninitialized ReplicatedVolatileDirectory.
+     */
+    public ReplicatedVolatileDirectory( )
+    {
+        this.backend = null;
+        this.replicator = null;
+    }
+
+    /**
+     * Set the backend to delegate all requests to.
+     */
+    public void setDirectory( VolatileDirectory directory )
+    {
+        this.backend = directory;
+    }
+
+    /**
+     * Set the replicator to replicate all write requests to.
+     */
+    public void setReplicator( Replicator replicator )
+    {
+        this.replicator = replicator;
+    }
+
+    /**
+     * Internal method which acts as part of the guard of all public methods.
+     */
+    public void checkState( )
+    {
+        if( null == backend || null == replicator )
         {
-                this.backend = backend;
-                this.replicator = replicator;
+            throw new IllegalStateException( "Tried to operate on frontend while it had not been initialized yet. You first need to set a volatile Directory!" );
+        }
+    }
+
+    /**
+     * A delegator for TimeSlice.getActualSlice().
+     *
+     * @see TimeSlice
+     */
+    @Override
+    public long getActualSlice( )
+    {
+        // guard
+        {
+            checkState();
         }
 
-        /**
-         * Construct an uninitialized ReplicatedVolatileDirectory.
-         */
-        public ReplicatedVolatileDirectory( )
+        return backend.getActualSlice();
+    }
+
+    /**
+     * A delegator for TimeSlice.getNumberOfSlices().
+     *
+     * @see TimeSlice
+     */
+    @Override
+    public long getNumberOfSlices( )
+    {
+        // guard
         {
-                this.backend = null;
-                this.replicator = null;
+            checkState();
         }
 
-        /**
-         * Set the backend to delegate all requests to.
-         */
-        public void setDirectory( VolatileDirectory directory )
+        return backend.getNumberOfSlices();
+    }
+
+    /**
+     * A delegator for TimeSlice.getTimeSliceSize().
+     *
+     * @see TimeSlice
+     */
+    @Override
+    public long getTimeSliceSize( )
+    {
+        // guard
         {
-                this.backend = directory;
+            checkState();
         }
 
-        /**
-         * Set the replicator to replicate all write requests to.
-         */
-        public void setReplicator( Replicator replicator )
+        return backend.getTimeSliceSize();
+    }
+
+    /**
+     * Insert a key with its set of values.
+     *
+     * The insertion will be done concurrently at the replicator and the
+     * backend.
+     *
+     * @param key The key to insert.
+     * @param value The values associated to the key.
+     */
+    @Override
+    public void insert( List< String > key, Set< String > value, long timeStamp )
+    {
+        // guard
         {
-                this.replicator = replicator;
+            checkState();
         }
 
-        /**
-         * Internal method which acts as part of the guard of all public methods.
-         */
-        public void checkState( )
+        logger.debug("Replicating insert: " + key.toString() + " |--> " + value.toString());
+
+        InsertThread insertion = new InsertThread( backend, key, value, timeStamp );
+
+        try
         {
-                if( null == backend || null == replicator )
-                {
-                        throw new IllegalStateException( "Tried to operate on frontend while it had not been initialized yet. You first need to set a volatile Directory!" );
-                }
+            insertion.start();
+
+            replicator.insert( key, value, timeStamp );
+
+            insertion.join();
+        }
+        catch( InterruptedException e )
+        {
+            throw new VoldException( e );
         }
 
-        /**
-         * A delegator for TimeSlice.getActualSlice().
-         *
-         * @see TimeSlice
-         */
-	@Override
-	public long getActualSlice( )
-	{
-                // guard
-                {
-                        checkState();
-                }
+        if( null != insertion.exception )
+            throw insertion.exception;
+    }
 
-		return backend.getActualSlice();
-	}
+    /**
+     * Refresh a key.
+     *
+     * The request will be handled concurrently at the replicator and the
+     * backend.
+     *
+     * @param key The key to refresh.
+     * @param timeStamp     The timeStamp of operation.
+     */
+    @Override
+    public void refresh( List< String > key, final long timeStamp )
+    {
+        // guard
+        {
+            checkState();
+        }
 
-        /**
-         * A delegator for TimeSlice.getNumberOfSlices().
-         *
-         * @see TimeSlice
-         */
-	@Override
-	public long getNumberOfSlices( )
-	{
-                // guard
-                {
-                        checkState();
-                }
+        logger.debug("Replicating refresh: " + key.toString());
 
-		return backend.getNumberOfSlices();
-	}
+        RefreshThread freshen = new RefreshThread( backend, key, timeStamp );
 
-        /**
-         * A delegator for TimeSlice.getTimeSliceSize().
-         *
-         * @see TimeSlice
-         */
-	@Override
-	public long getTimeSliceSize( )
-	{
-                // guard
-                {
-                        checkState();
-                }
+        try
+        {
+            freshen.start();
 
-		return backend.getTimeSliceSize();
-	}
+            replicator.refresh( key, timeStamp );
 
-        /**
-         * Insert a key with its set of values.
-         *
-         * The insertion will be done concurrently at the replicator and the
-         * backend.
-         *
-         * @param key The key to insert.
-         * @param value The values associated to the key.
-         */
-	@Override
-	public void insert( List< String > key, Set< String > value )
-	{
-                // guard
-                {
-                        checkState();
-                }
+            freshen.join();
+        }
+        catch( InterruptedException e )
+        {
+            throw new VoldException( e );
+        }
 
-                logger.debug("Replicating insert: " + key.toString() + " |--> " + value.toString());
+        if( null != freshen.exception )
+            throw freshen.exception;
+    }
 
-                InsertThread insertion = new InsertThread( backend, key, value );
-                
-                try
-                {
-                        insertion.start();
+    /**
+     * Delete a key.
+     *
+     * The request handled be done concurrently at the replicator and the
+     * backend.
+     *
+     * @param key The key to delete.
+     */
+    @Override
+    public void delete( List< String > key )
+    {
+        // guard
+        {
+            checkState();
+        }
 
-                        replicator.insert( key, value );
-                        
-                        insertion.join();
-                }
-                catch( InterruptedException e )
-                {
-                        throw new VoldException( e );
-                }
+        logger.debug("Replicating delete: " + key.toString());
 
-                if( null != insertion.exception )
-                        throw insertion.exception;
-	}
+        DeleteThread deletion = new DeleteThread( backend, key );
 
-        /**
-         * Refresh a key.
-         *
-         * The request will be handled concurrently at the replicator and the
-         * backend.
-         *
-         * @param key The key to refresh.
-         */
+        try
+        {
+            deletion.start();
+
+            replicator.delete( key );
+
+            deletion.join();
+        }
+        catch( InterruptedException e )
+        {
+            throw new VoldException( e );
+        }
+
+        if( null != deletion.exception )
+            throw deletion.exception;
+    }
+
+    /**
+     * Helper class to insert an entry concurrently.
+     */
+    private class InsertThread extends Thread
+    {
+        private final VolatileDirectory directory;
+        private final List< String > key;
+        private final Set< String > values;
+        private final long timeStamp;
+        public VoldException exception = null;
+
+        public InsertThread(
+                VolatileDirectory directory,
+                List< String > key,
+                Set< String > values,
+                long timeStamp )
+        {
+            this.directory = directory;
+            this.key = key;
+            this.values = values;
+            this.timeStamp = timeStamp;
+        }
+
         @Override
-        public void refresh( List< String > key )
+        public void run()
         {
-                // guard
-                {
-                        checkState();
-                }
+            try
+            {
+                directory.insert( key, values, timeStamp );
+            }
+            catch( VoldException e )
+            {
+                this.exception = e;
+            }
+        }
+    }
 
-            logger.debug("Replicating refresh: " + key.toString());
+    /**
+     * Helper class to refresh an entry concurrently.
+     */
+    private class RefreshThread extends Thread
+    {
+        private final VolatileDirectory directory;
+        private final List< String > key;
+        private final long timeStamp;
+        public VoldException exception = null;
 
-                RefreshThread freshen = new RefreshThread( backend, key );
-                
-                try
-                {
-                        freshen.start();
-
-                        replicator.refresh( key );
-                        
-                        freshen.join();
-                }
-                catch( InterruptedException e )
-                {
-                        throw new VoldException( e );
-                }
-
-                if( null != freshen.exception )
-                        throw freshen.exception;
+        public RefreshThread( VolatileDirectory directory, List< String > key, final long timeStamp )
+        {
+            this.directory = directory;
+            this.key = key;
+            this.timeStamp = timeStamp;
         }
 
-        /**
-         * Delete a key.
-         *
-         * The request handled be done concurrently at the replicator and the
-         * backend.
-         *
-         * @param key The key to delete.
-         */
         @Override
-        public void delete( List< String > key )
+        public void run()
         {
-                // guard
-                {
-                        checkState();
-                }
+            try
+            {
+                directory.refresh( key, timeStamp );
+            }
+            catch( VoldException e )
+            {
+                this.exception = e;
+            }
+        }
+    }
 
-            logger.debug("Replicating delete: " + key.toString());
+    /**
+     * Helper class to delete an entry concurrently.
+     */
+    private class DeleteThread extends Thread
+    {
+        private final VolatileDirectory directory;
+        private final List< String > key;
+        public VoldException exception = null;
 
-                DeleteThread deletion = new DeleteThread( backend, key );
-                
-                try
-                {
-                        deletion.start();
-
-                        replicator.delete( key );
-
-                        deletion.join();
-                }
-                catch( InterruptedException e )
-                {
-                        throw new VoldException( e );
-                }
-
-                if( null != deletion.exception )
-                        throw deletion.exception;
+        public DeleteThread( VolatileDirectory directory, List< String > key )
+        {
+            this.directory = directory;
+            this.key = key;
         }
 
-        /**
-         * Helper class to insert an entry concurrently.
-         */
-        private class InsertThread extends Thread
-        {
-                private final VolatileDirectory directory;
-                private final List< String > key;
-                private final Set< String > values;
-                public VoldException exception = null;
-
-                public InsertThread( VolatileDirectory directory, List< String > key, Set< String > values )
-                {
-                        this.directory = directory;
-                        this.key = key;
-                        this.values = values;
-                }
-
-                @Override
-                public void run()
-                {
-                        try
-                        {
-                                directory.insert( key, values );
-                        }
-                        catch( VoldException e )
-                        {
-                                this.exception = e;
-                        }
-                }
-        }
-
-        /**
-         * Helper class to refresh an entry concurrently.
-         */
-        private class RefreshThread extends Thread
-        {
-                private final VolatileDirectory directory;
-                private final List< String > key;
-                public VoldException exception = null;
-
-                public RefreshThread( VolatileDirectory directory, List< String > key )
-                {
-                        this.directory = directory;
-                        this.key = key;
-                }
-
-                @Override
-                public void run()
-                {
-                        try
-                        {
-                                directory.refresh( key );
-                        }
-                        catch( VoldException e )
-                        {
-                                this.exception = e;
-                        }
-                }
-        }
-
-        /**
-         * Helper class to delete an entry concurrently.
-         */
-        private class DeleteThread extends Thread
-        {
-                private final VolatileDirectory directory;
-                private final List< String > key;
-                public VoldException exception = null;
-
-                public DeleteThread( VolatileDirectory directory, List< String > key )
-                {
-                        this.directory = directory;
-                        this.key = key;
-                }
-
-                @Override
-                public void run()
-                {
-                        try
-                        {
-                                directory.delete( key );
-                        }
-                        catch( VoldException e )
-                        {
-                                this.exception = e;
-                        }
-                }
-        }
-
-        /**
-         * Delegate a lookup request to the backend.
-         *
-         * @param key The key to query.
-         * @return The values for that key or null if the key has not been found.
-         */
-	@Override
-	public Set< String > lookup( List< String > key )
-	{
-                // guard
-                {
-                        checkState();
-                }
-
-                return backend.lookup( key );
-	}
-
-        /**
-         * Delegate a prefixlookup to the backend.
-         *
-         * @param key The prefix of the keys to be found.
-         * @return The map containing all keys beginning with the prefix and all its associated values.
-         */
-	@Override
-	public Map< List< String >, Set< String > > prefixLookup( List< String > key )
-	{
-                // guard
-                {
-                        checkState();
-                }
-
-                return backend.prefixLookup( key );
-	}
-
-        /**
-         * Delegate a slicelookup to the backend.
-         *
-         * @param slice The slice to get all keys from.
-         * @return The keys in that slice and its timestamps.
-         */
         @Override
-        public Map< List< String >, DateTime > sliceLookup( long slice )
+        public void run()
         {
-                // guard
-                {
-                        checkState();
-                }
-
-                return backend.sliceLookup( slice );
+            try
+            {
+                directory.delete( key );
+            }
+            catch( VoldException e )
+            {
+                this.exception = e;
+            }
         }
+    }
+
+    /**
+     * Delegate a lookup request to the backend.
+     *
+     * @param key The key to query.
+     * @return The values for that key or null if the key has not been found.
+     */
+    @Override
+    public Set< String > lookup( List< String > key )
+    {
+        // guard
+        {
+            checkState();
+        }
+
+        return backend.lookup( key );
+    }
+
+    /**
+     * Delegate a prefixlookup to the backend.
+     *
+     * @param key The prefix of the keys to be found.
+     * @return The map containing all keys beginning with the prefix and all its associated values.
+     */
+    @Override
+    public Map< List< String >, Set< String > > prefixLookup( List< String > key )
+    {
+        // guard
+        {
+            checkState();
+        }
+
+        return backend.prefixLookup( key );
+    }
+
+    /**
+     * Delegate a slicelookup to the backend.
+     *
+     * @param slice The slice to get all keys from.
+     * @return The keys in that slice and its timestamps.
+     */
+    @Override
+    public Map< List< String >, DateTime > sliceLookup( long slice )
+    {
+        // guard
+        {
+            checkState();
+        }
+
+        return backend.sliceLookup( slice );
+    }
 }

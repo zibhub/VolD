@@ -154,8 +154,9 @@ public class Frontend
      * @param source The source where the key comes from.
      * @param key The key to insert.
      * @param value The values associated with that key.
+     * @param timeStamp     The timeStamp of operation.
      **/
-    public void insert( String source, Key key, Set<String> value )
+    public void insert( String source, Key key, Set<String> value, final long timeStamp )
     {
         // guard
         {
@@ -171,7 +172,7 @@ public class Frontend
             List< String > _key = key._buildkey();
             _key.add( source );
 
-            volatileDirectory.insert( _key, value );
+            volatileDirectory.insert( _key, value, timeStamp );
         }
         finally
         {
@@ -184,8 +185,9 @@ public class Frontend
      *
      * @param source The source for which the keys timestamp should be updated.
      * @param key The key to refresh.
+     * @param timeStamp     The timeStamp of operation.
      */
-    public void refresh( String source, Key key )
+    public void refresh( String source, Key key, final long timeStamp )
     {
         // guard
         {
@@ -201,7 +203,7 @@ public class Frontend
             List< String > _key = key._buildkey();
             _key.add( source );
 
-            volatileDirectory.refresh( _key );
+            volatileDirectory.refresh( _key, timeStamp );
         }
         finally
         {

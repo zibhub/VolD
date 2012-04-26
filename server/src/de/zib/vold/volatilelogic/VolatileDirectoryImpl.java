@@ -16,20 +16,13 @@
 
 package de.zib.vold.volatilelogic;
 
-import de.zib.vold.backend.PartitionedDirectory;
 import de.zib.vold.backend.NotSupportedException;
-
-import java.util.List;
-import java.util.LinkedList;
-import java.util.Set;
-import java.util.HashSet;
-import java.util.Map;
-import java.util.HashMap;
-
+import de.zib.vold.backend.PartitionedDirectory;
 import org.joda.time.DateTime;
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import java.util.*;
 
 /**
  * Implementation of the volatile directory logic.
@@ -61,6 +54,7 @@ public class VolatileDirectoryImpl implements VolatileDirectory
 
     protected final Logger log = LoggerFactory.getLogger( this.getClass() );
 
+
     /**
      * Construct a VolatileDirectoryImpl.
      *
@@ -73,6 +67,7 @@ public class VolatileDirectoryImpl implements VolatileDirectory
         this.timeslice = timeslice;
     }
 
+
     /**
      * Construct an uninitialized VolatileDirectoryImpl.
      */
@@ -81,6 +76,7 @@ public class VolatileDirectoryImpl implements VolatileDirectory
         this.directory = null;
         this.timeslice = null;
     }
+
 
     /**
      * Internal method which acts as part of the guard of all public methods.
@@ -92,6 +88,7 @@ public class VolatileDirectoryImpl implements VolatileDirectory
             throw new IllegalStateException( "Tried to operate on database while it had not been initialized yet. You first need to set a TimeSlice and Directory backend!" );
         }
     }
+
 
     /**
      * Set the timeslice configuration.
@@ -108,6 +105,7 @@ public class VolatileDirectoryImpl implements VolatileDirectory
         this.timeslice = timeslice;
     }
 
+
     /**
      * Set the backend used to store all informations.
      */
@@ -115,6 +113,7 @@ public class VolatileDirectoryImpl implements VolatileDirectory
     {
         this.directory = backend;
     }
+
 
     /**
      * A delegator for TimeSlice.getActualSlice().
@@ -132,6 +131,7 @@ public class VolatileDirectoryImpl implements VolatileDirectory
         return timeslice.getActualSlice();
     }
 
+
     /**
      * A delegator for TimeSlice.getNumberOfSlices().
      *
@@ -147,6 +147,7 @@ public class VolatileDirectoryImpl implements VolatileDirectory
 
         return timeslice.getNumberOfSlices();
     }
+
 
     /**
      * A delegator for TimeSlice.getTimeSliceSize().
@@ -164,6 +165,7 @@ public class VolatileDirectoryImpl implements VolatileDirectory
         return timeslice.getTimeSliceSize();
     }
 
+
     /**
      * Insert a key with its set of values.
      *
@@ -177,7 +179,7 @@ public class VolatileDirectoryImpl implements VolatileDirectory
      * @param value The values associated to the key.
      */
     @Override
-    public void insert( List< String > key, Set< String > value )
+    public void insert( List< String > key, Set< String > value, long timeStamp )
     {
         // guard
         {
@@ -195,7 +197,7 @@ public class VolatileDirectoryImpl implements VolatileDirectory
             }
         }
 
-        List< String > oldtimeslice;
+        final List< String > oldtimeslice;
         try
         {
             oldtimeslice = directory.lookup( 1, key );
@@ -209,13 +211,28 @@ public class VolatileDirectoryImpl implements VolatileDirectory
             return;
         }
 
-        long newtimeslice = timeslice.getActualSlice();
+        // check for newer timeStamp
+        {
+            if( null != oldtimeslice )
+            {
+                final List< String > timeslicekey = get_timeslice_key( to_timeslice( oldtimeslice ), key );
+                final List< String > timeslice = directory.lookup( 2, timeslicekey );
+                final long oldTimeStamp = to_timeslice( timeslice );
+
+                if( timeStamp < oldTimeStamp ) {
+                    log.debug( "Not overwriting Key " + key.toString() + ", since the inserted one is newer." );
+                    return;
+                }
+            }
+        }
+
+        final long newtimeslice = timeslice.getActualSlice();
 
         // insert new "slice/key |--> date" entry
         {
-            List< String > timeslicekey = get_timeslice_key( newtimeslice, key );
+            final List< String > timeslicekey = get_timeslice_key( newtimeslice, key );
 
-            directory.insert( 2, timeslicekey, to_date( DateTime.now() ) );
+            directory.insert( 2, timeslicekey, to_date( timeStamp ) );
         }
 
         // insert "key |--> timeslice" entry
@@ -232,13 +249,14 @@ public class VolatileDirectoryImpl implements VolatileDirectory
         {
             if( null != oldtimeslice )
             {
-                long oldts = to_timeslice( oldtimeslice );
+                final long oldts = to_timeslice( oldtimeslice );
 
                 if( oldts != newtimeslice )
                     directory.delete( 2, get_timeslice_key( to_timeslice( oldtimeslice ), key ) );
             }
         }
     }
+
 
     /**
      * Refresh a key.
@@ -254,9 +272,10 @@ public class VolatileDirectoryImpl implements VolatileDirectory
      * had already been inserted.
      *
      * @param key The key to refresh.
+     * @param timeStamp The timeStamp to order insertions.
      */
     @Override
-    public void refresh( List< String > key )
+    public void refresh( List< String > key, long timeStamp )
     {
         // guard
         {
@@ -284,13 +303,27 @@ public class VolatileDirectoryImpl implements VolatileDirectory
             return;
         }
 
+        // check for newer timeStamp
+        {
+            if( null != oldtimeslice ) {
+                final List< String > timeslicekey = get_timeslice_key( to_timeslice( oldtimeslice ), key );
+                final List< String > timeslice = directory.lookup( 2, timeslicekey );
+                final long oldTimeStamp = to_timeslice( timeslice );
+
+                if( timeStamp < oldTimeStamp ) {
+                    log.debug( "Not overwriting Key " + key.toString() + ", since the inserted one is newer." );
+                    return;
+                }
+            }
+        }
+
         long newtimeslice = timeslice.getActualSlice();
 
         // insert new "slice/key |--> date" entry
         {
             List< String > timeslicekey = get_timeslice_key( newtimeslice, key );
 
-            directory.insert( 2, timeslicekey, to_date( DateTime.now() ) );
+            directory.insert( 2, timeslicekey, to_date( timeStamp ) );
         }
 
         // insert "key |--> timeslice" entry
@@ -309,6 +342,7 @@ public class VolatileDirectoryImpl implements VolatileDirectory
             }
         }
     }
+
 
     /**
      * Delete a key.
@@ -354,6 +388,7 @@ public class VolatileDirectoryImpl implements VolatileDirectory
         }
     }
 
+
     /**
      * Query the values for a key.
      *
@@ -375,6 +410,7 @@ public class VolatileDirectoryImpl implements VolatileDirectory
         else
             return new HashSet< String >( _result );
     }
+
 
     /**
      * Query all keys beginning with a certain prefix.
@@ -408,6 +444,7 @@ public class VolatileDirectoryImpl implements VolatileDirectory
             return result;
         }
     }
+
 
     /**
      * Query all keys in a certain time slice.
@@ -476,6 +513,7 @@ public class VolatileDirectoryImpl implements VolatileDirectory
         return result;
     }
 
+
     /**
      * Convert a date value to a DateTime object.
      *
@@ -496,6 +534,7 @@ public class VolatileDirectoryImpl implements VolatileDirectory
         return new DateTime( Long.parseLong( date.get( 0 ) ) );
     }
 
+
     /**
      * Convert a time to a value.
      *
@@ -504,10 +543,23 @@ public class VolatileDirectoryImpl implements VolatileDirectory
      */
     private List< String > to_date( DateTime date )
     {
+        return to_date( date.getMillis() );
+    }
+
+
+    /**
+     * Convert a timeStamp to a value.
+     *
+     * @param timeStamp The timeStamp to convert.
+     * @return The value holding the date.
+     */
+    private List< String > to_date( long timeStamp )
+    {
         List< String > result = new LinkedList< String >();
-        result.add( String.valueOf( date.getMillis() ) );
+        result.add( String.valueOf( timeStamp ) );
         return result;
     }
+
 
     /**
      * Convert a key holding a timeslice only to a timeslice.
@@ -527,16 +579,17 @@ public class VolatileDirectoryImpl implements VolatileDirectory
         return Long.parseLong( slice.get( 0 ) );
     }
 
+
     /**
      * Melt a timeslice and key to a complete key.
      *
      * The timeslice will be prepended to the key using to_value.
      *
-     * @param timeslice The timeslice to prepend.
+     * @param slice The timeslice to prepend.
      * @param key The key which will be completed.
      * @return The complete key.
      *
-     * @see to_value
+     * @see this.to_value
      */
     private List< String > get_timeslice_key( long slice, List< String > key )
     {
@@ -550,6 +603,7 @@ public class VolatileDirectoryImpl implements VolatileDirectory
 
         return timeslicekey;
     }
+
 
     /**
      * Convert a timeslice to a key.

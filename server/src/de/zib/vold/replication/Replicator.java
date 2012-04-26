@@ -39,15 +39,17 @@ public interface Replicator
          *
          * @param key           The key to replicate the insert for.
          * @param value         The values associated to the key.
+         * @param timeStamp     The timeStamp of operation.
          */
-        void insert( List< String > key, Set< String > value );
+        void insert( List< String > key, Set< String > value, long timeStamp );
 
         /**
          * Replicate a refresh request.
          *
          * @param key           The key to replicate the refresh request for.
+         * @param timeStamp     The timeStamp of operation.
          */
-        void refresh( List< String > key );
+        void refresh( List< String > key, long timeStamp );
 
         /**
          * Replicate a delete request.

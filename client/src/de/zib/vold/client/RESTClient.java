@@ -15,35 +15,25 @@
 
 package de.zib.vold.client;
 
-import de.zib.vold.common.VoldInterface;
 import de.zib.vold.common.Key;
 import de.zib.vold.common.URIKey;
-
-import java.util.Collection;
-import java.util.List;
-import java.util.ArrayList;
-import java.util.Set;
-import java.util.HashSet;
-import java.util.Map;
-import java.util.HashMap;
-
-import org.springframework.util.MultiValueMap;
-import org.springframework.util.LinkedMultiValueMap;
-
+import de.zib.vold.common.VoldInterface;
+import org.joda.time.DateTime;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
-
+import org.springframework.http.*;
+import org.springframework.util.LinkedMultiValueMap;
+import org.springframework.util.MultiValueMap;
 import org.springframework.web.client.RestTemplate;
-import org.springframework.http.ResponseEntity;
-import org.springframework.http.HttpStatus;
+
+import java.util.*;
 
 /**
  * The VolD REST based client api.
  *
- * @see RESTController
+ * @see de.zib.vold.userInterface.RESTController
  */
 public class RESTClient implements VoldInterface
 {
@@ -125,6 +115,14 @@ public class RESTClient implements VoldInterface
     @Override
     public void insert( String source, Map< Key, Set< String > > map )
     {
+        insert( source, map, DateTime.now().getMillis() );
+    }
+
+    /**
+     * Insert a set of keys.
+     */
+    public void insert( String source, Map< Key, Set< String > > map, final long timeStamp )
+    {
         // guard
         {
             log.trace( "Insert: " + map.toString() );
@@ -177,7 +175,13 @@ public class RESTClient implements VoldInterface
             }
         }
 
-        rest.put( url, request );
+        HttpHeaders requestHeaders = new HttpHeaders();
+        requestHeaders.add( "TIMESTAMP", String.valueOf( timeStamp ) );
+        HttpEntity< MultiValueMap< String, String > > requestEntity =
+                new HttpEntity< MultiValueMap< String, String > >( request, requestHeaders );
+        final ResponseEntity< HashMap > responseEntity =
+                rest.exchange(url, HttpMethod.PUT, requestEntity, HashMap.class);
+        //rest.put( url, request );
     }
 
     /**
@@ -188,6 +192,18 @@ public class RESTClient implements VoldInterface
      */
     @Override
     public Map< String, String > refresh( String source, Set< Key > set )
+    {
+        return refresh( source, set, DateTime.now().getMillis() );
+    }
+
+    /**
+     * Refresh a set of keys.
+     *
+     * @param source The source of the keys.
+     * @param set The set keys to refresh.
+     * @param timeStamp The timeStamp of this operation
+     */
+    public Map< String, String > refresh( String source, Set< Key > set, final long timeStamp )
     {
         // guard
         {
@@ -236,21 +252,21 @@ public class RESTClient implements VoldInterface
         }
 
         // get response from Server
-        ResponseEntity< Map< String, String > > response;
+        ResponseEntity< Map > responseEntity;
         {
-            Object obj = rest.postForEntity( url, null, HashMap.class );
-
-            if( obj instanceof ResponseEntity< ? > )
-            {
-                response = ( ResponseEntity< Map< String, String > > )obj;
-            }
-            else
-            {
-                throw new RuntimeException( "THIS SHOULD NEVER HAPPEN!" );
-            }
+            HttpHeaders requestHeaders = new HttpHeaders();
+            requestHeaders.add( "TIMESTAMP", String.valueOf(timeStamp) );
+            HttpEntity< Map< String, String > > requestEntity =
+                    new HttpEntity< Map< String, String > >( null, requestHeaders );
+            responseEntity = rest.exchange(
+                    url,
+                    HttpMethod.POST,
+                    requestEntity,
+                    Map.class);
+            //Object obj = rest.postForEntity( url, null, HashMap.class );
         }
 
-        return response.getBody();
+        return responseEntity.getBody();
     }
 
     /**
@@ -296,7 +312,7 @@ public class RESTClient implements VoldInterface
                 String scope = entry.get_scope().substring( commonscope.length() );
                 String type = entry.get_type();
                 String keyname = entry.get_keyname();
-                
+
                 keys.add( new Key( scope, type, keyname ) );
             }
         }
@@ -390,9 +406,22 @@ public class RESTClient implements VoldInterface
      */
     public void insert( String source, Key key, Set< String > values )
     {
+        insert( source, key, values, DateTime.now().getMillis() );
+    }
+
+    /**
+     * Insert a single key.
+     *
+     * @param source The source of the key.
+     * @param key The key to store.
+     * @param values The values associated with the key.
+     * @param timeStamp The timeStamp of this operation
+     */
+    public void insert( String source, Key key, Set< String > values, final long timeStamp )
+    {
         Map< Key, Set< String > > map = new HashMap< Key, Set< String > >();
         map.put( key, values );
-        insert( source, map );
+        insert( source, map, timeStamp );
     }
 
     /**

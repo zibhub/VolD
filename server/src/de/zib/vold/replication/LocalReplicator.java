@@ -17,12 +17,11 @@
 package de.zib.vold.replication;
 
 import de.zib.vold.volatilelogic.VolatileDirectory;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.util.List;
 import java.util.Set;
-
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 /**
  * Simple Replicator delegating all requests to a VolatileDirectory.
@@ -80,9 +79,10 @@ public class LocalReplicator implements Replicator
          *
          * @param key   The key to replicate the request for.
          * @param value The values associated to the key.
+         * @param timeStamp     The timeStamp of operation.
          */
         @Override
-        public void insert( List< String > key, Set< String > value )
+        public void insert( List< String > key, Set< String > value, long timeStamp )
         {
                 // guard
                 {
@@ -91,16 +91,17 @@ public class LocalReplicator implements Replicator
                         checkState();
                 }
 
-                replica.insert( key, value );
+                replica.insert( key, value, timeStamp );
         }
 
         /**
          * Delegate a refresh request.
          *
          * @param key   The key to replicate request for.
+         * @param timeStamp     The timeStamp of operation.
          */
         @Override
-        public void refresh( List< String > key )
+        public void refresh( List< String > key, long timeStamp )
         {
                 // guard
                 {
@@ -109,7 +110,7 @@ public class LocalReplicator implements Replicator
                         checkState();
                 }
 
-                replica.refresh( key );
+                replica.refresh( key, timeStamp );
         }
 
         /**
