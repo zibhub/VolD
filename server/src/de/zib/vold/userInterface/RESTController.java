@@ -23,7 +23,6 @@ import de.zib.vold.frontend.Frontend;
 import org.joda.time.DateTime;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
@@ -63,7 +62,7 @@ public class RESTController
      * @return A map of keys with its lifetime, whereas the livetime is zero if an error for that key occured.
      */
     @RequestMapping( method = RequestMethod.PUT )
-    public ResponseEntity< Map< String, String > > put(
+    public ResponseEntity< Map< String, String > > insert(
             @ModelAttribute("clientIpAddress") String clientIpAddress,
             @RequestParam MultiValueMap< String, String > args,
             @RequestBody MultiValueMap< String, String > argsbody,
@@ -260,7 +259,7 @@ public class RESTController
      * @return A map of keys with its lifetime, whereas the livetime is zero if an error for that key occured.
      */
     @RequestMapping( method = RequestMethod.POST )
-    public ResponseEntity< Map< String, String > > post(
+    public ResponseEntity< Map< String, String > > refresh(
             @ModelAttribute("clientIpAddress") String clientIpAddress,
             @RequestParam MultiValueMap< String, String > args,
             @RequestHeader( value = "TIMESTAMP", defaultValue = "unset" ) String timeStampHeader,
@@ -348,7 +347,7 @@ public class RESTController
      * @return A map of found keys with its associated values.
      */
     @RequestMapping( method = RequestMethod.GET )
-    public ResponseEntity< Map< Key, Set< String > > > get(
+    public ResponseEntity< Map< Key, Set< String > > > lookup(
             @RequestParam Map< String, String > keys,
             HttpServletRequest request )
     {
@@ -432,7 +431,7 @@ public class RESTController
     }
 
 
-    @Autowired
+    //@Inject
     public void setFrontend( Frontend frontend )
     {
         this.frontend = frontend;
