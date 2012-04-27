@@ -46,6 +46,7 @@ public class RESTClient implements VoldInterface
 
     private String enc = "utf-8";
 
+
     /**
      * Construct an uninitialized RESTClient.
      */
@@ -61,6 +62,7 @@ public class RESTClient implements VoldInterface
             throw new IllegalStateException( "Could not get bean rest out of client-context.xml!" );
         }
     }
+
 
     /**
      * Construct a RESTClient with all necessary informations.
@@ -80,6 +82,7 @@ public class RESTClient implements VoldInterface
         this.baseURL = baseURL;
     }
 
+
     /**
      * Set the URL of the remote REST based VolD service.
      *
@@ -90,6 +93,7 @@ public class RESTClient implements VoldInterface
         this.baseURL = baseURL;
     }
 
+
     /**
      * Set the encoding used to encode all keys.
      */
@@ -97,6 +101,7 @@ public class RESTClient implements VoldInterface
     {
         this.enc = enc;
     }
+
 
     /**
      * Check the state of the object.
@@ -109,6 +114,36 @@ public class RESTClient implements VoldInterface
         }
     }
 
+
+    /**
+     * Insert a single key.
+     *
+     * @param source The source of the key.
+     * @param key The key to store.
+     * @param values The values associated with the key.
+     */
+    public void insert( String source, Key key, Set< String > values )
+    {
+        insert( source, key, values, DateTime.now().getMillis() );
+    }
+
+
+    /**
+     * Insert a single key.
+     *
+     * @param source The source of the key.
+     * @param key The key to store.
+     * @param values The values associated with the key.
+     * @param timeStamp The timeStamp of this operation
+     */
+    public void insert( String source, Key key, Set< String > values, final long timeStamp )
+    {
+        Map< Key, Set< String > > map = new HashMap< Key, Set< String > >();
+        map.put( key, values );
+        insert( source, map, timeStamp );
+    }
+
+
     /**
      * Insert a set of keys.
      */
@@ -117,6 +152,7 @@ public class RESTClient implements VoldInterface
     {
         insert( source, map, DateTime.now().getMillis() );
     }
+
 
     /**
      * Insert a set of keys.
@@ -184,6 +220,7 @@ public class RESTClient implements VoldInterface
         //rest.put( url, request );
     }
 
+
     /**
      * Refresh a set of keys.
      *
@@ -195,6 +232,7 @@ public class RESTClient implements VoldInterface
     {
         return refresh( source, set, DateTime.now().getMillis() );
     }
+
 
     /**
      * Refresh a set of keys.
@@ -269,6 +307,19 @@ public class RESTClient implements VoldInterface
         return responseEntity.getBody();
     }
 
+
+    /**
+     * Delete a set of keys.
+     *
+     * @param source The source of the keys to delete.
+     * @param key The key to delete.
+     */
+    public void delete( final String source, final Key key )
+    {
+        delete( source, new HashSet< Key >(){{ add( key ); }} );
+    }
+
+
     /**
      * Delete a set of keys.
      *
@@ -326,6 +377,7 @@ public class RESTClient implements VoldInterface
 
         rest.delete( url, HashMap.class );
     }
+
 
     /**
      * Query a set of keys.
@@ -397,32 +449,6 @@ public class RESTClient implements VoldInterface
         }
     }
 
-    /**
-     * Insert a single key.
-     *
-     * @param source The source of the key.
-     * @param key The key to store.
-     * @param values The values associated with the key.
-     */
-    public void insert( String source, Key key, Set< String > values )
-    {
-        insert( source, key, values, DateTime.now().getMillis() );
-    }
-
-    /**
-     * Insert a single key.
-     *
-     * @param source The source of the key.
-     * @param key The key to store.
-     * @param values The values associated with the key.
-     * @param timeStamp The timeStamp of this operation
-     */
-    public void insert( String source, Key key, Set< String > values, final long timeStamp )
-    {
-        Map< Key, Set< String > > map = new HashMap< Key, Set< String > >();
-        map.put( key, values );
-        insert( source, map, timeStamp );
-    }
 
     /**
      * Query a key.
@@ -436,6 +462,7 @@ public class RESTClient implements VoldInterface
         keys.add( key );
         return lookup( keys );
     }
+
 
     /**
      * Get the largest prefix shared by a set of words.
@@ -459,6 +486,7 @@ public class RESTClient implements VoldInterface
 
         return commonprefix;
     }
+
 
     /**
      * Get the greatest common prefix of two strings.
@@ -484,6 +512,7 @@ public class RESTClient implements VoldInterface
 
         return b;
     }
+
 
     /**
      * Build a URI requesting a set of keys from the remote VolD.
