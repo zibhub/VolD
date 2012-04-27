@@ -15,7 +15,7 @@
 
 package de.zib.vold.Test;
 
-import de.zib.vold.client.RESTClient;
+import de.zib.vold.client.VolDClient;
 import de.zib.vold.common.Key;
 import org.springframework.beans.factory.config.AutowireCapableBeanFactory;
 import org.springframework.context.ApplicationContext;
@@ -44,7 +44,7 @@ public class ClientTest {
 
     private final ApplicationContext context;
 
-    private RESTClient voldClient;
+    private VolDClient voldClient;
 
     Map< Key, Set< String > > keys = new HashMap< Key, Set< String > >();
 
@@ -60,8 +60,8 @@ public class ClientTest {
 
     @BeforeClass( groups = { "VoldServiceTest" } )
     public void init() {
-        voldClient = ( RESTClient )context.getAutowireCapableBeanFactory().createBean(
-                RESTClient.class,
+        voldClient = (VolDClient)context.getAutowireCapableBeanFactory().createBean(
+                VolDClient.class,
                 AutowireCapableBeanFactory.AUTOWIRE_BY_TYPE, true );
         voldClient.setBaseURL( baseUrl );
 

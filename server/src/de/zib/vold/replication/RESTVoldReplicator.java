@@ -16,7 +16,7 @@
 
 package de.zib.vold.replication;
 
-import de.zib.vold.client.RESTClient;
+import de.zib.vold.client.VolDClient;
 import de.zib.vold.common.Key;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -41,14 +41,14 @@ public class RESTVoldReplicator implements Replicator
 {
     protected final Logger log = LoggerFactory.getLogger( this.getClass() );
 
-    RESTClient rest;
+    VolDClient volD;
 
     /**
      * Construct an unitialized RESTVoldReplicator.
      */
     public RESTVoldReplicator( )
     {
-        this.rest = new RESTClient();
+        this.volD = new VolDClient();
     }
 
     /**
@@ -56,7 +56,7 @@ public class RESTVoldReplicator implements Replicator
      */
     public void setBaseURL( String baseURL )
     {
-        rest.setBaseURL( baseURL );
+        volD.setBaseURL( baseURL );
     }
 
     /**
@@ -66,7 +66,7 @@ public class RESTVoldReplicator implements Replicator
     {
         try
         {
-            rest.checkState();
+            volD.checkState();
         }
         catch( IllegalStateException e )
         {
@@ -102,7 +102,7 @@ public class RESTVoldReplicator implements Replicator
             k = Key.buildkey( key );
         }
 
-        rest.insert( key.get( 3 ), k, value, timeStamp );
+        volD.insert( key.get( 3 ), k, value, timeStamp );
     }
 
     /**
@@ -135,7 +135,7 @@ public class RESTVoldReplicator implements Replicator
         Set< Key > keys = new HashSet< Key >();
         keys.add( k );
 
-        rest.refresh( key.get( 3 ), keys, timeStamp );
+        volD.refresh( key.get( 3 ), keys, timeStamp );
     }
 
     /**
