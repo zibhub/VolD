@@ -315,6 +315,9 @@ public class VolatileDirectoryImpl implements VolatileDirectory
                     return;
                 }
             }
+            else
+                // no key found to refresh
+                return;
         }
 
         long newtimeslice = timeslice.getActualSlice();
