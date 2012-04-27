@@ -35,7 +35,7 @@ import java.util.*;
  *
  * @see de.zib.vold.userInterface.RESTController
  */
-public class RESTClient implements VoldInterface
+public class VolDClient implements VoldInterface
 {
     protected final Logger log = LoggerFactory.getLogger( this.getClass() );
 
@@ -48,9 +48,9 @@ public class RESTClient implements VoldInterface
 
 
     /**
-     * Construct an uninitialized RESTClient.
+     * Construct an uninitialized VolDClient.
      */
-    public RESTClient( )
+    public VolDClient()
     {
         baseURL = null;
 
@@ -65,11 +65,11 @@ public class RESTClient implements VoldInterface
 
 
     /**
-     * Construct a RESTClient with all necessary informations.
+     * Construct a VolDClient with all necessary informations.
      *
      * @param baseURL The URL of the remote REST based VolD service.
      */
-    public RESTClient( String baseURL )
+    public VolDClient(String baseURL)
     {
         context = new ClassPathXmlApplicationContext( "classpath:META-INF/client-context.xml" );
         rest = ( RestTemplate )context.getBean( "restTemplate", RestTemplate.class );
