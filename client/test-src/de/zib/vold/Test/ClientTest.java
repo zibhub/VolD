@@ -91,6 +91,8 @@ public class ClientTest {
         Set< String > values = lookup.get( k );
         Assert.assertEquals( values.size(), 1, "Some source seems to interfeer test. Key " + k.toString() + " has been inserted by another source?" );
         Assert.assertEquals( values.contains( "1" ), true, "Too old timeStamp found in VolD." );
+        
+        voldClient.delete( "localhost", k );
     }
 
 
