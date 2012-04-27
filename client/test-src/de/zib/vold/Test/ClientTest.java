@@ -78,6 +78,20 @@ public class ClientTest {
         Assert.assertNotNull( map );
         Assert.assertEquals( map, keys );
     }
+    
+    
+    @Test( groups = { "VoldServiceTest" }, dependsOnMethods = { "testInsert" } )
+    public void testTimeStamp() {
+        final Key k = new Key( "/test/timestamp/", "T", "k" );
+
+        voldClient.insert( "localhost", k, new HashSet< String >(){{ add( "1" ); }}, 1 );
+        voldClient.insert( "localhost", k, new HashSet< String >(){{ add( "0" ); }}, 0 );
+        
+        final Map< Key, Set< String > > lookup = voldClient.lookup( k );
+        Set< String > values = lookup.get( k );
+        Assert.assertEquals( values.size(), 1, "Some source seems to interfeer test. Key " + k.toString() + " has been inserted by another source?" );
+        Assert.assertEquals( values.contains( "1" ), true, "Too old timeStamp found in VolD." );
+    }
 
 
     private void fillKeys() {
