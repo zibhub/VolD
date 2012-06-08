@@ -63,7 +63,7 @@ The physical data would be stored in the directory `/path/to/fsd` and the incomi
 {% highlight xml %}
     <bean id="UNIQUEID" class="de.zib.vold.backend.FileSystemDirectory">
         <property name="rootPath" value="/path/to/fsd" />
-        <property enc="utf-8" />
+        <property name="enc" value="utf-8" />
     </bean>
 {% endhighlight %}
 
