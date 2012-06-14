@@ -23,14 +23,22 @@ import de.zib.vold.frontend.Frontend;
 import org.joda.time.DateTime;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.http.HttpInputMessage;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.http.converter.xml.MarshallingHttpMessageConverter;
+import org.springframework.http.server.ServletServerHttpRequest;
 import org.springframework.stereotype.Controller;
+import org.springframework.util.LinkedMultiValueMap;
 import org.springframework.util.MultiValueMap;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.context.request.RequestContextHolder;
+import org.springframework.web.context.request.ServletRequestAttributes;
 
+import javax.inject.Inject;
 import javax.servlet.http.HttpServletRequest;
 import java.io.File;
+import java.io.IOException;
 import java.util.*;
 
 /**
@@ -45,6 +53,8 @@ public class RESTController
 {
     protected final Logger logger = LoggerFactory.getLogger( this.getClass() );
 
+    private MarshallingHttpMessageConverter converter;
+
     private Frontend frontend;
     private String enc = "utf-8";
     private String removePrefix = "";
@@ -57,7 +67,7 @@ public class RESTController
      *
      * @param clientIpAddress The ip of the sending client, it's extracted from the request itself.
      * @param args The URL arguments of the request.
-     * @param argsbody The PUT body arguments of the request.
+     //* @param argsbody The PUT body arguments of the request.
      * @param request Request informations
      * @return A map of keys with its lifetime, whereas the livetime is zero if an error for that key occured.
      */
@@ -65,10 +75,11 @@ public class RESTController
     public ResponseEntity< Map< String, String > > insert(
             @ModelAttribute("clientIpAddress") String clientIpAddress,
             @RequestParam MultiValueMap< String, String > args,
-            @RequestBody MultiValueMap< String, String > argsbody,
+            //@RequestBody MultiValueMap< String, String > argsbody,
             @RequestHeader( value = "TIMESTAMP", defaultValue = "unset" ) String timeStampHeader,
-            HttpServletRequest request)
-    {
+            HttpServletRequest request) throws IOException {
+
+        MultiValueMap< String, String > argsbody = getBody();
         final long timeStamp;
         if( timeStampHeader.equals( "unset" ) )
             timeStamp = DateTime.now().getMillis();
@@ -423,6 +434,20 @@ public class RESTController
         return new ResponseEntity< Map<Key, Set< String > > >( merged_result, HttpStatus.OK );
     }
 
+    
+    MultiValueMap< String, String > getBody() throws IOException {
+        ServletRequestAttributes requestAttributes =
+                ( ServletRequestAttributes ) RequestContextHolder.currentRequestAttributes();
+        HttpServletRequest request = requestAttributes.getRequest();
+
+        if( request.getContentLength() <= 0 )
+            return null;
+
+        HttpInputMessage inputMessage = new ServletServerHttpRequest( request );
+
+        return ( MultiValueMap< String, String > )converter.read( LinkedMultiValueMap.class, inputMessage );
+    }
+    
 
     @ModelAttribute("clientIpAddress")
     public String populateClientIpAddress( HttpServletRequest request )
@@ -456,4 +481,12 @@ public class RESTController
             throw new IllegalStateException( "Tried to operate on REST controller while it had not been initialized yet. Set a frontend first!" );
         }
     }
+
+
+    @Inject
+    public void setConverter( MarshallingHttpMessageConverter converter ) {
+        this.converter = converter;
+    }
+
+
 }
