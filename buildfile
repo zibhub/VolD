@@ -61,6 +61,11 @@ SPRING_SECURITY = [
     "org.springframework.security:spring-security-config:jar:#{SPRING_VERSION}",
     "org.springframework.security:spring-security-web:jar:#{SPRING_VERSION}"
 ]
+ASPECTJ = [
+        'org.aspectj:aspectjrt:jar:1.6.11',
+        'org.aspectj:aspectjweaver:jar:1.6.11',
+        'aopalliance:aopalliance:jar:1.0'
+]
 download artifact(BABUDB) => 'http://babudb.googlecode.com/files/BabuDB-0.5.5.jar'
 #download artifact(COMMONS_LANG) => 'http://repo1.maven.org/maven2/org/apache/commons/commons-lang3/3.0.1/commons-lang3-3.0.1.jar'
 JSON=['org.codehaus.jackson:jackson-core-lgpl:jar:1.7.4', 
@@ -75,7 +80,7 @@ define "vold" do
 
   define "server" do
 
-      compile.with project('common'), project('client'), JODA_TIME, BABUDB, SLF4J, COMMONS_LOGGING, COMMONS_LANG, SPRING, XSTREAM, SERVLET, SPRING_SECURITY, INJECT
+      compile.with project('common'), project('client'), JODA_TIME, BABUDB, SLF4J, COMMONS_LOGGING, COMMONS_LANG, SPRING, XSTREAM, SERVLET, SPRING_SECURITY, INJECT, ASPECTJ
       mainClass='de.zib.vold.userInterface.ABI'
 
       package(:jar).with :manifest=>manifest.merge('Main-Class'=>mainClass)
