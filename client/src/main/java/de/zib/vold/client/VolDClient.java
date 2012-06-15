@@ -18,7 +18,8 @@ package de.zib.vold.client;
 import de.zib.vold.common.Key;
 import de.zib.vold.common.URIKey;
 import de.zib.vold.common.VoldInterface;
-import org.joda.time.DateTime;
+
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.context.ApplicationContext;
@@ -55,7 +56,7 @@ public class VolDClient implements VoldInterface
         baseURL = null;
 
         context = new ClassPathXmlApplicationContext( "classpath:META-INF/client-context.xml" );
-        rest = ( RestTemplate )context.getBean( "restTemplate", RestTemplate.class );
+        rest = ( RestTemplate )context.getBean( "voldRestTemplate", RestTemplate.class );
 
         if( null == rest )
         {
@@ -72,7 +73,7 @@ public class VolDClient implements VoldInterface
     public VolDClient(String baseURL)
     {
         context = new ClassPathXmlApplicationContext( "classpath:META-INF/client-context.xml" );
-        rest = ( RestTemplate )context.getBean( "restTemplate", RestTemplate.class );
+        rest = ( RestTemplate )context.getBean( "voldRestTemplate", RestTemplate.class );
 
         if( null == rest )
         {

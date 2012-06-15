@@ -21,10 +21,10 @@
 
         <import resource="classpath:/META-INF/converter.xml"/>
 
-        <bean id="restTemplate" class="org.springframework.web.client.RestTemplate">
+        <bean id="voldRestTemplate" class="org.springframework.web.client.RestTemplate">
                 <property name="messageConverters">
                         <list>
-                                <ref bean="converter"/>
+                                <ref bean="voldConverter"/>
                         </list>
                 </property>
         </bean>
