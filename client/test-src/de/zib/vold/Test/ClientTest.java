@@ -86,9 +86,14 @@ public class ClientTest {
 
         voldClient.insert( "localhost", k, new HashSet< String >(){{ add( "1" ); }}, 1 );
         voldClient.insert( "localhost", k, new HashSet< String >(){{ add( "0" ); }}, 0 );
-        
+
+        voldClient.insert("", new Key("/c3grid/", "dp", "gorfxep"), new HashSet<String>() {{
+            add( "http://welt.de:8080/blubba" );
+        }});
+
         final Map< Key, Set< String > > lookup = voldClient.lookup( k );
         Set< String > values = lookup.get( k );
+        Assert.assertNotNull( values );
         Assert.assertEquals( values.size(), 1, "Some source seems to interfeer test. Key " + k.toString() + " has been inserted by another source?" );
         Assert.assertEquals( values.contains( "1" ), true, "Too old timeStamp found in VolD." );
         
