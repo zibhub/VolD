@@ -128,7 +128,7 @@
     <bean id="userDetailsService"
           class="de.zib.vold.security.GridMapUserDetailsService">
         <property name="gridMapfileName" value="/etc/grid-security/grid-mapfile" />
-        <property name="adminGridMapfileName" value="/var/tmp/gndms/gndms-admins" />
+        <property name="adminGridMapfileName" value="/etc/grid-security/gndms-admins" />
     </bean>
 
     <!-- at least all headers must include the dn -->
