@@ -18,8 +18,7 @@ package de.zib.vold.client;
 import de.zib.vold.common.Key;
 import de.zib.vold.common.URIKey;
 import de.zib.vold.common.VoldInterface;
-
-
+import org.joda.time.DateTime;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.context.ApplicationContext;
@@ -34,7 +33,7 @@ import java.util.*;
 /**
  * The VolD REST based client api.
  *
- * @see de.zib.vold.userInterface.RESTController
+ * @see de.zib.vold.common.VoldInterface
  */
 public class VolDClient implements VoldInterface
 {
@@ -163,6 +162,10 @@ public class VolDClient implements VoldInterface
         // guard
         {
             log.trace( "Insert: " + map.toString() );
+
+            // nothing to do here?
+            if( 0 == map.size() )
+                return;
 
             checkState();
 
@@ -473,7 +476,7 @@ public class VolDClient implements VoldInterface
      */
     private String getGreatestCommonPrefix( Collection< String > words )
     {
-        if( null == words )
+        if( null == words || 0 == words.size() )
         {
             throw new IllegalArgumentException( "Cannot build the greatest common prefix out of an empty set of words!" );
         }
