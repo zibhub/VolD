@@ -54,7 +54,7 @@ public class ClientTest {
         this.baseUrl = serviceUrl;
         this.admindn = admindn;
 
-        this.context = new ClassPathXmlApplicationContext( "classpath:META-INF/client-context.xml" );
+        this.context = new ClassPathXmlApplicationContext("classpath:META-INF/vold-client-context.xml");
     }
 
 

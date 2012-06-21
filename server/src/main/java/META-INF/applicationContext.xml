@@ -30,12 +30,16 @@
         <!-- ** SETUP BACKENDS                                               -->
 
         <!-- setup BabuDirectory backend -->
-        <bean id="backend2" class="de.zib.vold.backend.BabuDirectory">
-                <property name="dir" value="/tmp/babu/" />
-                <property name="logDir" value="/tmp/babu/log" />
-                <property name="sync" value="ASYNC" />
-                <property name="databaseName" value="testvold" />
-                <property name="enc" value="utf-8" />
+        <bean id="backend2" class="de.zib.vold.backend.FileSystemDirectory">
+            <property name="rootPath" value="/var/lib/vold/fs" />
+            <property name="enc" value="utf-8" />
+            <!--
+            <property name="dir" value="/tmp/babu/" />
+            <property name="logDir" value="/tmp/babu/log" />
+            <property name="sync" value="ASYNC" />
+            <property name="databaseName" value="testvold" />
+            <property name="enc" value="utf-8" />
+            -->
         </bean>
 
         <!-- *************************************************************** -->

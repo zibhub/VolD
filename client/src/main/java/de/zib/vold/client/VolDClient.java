@@ -54,12 +54,12 @@ public class VolDClient implements VoldInterface
     {
         baseURL = null;
 
-        context = new ClassPathXmlApplicationContext( "classpath:META-INF/client-context.xml" );
+        context = new ClassPathXmlApplicationContext("classpath:META-INF/vold-client-context.xml");
         rest = ( RestTemplate )context.getBean( "voldRestTemplate", RestTemplate.class );
 
         if( null == rest )
         {
-            throw new IllegalStateException( "Could not get bean rest out of client-context.xml!" );
+            throw new IllegalStateException( "Could not get bean rest out of vold-client-context.xml!" );
         }
     }
 
@@ -71,12 +71,12 @@ public class VolDClient implements VoldInterface
      */
     public VolDClient(String baseURL)
     {
-        context = new ClassPathXmlApplicationContext( "classpath:META-INF/client-context.xml" );
+        context = new ClassPathXmlApplicationContext("classpath:META-INF/vold-client-context.xml");
         rest = ( RestTemplate )context.getBean( "voldRestTemplate", RestTemplate.class );
 
         if( null == rest )
         {
-            throw new IllegalStateException( "Could not get bean rest out of client-context.xml!" );
+            throw new IllegalStateException( "Could not get bean rest out of vold-client-context.xml!" );
         }
 
         this.baseURL = baseURL;
