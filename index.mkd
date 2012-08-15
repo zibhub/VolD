@@ -8,20 +8,21 @@ layout: default
 VolD - Volatile Directory Service
 =================================
 
-VolD is a data storage with a REST based interface written in Java.
-It is a map assigning each key a set of values.
-The keys can be configured to be volatile, i.e. a key will be deleted if its age has exceeded a certain time to live.
-The keys are stored in a hierarchical structure (wherefore the service is called Directory Service) called scopes.
-Furthermore, the keys are typed.
-Inserting the same key (in the same scope with the same type) from different sources results in the merging the sets of values.
+VolD is a key-value data storage with a REST based interface written in Java. Basically, it is a map with a set of keys assigning to each key a set of values. 
+For physical storage, either a file system directory or BabuDB, an embedded non-relational database system, can be configured. 
 
-The project is shipped with a server and client.
-VolD also supports a flexible but easy to configure replication multi master replication.
+The keys can be configured to be volatile, i.e. a key will be deleted if its age has exceeded a certain time to live and it has not been refreshed in between.
+
+The keys are stored in a hierarchical structure (wherefore the service is called Directory Service) called scopes.
+The keys are typed and stored per source. If two sources (e.g. different clients on the REST interface) store the same key in the same directory (called scope), a lookup for this key will merge the sets of values, given by both sources. 
+
+VolD also supports a flexible but easy to configure multi master replication.
+
+The project is shipped with a server and a client. 
 
 Compiling
 ---------
 
-First you need to get the sources.
 The latest sources can be downloaded at github:
 
 {% highlight bash %}
@@ -36,7 +37,6 @@ $ buildr vold:package
 
 After compiling, there will be `.jar` and `.war` files in `common/target/`, `client/target/` and `server/target/`.
 The file `server/target/vold-server-VERSION.war` can be used in an application container such as tomcat or jetty (where VERSION is the actual version string like `0.1.0`).
-
 
 ### Dependencies
 
@@ -53,13 +53,13 @@ The project depends on the following archives:
 - BabuDB
 - javax Inject
 
-When compiling the project using buildr, these ressources should be downloaded automatically and stored in `~/.m2/repository/`
+When compiling the project using buildr, these resources should be downloaded automatically and stored in `~/.m2/repository/`
 
 Structure
 ---------
 
 The project is subdivided into three packages: 'common', 'client' and 'server'.
-The server and client package depend on the common archive.
+The server and client packages depend on the common archive.
 Additionally, the server package depends on the client archive.
-Hence, it's possible to install the client without installing the server.
+Hence, it is possible to install the client without installing the server.
 

@@ -5,24 +5,13 @@ layout: default
 ---
 
 
-Interface
+The User Interface
 =========
 
 * Table of content:
 {:toc}
 
-In this part of the documentation we assume `http://localhost:8080/` to be the base URL of the VolD service.
-
-VolD stores a structured set of typed keys each having a list of values.
-
-Structure
----------
-
-The structure, VolD stores the keys in, is a directory, i.e. a hierarchical tree.
-Each directory, i.e. the full path to each node is called scope.
-An example for a scope would be
-
-    /path/to/node/
+Note that in this part of the documentation we assume `http://localhost:8080/` to be the base URL of the VolD service.
 
 Keys
 ----
@@ -31,10 +20,12 @@ A key consists of three components:
 1. a scope,
 2. a type and
 3. a name.
-The scope has already been explained.
-The type can be an arbitrary string including the empty word, but it must be URL encoded.
-For names holds the same as for types.
 
+The scope is the full path to each node. An example for a scope would be
+
+    /path/to/node/
+
+The type and name can be an arbitrary string including the empty word, but it must be URL encoded.
 
 The syntax for a key is
 
@@ -46,20 +37,24 @@ The syntax for a key is
 * TYPE is the type of the key.
 * NAME is the name of the key.
 
-Avoiding the type results in the empty type.
-Hence, `/scope/keyname` and `/scope/:keyname` describe the same key.
+Note that a key starting with `/`means that no source is given and it directly starts with the scope. Avoiding the type results in the empty type, hence, `/scope/keyname` and `/scope/:keyname` describe the same key.
 
 Access
 ------
 
 HTTP offers the four methods `PUT`, `POST`, `DELETE` and `GET`.
 All of these methods are used to alter the storage.
-* `PUT` stores some keys and its lists of values.
-* `POST` refreshes some keys.
-* `DELETE` deletes some keys.
+* `PUT` stores some keys and its lists of values and multiple `PUT` requests from the same source with the same key overwrite older values.
+* `POST` refreshes some keys and thereby extends their lifetime.
+* `DELETE` deletes some keys and their values.
 * `GET` retrieves the values of keys.
 
-Multiple keys can be altered at the same time, even if they are in a different scope.
+### Syntax for complex request
+
+To avoid multiple requests from the same source, different keys can be altered at the same time with one request, even if they are in a different scopes.
+
+With `?`, a split point is marked meaning that the different keys have the same prefixes as written before the `?`. Following `?`, the different keys are concatenated by `&`.
+
 A request to alter the keys `/c/s1/k1` and `/c/s2/k1` with the common scope `/c/` would look like
 
     http://localhost:8080/c?/s1/k1&/s2/k2
@@ -78,9 +73,12 @@ and
 
     http://localhost:8080?/c/s1/k1
 
-would access the same key.
+access the same key.
 
-All these methods `PUT`, `POST`, `DELETE` and `GET` can be tested using curl with the simple call
+
+### Simple Testing
+
+Using curl, all these request methods `PUT`, `POST`, `DELETE` and `GET` can be tested using the call
 
     curl -X [METHOD] [URL]
 
@@ -100,10 +98,9 @@ would then get that key. At the moment, the system marshaller XStream is used, t
 
 ### Prefix lookups
 
-On `GET` requests it is possible to lookup a range of keys having the same prefix in the keyname.
-To do that, request for a key having the prefix appended by three dots as keyname.
-The request
+On `GET` requests it is possible to lookup a range of keys having the same prefix in their name.
+To do that, request for a key having the prefix appended by three dots. For example, the request
 
     http://localhost:8080/scope?/s1/k...
 
-would find all keys with the prefix `k` in the scope `/scope/s1/`.
+will find all keys with the prefix `k` in the scope `/scope/s1/`.

@@ -11,26 +11,27 @@ Configuration
 * Table of content:
 {:toc}
 
-There is no need to change the configuration of the client as long as the default marshaller will be used (which is recommended).
+As long as the default marshaller is used (which is recommended), there is no need to change the configuration of the client .
+
 The configuration file for the server is `server/src/main/java/META-INF/applicationContext.xml`.
-It will be explained in four parts.
+It consists of the configuration of
+1. the backends, where the physical data will be stored,
+2. the volatile logic interface on top of the backends,
+3. replication using these interface to build up a replication tree,
+4. the front end, and
+5. the user interface.
 
-The first part describes setting up the backends, where the physical data will be stored.
-The second part describes the volatile logic interface on top of the backends.
-The third part uses these interface to build up a replication tree.
-The fourth and last part describes setting up the frontend and user interface.
+The configuration of the user interface (i.e. the configuration of the RESTController) can be configured in the file `server/web/WEB-INF/dispatcher-servlet.xml`, but the above mentioned `applicationContext.xml` is also a good choice.
 
-After that, the configuration of the user interface (i.e. the configuration of the RESTController) will be explained seperately.
-Alternatively, it can be configured in the file `server/web/WEB-INF/dispatcher-servlet.xml`, but the above mentioned `applicationContext.xml` is also a good choice.
+Backends
+-------
 
-Reference
----------
+An arbitrary number of backends can be configured. Note that at least one local backend has to be configured, where all read request are handled.
 
-### Backends
+![](Backend.png)
 
-An arbitrary number of backends can be configured.
-A new backend will be created by inserting a bean tag with a new unique id and the parameter class telling which type of backend to crate.
-Within the bean tag, the backend specific properties will be set with property tags.
+A new backend is created by inserting a bean tag with a new unique id and the parameter class telling which type of backend to crate.
+Within the bean tag, the backend specific properties are set with property tags.
 Since version 0.1.0, there are three different types of backends, namely
 
 - BabuDirectory using BabuDB as physical storage,
@@ -41,9 +42,9 @@ The WriteLogger backend is a write-only backend and cannot be used for read requ
 
 ### BabuDirectory
 
-The following entry would create a BabuDirectory backend with the id `UNIQUEID`.
-The database named `DBNAME` would be stored in the directory `/path/to/db` whereas its log files would be stored in `/path/to/db/logs`.
-The data would be written asynchronously and all incoming data would be interpreted `utf-8` encoded.
+The following entry creates a BabuDirectory backend with the id `UNIQUEID`.
+The database named `DBNAME` is stored in the directory `/path/to/db` whereas its log files are stored in `/path/to/db/logs`.
+The data is written asynchronously and all incoming data is interpreted as `utf-8` encoded.
  
 {% highlight xml %}
     <bean id="UNIQUEID" class="de.zib.vold.backend.BabuDirectory">
@@ -57,8 +58,8 @@ The data would be written asynchronously and all incoming data would be interpre
 
 #### FileSystemDirectory
 
-The following entry would create a FileSystemDirectory backend with the id `UNIQUEID`.
-The physical data would be stored in the directory `/path/to/fsd` and the incoming data would be interpreted `utf-8` encoded.
+The following entry creates a FileSystemDirectory backend with the id `UNIQUEID`.
+The physical data is stored in the directory `/path/to/fsd` and the incoming data is interpreted as `utf-8` encoded.
 
 {% highlight xml %}
     <bean id="UNIQUEID" class="de.zib.vold.backend.FileSystemDirectory">
@@ -69,8 +70,8 @@ The physical data would be stored in the directory `/path/to/fsd` and the incomi
 
 #### WriteLogger
 
-The following entry would create a WriteLogger backend with the id `UNIQUEID`.
-All write requests would be logged in the file `/path/to/log/file`.
+The following entry creates a WriteLogger backend with the id `UNIQUEID`.
+All write requests are logged in the file `/path/to/log/file`.
 
 {% highlight xml %}
     <bean id="UNIQUEID" class="de.zib.vold.backend.WriteLogger">
@@ -78,14 +79,16 @@ All write requests would be logged in the file `/path/to/log/file`.
     </bean>
 {% endhighlight %}
 
-### Volatile Logic
+Volatile Logic
+-------
 
-The backends are only able to store some data.
-They do not know anything about timestamps, time to live or the whole volatile logic at all.
+The backends are only able to store some data, but they do not know anything about timestamps, time to live or the whole volatile logic at all.
 The timing informations are stored in a TimeSlice object.
 The volatile logic is implemented in the class VolatilLogicImpl, thus each backend has to be wrapped by an object of this class.
 
-The following entry would create a TimeSlice descriptor describing 500 time slices each of the size 200 milliseconds.
+![](VolatileLogic.png)
+
+The following entry creates a TimeSlice descriptor describing 500 time slices each of the size of 200 milliseconds.
 
 {% highlight xml %}
     <bean id="timesliceid" class="de.zib.vold.volatilelogic.TimeSlice">
@@ -94,7 +97,7 @@ The following entry would create a TimeSlice descriptor describing 500 time slic
     </bean>
 {% endhighlight %}
 
-Having a backend with the id `BACKENDID`, the following entry would create a VolatileLogicImpl object with the id `UNIQUEID` using the backend `BACKENDID` to store the keys, its birthdates and slice informations it gets from the TimeSlice `TIMESLICEID`.
+Having a backend with the id `BACKENDID`, the following entry creates a VolatileLogicImpl object with the id `UNIQUEID` using the backend `BACKENDID` to store the keys, its birthdates and slice informations it gets from the TimeSlice `TIMESLICEID`.
 
 {% highlight xml %}
     <bean id="UNIQUEID" class="de.zib.vold.volatilelogic.VolatileLogicImpl">
@@ -105,13 +108,17 @@ Having a backend with the id `BACKENDID`, the following entry would create a Vol
 
 Of course, an appropriate TimeSlice object and backend has to be configured somewhere else in the configuration file.
 
-### Replication Tree
+Replication Tree
+--------
 
 This part can be skipped if replication is not needed.
 In principle, the replication tree is a binary tree where the leafs are VolatileDirectoryImpl objects and each other node is a ReplicatedVolatileDirectory object.
+
+![](Replication.png)
+
 A ReplicatedVolatileDirectory is assigned a VolatileDirectory as backend which will serve all read and write requests and a Replicator object which replicates all write requests.
-Before explaining the replicators, the definition of a ReplicatedVolatileDirectory object will be given.
-The following entry would create a ReplicatedVolatileDirectory with the unique id `VOLDREPID` proxying all requests to the volatile directory `VOLDID` and replicating all write requests to the Replicator `REPID`.
+Before explaining the replicators, we define a ReplicatedVolatileDirectory.
+The following entry creates a ReplicatedVolatileDirectory with the unique id `VOLDREPID` proxying all requests to the volatile directory `VOLDID` and replicating all write requests to the Replicator `REPID`.
 
 {% highlight xml %}
     <bean id="VOLDREPID" class="de.zib.vold.volatilelogic.ReplicatedVolatileDirectory">
@@ -121,10 +128,10 @@ The following entry would create a ReplicatedVolatileDirectory with the unique i
 {% endhighlight %}
 
 There are two different types of Replicators, namely LocalReplicator and RESTVoldReplicator.
-The former replicates to a VolatileDirectory object which itselfes can be a ReplicatedVolatileDirectory object again or a VolatileDirectoryImpl object.
+The former replicates to a VolatileDirectory object which itself can be a ReplicatedVolatileDirectory object again or a VolatileDirectoryImpl object.
 A RESTVoldReplicator object replicates all write requests to another VolD REST based service.
 
-The following entry would create a LocalReplicator with the unique id `REPID` proxying all write requests to the volatile directory `VOLDID`.
+The following entry creates a LocalReplicator with the unique id `REPID` proxying all write requests to the volatile directory `VOLDID`.
 
 {% highlight xml %}
     <bean id="REPID" class="de.zib.vold.replication.LocalReplicator">
@@ -132,7 +139,7 @@ The following entry would create a LocalReplicator with the unique id `REPID` pr
     </bean>
 {% endhighlight %}
 
-The following entry would create a RESTVoldReplicator with the unique id `REPID` proxying all write requests to the VolD service reachable at the URL `http://vold.i/slave/`
+The following entry creates a RESTVoldReplicator with the unique id `REPID` proxying all write requests to the VolD service reachable at the URL `http://vold.i/slave/`
 
 {% highlight xml %}
     <bean id="REPID" class="de.zib.vold.replication.RESTVoldReplicator">
@@ -140,11 +147,15 @@ The following entry would create a RESTVoldReplicator with the unique id `REPID`
     </bean>
 {% endhighlight %}
 
-### Frontends
+Frontends
+-------
 
 There are two different types of frontends which can be configured independently, namely the Reaper and Frontend classes.
-The Reaper cares about keys exceeding their time to live and deletes them.
-The following entry would create a Reaper with the id `UNIQUEREAPERID` deleting all keys older than 20000 milliseconds in the volatile directory `VOLDID` (either a replication or a concrete implementation).
+The Reaper cares about keys exceeding their time to live and deletes them, while the Frontend cares about all requests being reentrant.
+
+![](Frontend.png)
+
+The following entry creates a Reaper with the id `UNIQUEREAPERID` deleting all keys older than 20000 milliseconds in the volatile directory `VOLDID` (either a replication or a concrete implementation).
 
 {% highlight xml %}
     <bean id="UNIQUEREAPERID" class="de.zib.vold.frontend.Reaper">
@@ -153,8 +164,7 @@ The following entry would create a Reaper with the id `UNIQUEREAPERID` deleting 
     </bean>
 {% endhighlight %}
 
-The Frontend cares about all requests beeing reentrant.
-A Frontend with the id `UNIQUEFRONTENDID` working on the volatile directory `VOLDID` would be created with the following entry.
+A Frontend with the id `UNIQUEFRONTENDID` working on the volatile directory `VOLDID` is created with the following entry.
 
 {% highlight xml %}
     <bean id="UNIQUEFRONTENDID" class="de.zib.vold.frontend.Frontend">
@@ -162,10 +172,11 @@ A Frontend with the id `UNIQUEFRONTENDID` working on the volatile directory `VOL
     </bean>
 {% endhighlight %}
 
-### User Interfaces
+User Interfaces
+-------
 
 Last but not least, a user interface may be configured.
-The following entry would create a RESTController with the id `MASTERCONTROLLERID` proxying all requests to the Frontend `MASTERFRONTENDID`.
+The following entry creates a RESTController with the id `MASTERCONTROLLERID` proxying all requests to the Frontend `MASTERFRONTENDID`.
 
 {% highlight xml %}
     <bean id="MASTERCONTROLLERID" class="de.zib.vold.userInterface.RESTController">
@@ -174,7 +185,7 @@ The following entry would create a RESTController with the id `MASTERCONTROLLERI
 {% endhighlight %}
 
 The default for such a controller is to handle all requests.
-To change that behaviour, a SimpleUrlHandlerMapping may be configured with the following entry dispatching all requests from `/master/*` to the RestController with the id `MASTERFRONTENDID`.
+To change this behaviour, a SimpleUrlHandlerMapping may be configured with the following entry dispatching all requests from `/master/*` to the RestController with the id `MASTERFRONTENDID`.
 
 {% highlight xml %}
     <bean class="org.springframework.web.servlet.handler.SimpleUrlHandlerMapping">
@@ -187,7 +198,7 @@ To change that behaviour, a SimpleUrlHandlerMapping may be configured with the f
 {% endhighlight %}
 
 Of course, more than one `<prop>` entries can be configured.
-A typical setup would be to dispatch all replication queries from `/slave/*` to a slave controller, which itselfes does not replicate remote again.
+A typical setup would be to dispatch all replication queries from `/slave/*` to a slave controller, which itself does not replicate remote again.
 All other requests could be dispatched to a master controller.
 
 Configuration Examples
@@ -197,6 +208,8 @@ Configuration Examples
 
 The following example sets up a VolD REST based service without a Reaper and without replication on top of the file system directory `/var/spool/vold`.
 Therefore, the directory `/var/spool/vold` has to exist and the user running the application container has to have write permissions to that directory.
+
+![](MinConfEx.png)
 
 {% highlight xml %}
 <bean id="backend" class="de.zib.vold.backend.FileSystemDirectory">
@@ -229,6 +242,8 @@ Therefore, the directory `/var/spool/vold` has to exist and the user running the
 The following example sets up a VolD REST based service storing the data three times locally and replicating to another VolD service.
 A Reaper and two user interfaces (one for answering queries and one for acting as slave itselfes) will be configured additionally.
 There is a configuration which results in the same behaviour with a smaller replication tree, but this example tries to show all aspects.
+
+![](ConfigurationExample.png)
 
 {% highlight xml %}
 <!-- --------------- BACKEND ------------------ -->
