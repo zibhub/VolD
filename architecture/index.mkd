@@ -1,0 +1,62 @@
+---
+title: VolD - Architecture
+root: ..
+layout: default
+---
+
+
+Architecture
+=========
+
+* Table of content:
+{:toc}
+
+VolD has five main components: 
+
+1. The user interface, which is mainly a RESTController to provide the connection to the services.
+2. The frontend, which provides the handling of the keys and deletion overdue ones.
+3. The volatile logic, which handles the time logic and distribution of keys, as well as organizes the replication.
+4. The backend, which provides different storage facilities like a file system directory or a database.
+5. The replication, which contributes replicators that can replicate the data both locally and distributed via REST.
+
+![](ServiceArchitecture.png)
+
+The main data types used by these different layers are different: while the user interface handles uri keys, these are transformed to keys on the level of the frontend, and the volatile logic is mainly based on lists of strings. For more information on the different components see the configuration section.
+
+Time Logic
+-----
+
+For a volatile behavior, we define a number of time slices each of a certain size. 
+
+We assume that all VolD servers have synchronized clocks.  Whenever a write request arrives, the key is put into the current time slice and a current time stamp of this server is added to the request and stored. 
+
+An overwrite from the same source only happens for a subsequent time stamp.
+
+To ensure a fast system, the reaper only browses the current time slice for overdue keys, i.e. it checks for keys whose time to live is exceeded and deltes them. If this proceedure takes too long, the time slice size should be decreased and, if necessary, the number of slices increased.
+
+At the moment, we use 6 slices with a size of 10 seconds, i.e. overdue keys are delete after one minute at the latest.
+
+### Replication and Time
+
+The following scenario shows why time stamps are important for replication.
+
+Consider two VolD systems A and B, which are coupled and replicate each other. Now a host sends PUT requests for the key-value pairs `(K, U)` to A and `(K, V)` to B. The following things happen:
+- A stores `(K, U)`, B stores `(K, V)`
+- A replicates `(K, U)` and sends it to B, B replicates `(K, V)` and sends it to A
+- A stores `(K, V)` (and overwrites `(K, U)`), B stores `(K, U)` (and overwrites `(K,V)`)
+
+In the end, we would have inconsistencies, since A and B have different values for the key `K`.
+
+Using time stamps, the second requests has a later time stamp and thus B knows that it should not store the older request `(K, U)` from the same host, even if it arrived later.
+
+Note that the clocks of different clients do not have to be synchronized, since write requests from different clients do not overwrite the key, but extend it.
+
+Database Logic
+----
+
+In general, we need three different databases oder directories to store all information:
+- 0 stores the actual data, i.e. keys and values,
+- 1 stores the time slice of the key,
+- 2 stores the time stamp for the key, i.e. its arrival time at the VolD server.
+
+All information is url encoded. For a file directory, directories are marked by `+`, while values are stores as files and marked by `-`. The whole directory is then given by `dbnumber\scope\keyname\type\source\value`
