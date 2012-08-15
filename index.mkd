@@ -53,7 +53,7 @@ The project depends on the following archives:
 - BabuDB
 - javax Inject
 
-When compiling the project using buildr, these resources should be downloaded automatically and stored in `~/.m2/repository/`
+When compiling the project using buildr, these resources should be downloaded automatically and stored in `~/.m2/repository/`.
 
 Structure
 ---------

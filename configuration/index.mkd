@@ -83,6 +83,8 @@ Volatile Logic
 -------
 
 The backends are only able to store some data, but they do not know anything about timestamps, time to live or the whole volatile logic at all.
+This is the purpose of the volatile logic component. 
+
 The timing informations are stored in a TimeSlice object.
 The volatile logic is implemented in the class VolatilLogicImpl, thus each backend has to be wrapped by an object of this class.
 
@@ -359,7 +361,7 @@ There is a configuration which results in the same behaviour with a smaller repl
 
 ### Usual Case Example
 
-The following configuration example sets up a replicated VolD (to the slave `http://vold.i/slave`) and acts as slave itselfes too.
+The following configuration example sets up a replicated VolD (to the slave `http://vold.i/slave`) and acts as slave itself, too.
 The data will be written into a file system directory on the local disk.
 
 {% highlight xml %}

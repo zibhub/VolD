@@ -31,7 +31,7 @@ The syntax for a key is
 
     [[SOURCE]/SCOPE/][TYPE:]NAME
 
-    where
+where
 * SOURCE is the source, the key comes from. This is mainly used for replication of the backend storages.
 * SCOPE is the path to the tree in the hierarchy.
 * TYPE is the type of the key.
@@ -43,7 +43,7 @@ Access
 ------
 
 HTTP offers the four methods `PUT`, `POST`, `DELETE` and `GET`.
-All of these methods are used to alter the storage.
+All of these methods are used to alter or read the storage.
 * `PUT` stores some keys and its lists of values and multiple `PUT` requests from the same source with the same key overwrite older values.
 * `POST` refreshes some keys and thereby extends their lifetime.
 * `DELETE` deletes some keys and their values.
@@ -86,15 +86,15 @@ Calling
 
     curl -X PUT "http://localhost:8080/c/s1?k1=v1"
 
-would create the key `k1` in the scope `/c/s1` and
+creates the key `k1` in the scope `/c/s1` and
 
     curl -X POST "http://localhost:8080/c/s1?k1"
 
-would refresh it. A simple
+refreshes it. A simple
 
     curl "http://localhost:8080/c/s1?k1"
 
-would then get that key. At the moment, the system marshaller XStream is used, thus the answer is an xml file and not that easy to read as it would be with JSon.
+then gets that key. At the moment, the system marshaller XStream is used, thus the answer is an xml file and not that easy to read as it would be with JSon.
 
 ### Prefix lookups
 
