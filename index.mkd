@@ -13,7 +13,7 @@ For physical storage, either a file system directory or BabuDB, an embedded non-
 
 The keys can be configured to be volatile, i.e. a key will be deleted if its age has exceeded a certain time to live and it has not been refreshed in between.
 
-The keys are stored in a hierarchical structure (wherefore the service is called Directory Service) called scopes.
+The keys are stored in a hierarchical structure (wherefore the service is called Directory Service).
 The keys are typed and stored per source. If two sources (e.g. different clients on the REST interface) store the same key in the same directory (called scope), a lookup for this key will merge the sets of values, given by both sources. 
 
 VolD also supports a flexible but easy to configure multi master replication.

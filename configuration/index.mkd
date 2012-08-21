@@ -21,7 +21,7 @@ It consists of the configuration of
 4. the front end, and
 5. the user interface.
 
-The configuration of the user interface (i.e. the configuration of the RESTController) can be configured in the file `server/web/WEB-INF/dispatcher-servlet.xml`, but the above mentioned `applicationContext.xml` is also a good choice.
+The configuration of the user interface (i.e. the configuration of the RESTController) should be configured in the file `server/web/WEB-INF/dispatcher-servlet.xml`.
 
 Backends
 -------
@@ -30,7 +30,7 @@ An arbitrary number of backends can be configured. Note that at least one local 
 
 ![](Backend.png)
 
-A new backend is created by inserting a bean tag with a new unique id and the parameter class telling which type of backend to crate.
+A new backend is created by inserting a bean tag with a new unique id and the parameter class telling which type of backend to cre ate.
 Within the bean tag, the backend specific properties are set with property tags.
 Since version 0.1.0, there are three different types of backends, namely
 
@@ -114,7 +114,7 @@ Replication Tree
 --------
 
 This part can be skipped if replication is not needed.
-In principle, the replication tree is a binary tree where the leafs are VolatileDirectoryImpl objects and each other node is a ReplicatedVolatileDirectory object.
+In principle, the replication tree is a binary tree where the leaves are VolatileDirectoryImpl objects or replicators.
 
 ![](Replication.png)
 
@@ -209,7 +209,7 @@ Configuration Examples
 ### Most Simple Example
 
 The following example sets up a VolD REST based service without a Reaper and without replication on top of the file system directory `/var/spool/vold`.
-Therefore, the directory `/var/spool/vold` has to exist and the user running the application container has to have write permissions to that directory.
+Therefore, the directory `/var/spool/vold` must exist and the user running the application container has to have write permissions to that directory.
 
 ![](MinConfEx.png)
 
@@ -242,7 +242,7 @@ Therefore, the directory `/var/spool/vold` has to exist and the user running the
 ### Full Featured Example
 
 The following example sets up a VolD REST based service storing the data three times locally and replicating to another VolD service.
-A Reaper and two user interfaces (one for answering queries and one for acting as slave itselfes) will be configured additionally.
+A Reaper and two user interfaces (one for answering queries and one for acting as slave itself) will be configured additionally.
 There is a configuration which results in the same behaviour with a smaller replication tree, but this example tries to show all aspects.
 
 ![](ConfigurationExample.png)

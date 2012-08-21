@@ -44,16 +44,16 @@ Access
 
 HTTP offers the four methods `PUT`, `POST`, `DELETE` and `GET`.
 All of these methods are used to alter or read the storage.
-* `PUT` stores some keys and its lists of values and multiple `PUT` requests from the same source with the same key overwrite older values.
+* `PUT` stores some keys and its lists of values. Multiple `PUT` requests from the same source with the same key overwrite older values.
 * `POST` refreshes some keys and thereby extends their lifetime.
 * `DELETE` deletes some keys and their values.
 * `GET` retrieves the values of keys.
 
 ### Syntax for complex request
 
-To avoid multiple requests from the same source, different keys can be altered at the same time with one request, even if they are in a different scopes.
+To avoid multiple requests from the same source, different keys can be altered at the same time with one request, even if they are in different scopes.
 
-With `?`, a split point is marked meaning that the different keys have the same prefixes as written before the `?`. Following `?`, the different keys are concatenated by `&`.
+With the character `?`, a split point is marked meaning that the different keys have the same prefixes as written before the `?`. Following `?`, the different keys are concatenated by `&`.
 
 A request to alter the keys `/c/s1/k1` and `/c/s2/k1` with the common scope `/c/` would look like
 

@@ -21,18 +21,18 @@ VolD has five main components:
 
 ![](ServiceArchitecture.png)
 
-The main data types used by these different layers are different: while the user interface handles uri keys, these are transformed to keys on the level of the frontend, and the volatile logic is mainly based on lists of strings. For more information on the different components see the configuration section.
+The main data types used by these different layers differ: while the user interface handles uri keys, these are transformed to keys on the level of the frontend, and the volatile logic is mainly based on lists of strings. For more information on the different components see the configuration section.
 
 Time Logic
 -----
 
 For a volatile behavior, we define a number of time slices each of a certain size. 
 
-We assume that all VolD servers have synchronized clocks.  Whenever a write request arrives, the key is put into the current time slice and a current time stamp of this server is added to the request and stored. 
+We assume that all VolD servers have almost synchronized clocks.  Whenever a write request arrives, the key is put into the current time slice and a current time stamp of this server is added to the request and stored. 
 
 An overwrite from the same source only happens for a subsequent time stamp.
 
-To ensure a fast system, the reaper only browses the current time slice for overdue keys, i.e. it checks for keys whose time to live is exceeded and deltes them. If this proceedure takes too long, the time slice size should be decreased and, if necessary, the number of slices increased.
+To ensure a fast system, the reaper only browses the current time slice for overdue keys, i.e. it checks for keys whose time to live is exceeded and deletes them. If this procedure takes too long, the time slice size should be decreased and, if necessary, the number of slices increased.
 
 At the moment, we use 6 slices with a size of 10 seconds, i.e. overdue keys are delete after one minute at the latest.
 
@@ -47,14 +47,14 @@ Consider two VolD systems A and B, which are coupled and replicate each other. N
 
 In the end, we would have inconsistencies, since A and B have different values for the key `K`.
 
-Using time stamps, the second requests has a later time stamp and thus B knows that it should not store the older request `(K, U)` from the same host, even if it arrived later.
+Using time stamps, the second request has a later time stamp and thus B knows that it should not store the older request `(K, U)` from the same host, even if it arrived later.
 
 Note that the clocks of different clients do not have to be synchronized, since write requests from different clients do not overwrite the key, but extend it.
 
 Database Logic
 ----
 
-In general, we need three different databases oder directories to store all information:
+In general, we need three different databases or directories to store all information:
 - 0 stores the actual data, i.e. keys and values,
 - 1 stores the time slice of the key,
 - 2 stores the time stamp for the key, i.e. its arrival time at the VolD server.
