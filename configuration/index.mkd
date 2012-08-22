@@ -30,8 +30,7 @@ An arbitrary number of backends can be configured. Note that at least one local 
 
 ![](Backend.png)
 
-A new backend is created by inserting a bean tag with a new unique id and the parameter class telling which type of backend to cre ate.
-Within the bean tag, the backend specific properties are set with property tags.
+Inserting a bean tag with a new unique id and the parameter class telling which type of backend to create defines a new backend. Within the bean tag, the backend specific properties are set with property tags.
 Since version 0.1.0, there are three different types of backends, namely
 
 - BabuDirectory using BabuDB as physical storage,
@@ -214,9 +213,18 @@ Therefore, the directory `/var/spool/vold` must exist and the user running the a
 ![](MinConfEx.png)
 
 {% highlight xml %}
+<!-- --------------- BACKEND ------------------ -->
+
 <bean id="backend" class="de.zib.vold.backend.FileSystemDirectory">
     <property name="rootPath" value="/var/spool/vold" />
     <property name="enc" value="utf-8" />
+</bean>
+
+<!-- ---- REPLICATION TREE / VOLATILE LOGIC ---- -->
+
+<bean id="voldi" class="de.zib.vold.volatilelogic.VolatileDirectoryImpl">
+    <property name="timeslice" ref="timeslice" />
+    <property name="backend" ref="backend" />
 </bean>
 
 <bean id="timeslice" class="de.zib.vold.volatilelogic.TimeSlice">
@@ -225,9 +233,11 @@ Therefore, the directory `/var/spool/vold` must exist and the user running the a
     <!-- these values are choosen arbitrarily -->
 </bean>
 
-<bean id="voldi" class="de.zib.vold.volatilelogic.VolatileDirectoryImpl">
-    <property name="timeslice" ref="timeslice" />
-    <property name="backend" ref="backend" />
+<!-- ----- FRONTEND AND USER INTERFACE -------- -->
+
+<bean id="reaper" class="de.zib.vold.frontend.Reaper">
+    <property name="TTL" value="3600000" /> <!-- one hour -->
+    <property name="slicedDirectory" ref="voldi" />
 </bean>
 
 <bean id="frontend" class="de.zib.vold.frontend.Frontend">
@@ -284,7 +294,7 @@ There is a configuration which results in the same behaviour with a smaller repl
     <property name="timeSliceSize" value="1000" />
 </bean>
 
-<!-- ---------- REPLICATION TREE -------------- -->
+<!-- ---- REPLICATION TREE / VOLATILE LOGIC ---- -->
 
 <!-- SLAVE TREE -->
 
@@ -364,6 +374,8 @@ There is a configuration which results in the same behaviour with a smaller repl
 The following configuration example sets up a replicated VolD (to the slave `http://vold.i/slave`) and acts as slave itself, too.
 The data will be written into a file system directory on the local disk.
 
+![](UsualCaseExample.png)
+
 {% highlight xml %}
 <!-- --------------- BACKEND ------------------ -->
 
@@ -371,6 +383,8 @@ The data will be written into a file system directory on the local disk.
     <property name="rootPath" value="/var/spool/vold" />
     <property name="enc" value="utf-8" />
 </bean>
+
+<!-- ---- REPLICATION TREE / VOLATILE LOGIC ---- -->
 
 <bean id="timeslice" class="de.zib.vold.volatilelogic.TimeSlice">
     <property name="numberOfSlices" value="60" />
@@ -381,8 +395,6 @@ The data will be written into a file system directory on the local disk.
     <property name="timeslice" ref="timeslice" />
     <property name="backend" ref="backend" />
 </bean>
-
-<!-- ---------- REPLICATION TREE -------------- -->
 
 <bean id="slave" class="de.zib.vold.replication.RESTVoldReplicator">
     <property name="baseURL" value="http://vold.i/slave" />
