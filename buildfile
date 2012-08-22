@@ -29,7 +29,7 @@ INJECT  =  'javax.inject:javax.inject:jar:1'
 JODA_TIME = transitive('joda-time:joda-time:jar:2.0')
 BABUDB = 'org.xtreemfs.babudb:BabuDB:jar:0.5.5'
 #SLF4J = transitive('org.slf4j:slf4j-api:jar:1.6.3')
-SLF4J = transitive('org.slf4j:slf4j-log4j12:jar:1.5.8')
+SLF4J = transitive('org.slf4j:slf4j-log4j12:jar:1.6.6')
 #SLF4J = transitive('org.slf4j:slf4j-jcl:jar:1.6.4')
 #COMMONS_LOGGING = 'org.slf4j:jcl-over-slf4j:jar:1.6.3'
 XSTREAM = transitive('com.thoughtworks.xstream:xstream:jar:1.3.1')
@@ -111,11 +111,79 @@ define "vold" do
   end
 
   define "client" do
-    compile.with project( 'common' ), SPRING, COMMONS_LOGGING, SLF4J, XSTREAM, JODA_TIME
+    compile.with project( 'common' ), JODA_TIME, SPRING, COMMONS_LOGGING, SLF4J, XSTREAM
     package(:jar).include _('src/main/java/META-INF/*'), :path => 'META-INF/'
   end
 
 
 end
+
+
+task 'deploy-vold' do
+
+    def mkJettyProps( src, hostname, port, unsecureport, hostcert, hostkey, hostca)
+        mkProps(  src, "#{ENV['JETTY_HOME']}/gndms/", hostname, port, unsecureport, hostcert, hostkey, hostca )
+    end 
+
+    def mkProps( src, tgt, hostname, port, unsecureport, hostcert, hostkey, hostca)
+        props = eval IO.read ( "etc/#{src}" )
+        propFile = File.new( "#{tgt}/#{src}" , 'w')
+        propFile.write( props )
+        propFile.close
+    end 
+
+    src = project('vold:server').package(:war).to_s
+    if ( ENV['JETTY_HOME'] == nil )
+	puts ('the root directory of your jetty installation')
+	exit 1
+    end
+    tgt = "#{ENV['JETTY_HOME']}/webapps/vold.war"
+    puts "Deploying #{src} => #{tgt}"
+    cp( src, tgt );
+
+    if ( ENV['VOLD_HOST'] == nil )
+    	hostname = `hostname -f`.chomp
+    else 
+        hostname = ENV['VOLD_HOST'] 
+    end
+
+    if ( ENV['VOLD_SECURE_PORT'] == nil )
+        port = '8443'
+    else 
+        port = ENV['VOLD_SECURE_PORT'] 
+    end
+
+    if ( ENV['VOLD_UNSECURE_PORT'] == nil )
+        unsecureport = '8080'
+    else 
+        unsecureport = ENV['VOLD_UNSECURE_PORT'] 
+    end
+
+    if ( ENV['VOLD_HOSTCERT'] == nil )
+        hostcert = '/etc/grid-security/gndmscert.pem'
+    else 
+        hostcert = ENV['VOLD_HOSTCERT'] 
+    end
+
+    if ( ENV['VOLD_HOSTKEY'] == nil )
+        hostkey = '/etc/grid-security/gndmskey.pem'
+    else 
+        hostkey = ENV['VOLD_HOSTKEY'] 
+    end
+
+    if ( ENV['VOLD_HOSTCA'] == nil )
+        hostca = '/etc/grid-security/certificates/30ffc224.0'
+    else 
+        hostca = ENV['VOLD_HOSTCA'] 
+    end
+
+    #mkJettyProps( 'grid.properties', hostname, port, unsecureport, hostcert, hostkey, hostca )
+    #mkJettyProps( 'log4j.properties', hostname, port, unsecureport, hostcert, hostkey, hostca )
+
+end
+
+
+task :install => task( 'deploy-vold' )
+
 
 # vim:ft=ruby
