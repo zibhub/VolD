@@ -255,7 +255,7 @@ The following example sets up a VolD REST based service storing the data three t
 A Reaper and two user interfaces (one for answering queries and one for acting as slave itself) will be configured additionally.
 There is a configuration which results in the same behaviour with a smaller replication tree, but this example tries to show all aspects.
 
-![](ConfigurationExample.png)
+![](FullFeaturedExample.png)
 
 {% highlight xml %}
 <!-- --------------- BACKEND ------------------ -->
