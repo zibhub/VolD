@@ -21,7 +21,7 @@ import de.zib.vold.common.VoldInterface;
 import org.joda.time.DateTime;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.context.ApplicationContext;
+import org.springframework.beans.factory.BeanFactory;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
 import org.springframework.http.*;
 import org.springframework.util.LinkedMultiValueMap;
@@ -41,7 +41,6 @@ public class VolDClient implements VoldInterface
 
     private String baseURL;
 
-    private ApplicationContext context;
     private RestTemplate rest;
 
     private String enc = "utf-8";
@@ -52,9 +51,19 @@ public class VolDClient implements VoldInterface
      */
     public VolDClient()
     {
+        this( new ClassPathXmlApplicationContext("classpath:META-INF/vold-client-context.xml") );
+    }
+
+
+    /**
+     * Construct an uninitialized VolDClient.
+     *
+     * @param context The context to get the RestTemplate (voldRestTemplate) from.
+     */
+    public VolDClient( final BeanFactory context )
+    {
         baseURL = null;
 
-        context = new ClassPathXmlApplicationContext("classpath:META-INF/vold-client-context.xml");
         rest = ( RestTemplate )context.getBean( "voldRestTemplate", RestTemplate.class );
 
         if( null == rest )
@@ -69,16 +78,23 @@ public class VolDClient implements VoldInterface
      *
      * @param baseURL The URL of the remote REST based VolD service.
      */
-    public VolDClient(String baseURL)
+    public VolDClient( String baseURL )
     {
-        context = new ClassPathXmlApplicationContext("classpath:META-INF/vold-client-context.xml");
-        rest = ( RestTemplate )context.getBean( "voldRestTemplate", RestTemplate.class );
+        this( new ClassPathXmlApplicationContext("classpath:META-INF/vold-client-context.xml" ) );
 
-        if( null == rest )
-        {
-            throw new IllegalStateException( "Could not get bean rest out of vold-client-context.xml!" );
-        }
+        this.baseURL = baseURL;
+    }
 
+
+    /**
+     * Construct a VolDClient with all necessary informations.
+     *
+     * @param context The context to get the RestTemplate (voldRestTemplate) from.
+     * @param baseURL The URL of the remote REST based VolD service.
+     */
+    public VolDClient( final BeanFactory context, String baseURL )
+    {
+        this( context );
         this.baseURL = baseURL;
     }
 
