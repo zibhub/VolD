@@ -77,6 +77,11 @@ public class ClientTest {
         
         Assert.assertNotNull( map );
         Assert.assertEquals( map, keys );
+        
+        final Map< Key, Set< String > > map2 = voldClient.lookup( new Key( "/X/", "T1", "..." ) );
+
+        Assert.assertNotNull( map );
+        Assert.assertEquals( map, keys );
     }
     
     
