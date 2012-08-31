@@ -19,6 +19,7 @@ package de.zib.vold.frontend;
 import de.zib.vold.common.VoldException;
 import de.zib.vold.volatilelogic.SlicedDirectory;
 import org.joda.time.DateTime;
+import org.joda.time.DateTimeUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -279,7 +280,7 @@ public class Reaper extends Thread
 
             Map< List< String >, DateTime > map = directory.sliceLookup( timeslice );
 
-            DateTime now = DateTime.now();
+            DateTime now = new DateTime( DateTimeUtils.currentTimeMillis() );
 
             int deleted = 0;
             for( Map.Entry< List< String >, DateTime > entry: map.entrySet() )

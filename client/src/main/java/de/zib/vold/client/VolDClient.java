@@ -18,7 +18,7 @@ package de.zib.vold.client;
 import de.zib.vold.common.Key;
 import de.zib.vold.common.URIKey;
 import de.zib.vold.common.VoldInterface;
-import org.joda.time.DateTime;
+import org.joda.time.DateTimeUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.BeanFactory;
@@ -140,7 +140,7 @@ public class VolDClient implements VoldInterface
      */
     public void insert( String source, Key key, Set< String > values )
     {
-        insert( source, key, values, DateTime.now().getMillis() );
+        insert(source, key, values, DateTimeUtils.currentTimeMillis() );
     }
 
 
@@ -166,7 +166,7 @@ public class VolDClient implements VoldInterface
     @Override
     public void insert( String source, Map< Key, Set< String > > map )
     {
-        insert( source, map, DateTime.now().getMillis() );
+        insert( source, map, DateTimeUtils.currentTimeMillis() );
     }
 
 
@@ -250,7 +250,7 @@ public class VolDClient implements VoldInterface
     @Override
     public Map< String, String > refresh( String source, Set< Key > set )
     {
-        return refresh( source, set, DateTime.now().getMillis() );
+        return refresh( source, set, DateTimeUtils.currentTimeMillis() );
     }
 
 

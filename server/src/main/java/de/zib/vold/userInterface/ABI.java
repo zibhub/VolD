@@ -19,7 +19,7 @@ package de.zib.vold.userInterface;
 import de.zib.vold.common.Key;
 import de.zib.vold.common.VoldException;
 import de.zib.vold.frontend.Frontend;
-import org.joda.time.DateTime;
+import org.joda.time.DateTimeUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.context.ApplicationContext;
@@ -133,7 +133,7 @@ public class ABI
 
                     try
                     {
-                        abi.frontend.insert( a[1], k, values, DateTime.now().getMillis() );
+                        abi.frontend.insert( a[1], k, values, DateTimeUtils.currentTimeMillis() );
                     }
                     catch( VoldException e )
                     {

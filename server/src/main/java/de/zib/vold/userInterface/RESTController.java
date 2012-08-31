@@ -20,7 +20,7 @@ import de.zib.vold.common.Key;
 import de.zib.vold.common.URIKey;
 import de.zib.vold.common.VoldException;
 import de.zib.vold.frontend.Frontend;
-import org.joda.time.DateTime;
+import org.joda.time.DateTimeUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpInputMessage;
@@ -82,7 +82,7 @@ public class RESTController
         MultiValueMap< String, String > argsbody = getBody();
         final long timeStamp;
         if( timeStampHeader.equals( "unset" ) )
-            timeStamp = DateTime.now().getMillis();
+            timeStamp = DateTimeUtils.currentTimeMillis();
         else
             timeStamp = Long.parseLong( timeStampHeader );
 
@@ -278,7 +278,7 @@ public class RESTController
     {
         final long timeStamp;
         if( timeStampHeader.equals( "unset" ) )
-            timeStamp = DateTime.now().getMillis();
+            timeStamp = DateTimeUtils.currentTimeMillis();
         else
             timeStamp = Long.parseLong( timeStampHeader );
 

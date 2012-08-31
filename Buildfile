@@ -26,7 +26,7 @@ repositories.remote << 'http://repository.jboss.org/nexus/content/groups/public'
 repositories.remote << 'http://repo.marketcetera.org/maven'
 
 INJECT  =  'javax.inject:javax.inject:jar:1'
-JODA_TIME = transitive('joda-time:joda-time:jar:2.0')
+JODA_TIME = transitive('joda-time:joda-time:jar:1.6.2')
 BABUDB = 'org.xtreemfs.babudb:BabuDB:jar:0.5.5'
 #SLF4J = transitive('org.slf4j:slf4j-api:jar:1.6.3')
 SLF4J = transitive('org.slf4j:slf4j-log4j12:jar:1.6.6')

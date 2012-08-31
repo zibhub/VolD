@@ -16,6 +16,7 @@
 
 package de.zib.vold.volatilelogic;
 
+import org.joda.time.DateTimeUtils;
 import org.joda.time.Instant;
 
 /**
@@ -152,7 +153,7 @@ public class TimeSlice
             }
         }
 
-        long now = Instant.now().getMillis();
+        long now = DateTimeUtils.currentTimeMillis();
 
         return ( now / getTimeSliceSize() ) % getNumberOfSlices();
     }
