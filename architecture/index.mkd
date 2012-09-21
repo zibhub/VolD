@@ -28,9 +28,7 @@ Time Logic
 
 For a volatile behavior, we define a number of time slices each of a certain size. 
 
-We assume that all VolD servers have almost synchronized clocks.  Whenever a write request arrives, the key is put into the current time slice and a current time stamp of this server is added to the request and stored. 
-
-An overwrite from the same source only happens for a subsequent time stamp.
+We assume that all VolD servers have almost synchronized clocks.  Whenever a write request arrives, the key is put into the current time slice and a current time stamp of this server is added to the request and stored. Information from one source can only be overwritten for a subsequent time stamp.
 
 To ensure a fast system, the reaper only browses the current time slice for overdue keys, i.e. it checks for keys whose time to live is exceeded and deletes them. If this procedure takes too long, the time slice size should be decreased and, if necessary, the number of slices increased.
 
@@ -40,7 +38,7 @@ At the moment, we use 6 slices with a size of 10 seconds, i.e. overdue keys are 
 
 The following scenario shows why time stamps are important for replication.
 
-Consider two VolD systems A and B, which are coupled and replicate each other. Now a host sends PUT requests for the key-value pairs `(K, U)` to A and `(K, V)` to B. The following things happen:
+Consider two VolD systems A and B, which are coupled and replicate each other. Now a host sends first a PUT request for the key-value pair `(K, U)` to A and later a PUT request `(K, V)` to B. The following things may happen, if the communication between A and B takes more time than the second PUT request:
 - A stores `(K, U)`, B stores `(K, V)`
 - A replicates `(K, U)` and sends it to B, B replicates `(K, V)` and sends it to A
 - A stores `(K, V)` (and overwrites `(K, U)`), B stores `(K, U)` (and overwrites `(K,V)`)

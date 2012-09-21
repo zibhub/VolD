@@ -37,7 +37,7 @@ Since version 0.1.0, there are three different types of backends, namely
 - FileSystemDirectory using a file system directory as physical storage and
 - WriteLogger, using a file on the disk to log all write requests.
 
-The WriteLogger backend is a write-only backend and cannot be used for read requests.
+The WriteLogger backend is a write-only backend and cannot be used for read requests within the VolD service. It directly writes into a log file that should be accessed using standard file system commands.
 
 ### BabuDirectory
 
@@ -84,7 +84,7 @@ Volatile Logic
 The backends are only able to store some data, but they do not know anything about timestamps, time to live or the whole volatile logic at all.
 This is the purpose of the volatile logic component. 
 
-The timing informations are stored in a TimeSlice object.
+The timing information is stored in a TimeSlice object.
 The volatile logic is implemented in the class VolatilLogicImpl, thus each backend has to be wrapped by an object of this class.
 
 ![](VolatileLogic.png)
@@ -98,16 +98,16 @@ The following entry creates a TimeSlice descriptor describing 500 time slices ea
     </bean>
 {% endhighlight %}
 
-Having a backend with the id `BACKENDID`, the following entry creates a VolatileLogicImpl object with the id `UNIQUEID` using the backend `BACKENDID` to store the keys, its birthdates and slice informations it gets from the TimeSlice `TIMESLICEID`.
+Having a backend with the id `BACKENDID`, the following entry creates a VolatileLogicImpl object with the id `UNIQUEID` using the backend `BACKENDID` to store the keys, It gets the Information about its birthdates and slice from the TimeSlice `TIMESLICEID`.
 
 {% highlight xml %}
     <bean id="UNIQUEID" class="de.zib.vold.volatilelogic.VolatileLogicImpl">
         <property name="backend" ref="BACKENDID" />
-        <proeprty name="timeslice" ref="TIMESLICEID" />
+        <property name="timeslice" ref="TIMESLICEID" />
     </bean>
 {% endhighlight %}
 
-Of course, an appropriate TimeSlice object and backend has to be configured somewhere else in the configuration file.
+Of course, an appropriate TimeSlice object and backend have to be configured somewhere else in the configuration file.
 
 Replication Tree
 --------
@@ -198,7 +198,7 @@ To change this behaviour, a SimpleUrlHandlerMapping may be configured with the f
     </bean>
 {% endhighlight %}
 
-Of course, more than one `<prop>` entries can be configured.
+Of course, more than one `<prop>` entry can be configured.
 A typical setup would be to dispatch all replication queries from `/slave/*` to a slave controller, which itself does not replicate remote again.
 All other requests could be dispatched to a master controller.
 

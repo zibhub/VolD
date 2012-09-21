@@ -42,7 +42,7 @@ Note that a key starting with `/`means that no source is given and it directly s
 Access
 ------
 
-HTTP offers the four methods `PUT`, `POST`, `DELETE` and `GET`.
+HTTP offers four methods `PUT`, `POST`, `DELETE` and `GET`.
 All of these methods are used to alter or read the storage.
 * `PUT` stores some keys and its lists of values. Multiple `PUT` requests from the same source with the same key overwrite older values.
 * `POST` refreshes some keys and thereby extends their lifetime.
