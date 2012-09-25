@@ -63,9 +63,9 @@
         <!-- *************************************************************** -->
         <!-- ** SETUP FRONTEND                                               -->
 
-        <!-- setup reaper -->
+        <!-- setup reaper. TTL: 2 minutes -->
         <bean id="reaper" class="de.zib.vold.frontend.Reaper">
-                <property name="TTL" value="30000" />
+                <property name="TTL" value="120000" />
                 <property name="slicedDirectory" ref="voldi2" />
         </bean>
 
