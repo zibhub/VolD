@@ -15,6 +15,8 @@ package de.zib.vold.security;
  *  limitations under the License.
  */
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -47,6 +49,7 @@ public class GridMapUserDetailsService implements UserDetailsService {
 
     private String gridMapfileName;
     private String adminGridMapfileName;
+    protected final Logger logger = LoggerFactory.getLogger( this.getClass() );
 
     private final Map<String,String> admins;
     private final Map<String, String> users;
@@ -80,6 +83,7 @@ public class GridMapUserDetailsService implements UserDetailsService {
         VolDUserDetails userDetails = new VolDUserDetails( );
         userDetails.setAuthorities( authorityList );
         userDetails.setDn( dn );
+        logger.debug("userDetails "+userDetails.getUsername());
 
         return userDetails;
     }
@@ -97,23 +101,26 @@ public class GridMapUserDetailsService implements UserDetailsService {
     }
 
 
-    protected synchronized boolean searchInGridMapfile( final String fileName,
-                                                        final String dn ) throws IOException {
+	protected synchronized boolean searchInGridMapfile(final String fileName,
+			final String dn) throws IOException {
 
-        BufferedReader reader = new BufferedReader( new FileReader( fileName ) );
+		BufferedReader reader = new BufferedReader(new FileReader(fileName));
+		boolean authenticated =false;
 
-        try{
-            String line;
-            while ( ( line = reader.readLine() ) != null ) {
-
-                if( line.startsWith( "\""+ dn + "\"" ) )
-                    return true;
-
-            }
-        } finally {  reader.close(); }
-
-        return false;
-    }
+		try {
+			String line;
+			while ((line = reader.readLine()) != null) {
+				if (line.contains(dn)) {
+					logger.debug("gridmap file contains the DN "+line.toString());
+					authenticated =true;
+					break;
+				}
+			}
+		} finally {
+			reader.close();
+		}
+		return authenticated;
+	}
 
 
     public String getGridMapfileName() {
@@ -139,3 +146,4 @@ public class GridMapUserDetailsService implements UserDetailsService {
         this.adminGridMapfileName = adminGridMapfileName;
     }
 }
+
