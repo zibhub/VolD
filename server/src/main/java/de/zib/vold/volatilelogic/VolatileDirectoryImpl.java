@@ -212,19 +212,22 @@ public class VolatileDirectoryImpl implements VolatileDirectory
         }
 
         // check for newer timeStamp
-        {
-            if( null != oldtimeslice )
-            {
-                final List< String > timeslicekey = get_timeslice_key( to_timeslice( oldtimeslice ), key );
-                final List< String > timeslice = directory.lookup( 2, timeslicekey );
-                final long oldTimeStamp = to_timeslice( timeslice );
+		{
+			if (null != oldtimeslice) {
+				final List<String> timeslicekey = get_timeslice_key(to_timeslice(oldtimeslice), key);
+				final List<String> timeslice = directory.lookup(2, timeslicekey);
 
-                if( timeStamp < oldTimeStamp ) {
-                    log.debug( "Not overwriting Key " + key.toString() + ", since the inserted one is newer." );
-                    return;
-                }
-            }
-        }
+				if (null != timeslice) {
+					final long oldTimeStamp = to_timeslice(timeslice);
+
+					if (timeStamp < oldTimeStamp) {
+						log.debug("Not overwriting Key " + key.toString() + ", since the inserted one is newer.");
+						return;
+					}
+				}
+
+			}
+		}
 
         final long newtimeslice = timeslice.getActualSlice();
 
@@ -629,3 +632,4 @@ public class VolatileDirectoryImpl implements VolatileDirectory
     }
 
 }
+
